@@ -1,0 +1,41 @@
+name: Migrate one record from v1 to v2
+description: |
+  This workflow fetches a record from the v1 API, transforms it, and imports the result to v2.
+  It is designed for test & development purposes.
+
+on:
+  workflow_dispatch:
+    inputs:
+      record_id:
+        description: 'The record ID to process'
+        required: true
+        type: string
+      domain:
+        description: 'The domain/gateway URL (without protocol)'
+        required: true
+        type: string
+        default: 'farajaland-qa.opencrvs.org'
+
+jobs:
+  fetch-and-transform:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y jq
+          curl -fsSL https://deno.land/install.sh | sh
+          echo "$HOME/.deno/bin" >> $GITHUB_PATH
+
+      - name: Convert notebook to TypeScript
+        run: |
+          mkdir -p tmp
+          bash ./notebooks/scripts/deno-notebook-to-deno.sh ./notebooks/v1-to-v2-data-migration/fetch-and-transform.ipynb ./tmp/fetch-and-transform.ts
+
+      - name: Run the script with Deno
+        run: |
+          deno run --allow-net ./tmp/fetch-and-transform.ts ${{ github.event.inputs.record_id }} ${{ github.event.inputs.domain }}
+

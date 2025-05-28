@@ -1,0 +1,1234 @@
+{
+  "data": {
+    "fetchBirthRegistration": {
+      "id": "b2ae4b93-9067-4031-a6ac-267e7e6e7934",
+      "_fhirIDMap": {
+        "composition": "b2ae4b93-9067-4031-a6ac-267e7e6e7934",
+        "encounter": "2c956bf6-7594-4475-be68-8f883a20ac0e",
+        "eventLocation": "a723136e-506a-4d2f-8a38-23af468e0414",
+        "observation": {
+          "birthType": "923d0506-78d4-4743-83c0-e3653d619eb8",
+          "weightAtBirth": "83e19b1d-af9e-444a-86ab-d989cbb6ec34",
+          "attendantAtBirth": "0030c547-e882-4d80-8914-e790051d2aca"
+        },
+        "questionnaireResponse": "03b05162-82e1-4bee-a1a4-e7c228b411f3"
+      },
+      "registration": {
+        "id": "188c1742-4daa-4df5-b69c-bc19cd77d336",
+        "_fhirID": null,
+        "draftId": null,
+        "trackingId": "B2EJQW5",
+        "registrationNumber": "2025B2EJQW5",
+        "paperFormID": null,
+        "page": null,
+        "book": null,
+        "informantType": "MOTHER",
+        "otherInformantType": null,
+        "assignment": {
+          "practitionerId": "b4467b2f-454a-43c3-8302-809e4bda2972",
+          "firstName": "Felix",
+          "lastName": "Katongo",
+          "officeName": "Ibombo District Office",
+          "avatarURL": "https://eu.ui-avatars.com/api/?background=DEE5F2&color=222&name=Felix Katongo"
+        },
+        "contact": null,
+        "contactRelationship": null,
+        "informantsSignature": "/ocrvs/600e2b66-3abd-485e-a4bf-2725a6c010b6.png",
+        "groomSignature": null,
+        "brideSignature": null,
+        "witnessOneSignature": null,
+        "witnessTwoSignature": null,
+        "contactPhoneNumber": "+2600758519913",
+        "contactEmail": "Jasper.Pollich@gmail.com",
+        "status": [
+          {
+            "id": "188c1742-4daa-4df5-b69c-bc19cd77d336",
+            "user": {
+              "id": "6751864d5db8a2d6f32f0ee3",
+              "userMgntUserID": "6751864d5db8a2d6f32f0ee3",
+              "practitionerId": "b4467b2f-454a-43c3-8302-809e4bda2972",
+              "username": "f.katongo",
+              "mobile": "+260922222222",
+              "role": {
+                "id": "REGISTRATION_AGENT",
+                "label": {
+                  "id": "userRole.registrationOfficer",
+                  "defaultMessage": "Registration Officer",
+                  "description": "Name for user role Registration Officer"
+                }
+              },
+              "email": "kalushabwalya17+@gmail.com",
+              "underInvestigation": false,
+              "primaryOffice": {
+                "id": "5f22d65c-afbd-44d0-9209-f296c736c6bd",
+                "_fhirID": null,
+                "status": "active",
+                "name": "Ibombo District Office",
+                "description": null,
+                "partOf": "Location/eab9ecdb-01ea-4281-b7e0-bd0e06bc6633",
+                "type": "CRVS_OFFICE",
+                "telecom": null,
+                "address": null,
+                "longitude": null,
+                "latitude": null,
+                "altitude": null,
+                "geoData": null
+              },
+              "localRegistrar": {
+                "name": [
+                  {
+                    "use": "en",
+                    "firstNames": "Felix",
+                    "middleName": "",
+                    "familyName": "Katongo",
+                    "marriedLastName": null
+                  }
+                ],
+                "role": "REGISTRATION_AGENT",
+                "signature": null
+              },
+              "identifier": null,
+              "signature": null,
+              "creationDate": "2024-12-05T10:54:05.453Z",
+              "avatar": null,
+              "device": "xyz"
+            },
+            "timestamp": "2025-05-16T06:15:48.176Z",
+            "reason": null,
+            "location": {
+              "id": "eab9ecdb-01ea-4281-b7e0-bd0e06bc6633",
+              "_fhirID": null,
+              "status": "active",
+              "name": "Ibombo",
+              "description": "oEBf29y8JP8",
+              "partOf": "Location/c6a583aa-5816-4681-8e96-0f8fe32b8a13",
+              "type": "ADMIN_STRUCTURE",
+              "telecom": null,
+              "address": null,
+              "longitude": null,
+              "latitude": null,
+              "altitude": null,
+              "geoData": null
+            },
+            "office": {
+              "id": "5f22d65c-afbd-44d0-9209-f296c736c6bd",
+              "_fhirID": null,
+              "status": "active",
+              "name": "Ibombo District Office",
+              "description": null,
+              "partOf": "Location/eab9ecdb-01ea-4281-b7e0-bd0e06bc6633",
+              "type": "CRVS_OFFICE",
+              "telecom": null,
+              "address": null,
+              "longitude": null,
+              "latitude": null,
+              "altitude": null,
+              "geoData": null
+            },
+            "timeLogged": 0
+          },
+          {
+            "id": "38c75b07-d9ea-42ed-ace4-647c96d5c379",
+            "user": {
+              "id": "6751864f5db8a2d6f32f0eec",
+              "userMgntUserID": "6751864f5db8a2d6f32f0eec",
+              "practitionerId": "a14a2a51-7713-40d1-b845-3a0336a6c216",
+              "username": "k.mweene",
+              "mobile": "+260933333333",
+              "role": {
+                "id": "LOCAL_REGISTRAR",
+                "label": {
+                  "id": "userRole.localRegistrar",
+                  "defaultMessage": "Local Registrar",
+                  "description": "Name for user role Local Registrar"
+                }
+              },
+              "email": "kalushabwalya1.7@gmail.com",
+              "underInvestigation": false,
+              "primaryOffice": {
+                "id": "5f22d65c-afbd-44d0-9209-f296c736c6bd",
+                "_fhirID": null,
+                "status": "active",
+                "name": "Ibombo District Office",
+                "description": null,
+                "partOf": "Location/eab9ecdb-01ea-4281-b7e0-bd0e06bc6633",
+                "type": "CRVS_OFFICE",
+                "telecom": null,
+                "address": null,
+                "longitude": null,
+                "latitude": null,
+                "altitude": null,
+                "geoData": null
+              },
+              "localRegistrar": {
+                "name": [
+                  {
+                    "use": "en",
+                    "firstNames": "Kennedy",
+                    "middleName": "",
+                    "familyName": "Mweene",
+                    "marriedLastName": null
+                  }
+                ],
+                "role": "LOCAL_REGISTRAR",
+                "signature": {
+                  "data": null,
+                  "type": null
+                }
+              },
+              "identifier": null,
+              "signature": {
+                "data": "/ocrvs/687dfbe1-ea5f-4834-b983-375b13296f81.png",
+                "type": "image/png"
+              },
+              "creationDate": "2024-12-05T10:54:07.831Z",
+              "avatar": null,
+              "device": "xyz"
+            },
+            "timestamp": "2025-05-16T06:15:36.083Z",
+            "reason": null,
+            "location": {
+              "id": "eab9ecdb-01ea-4281-b7e0-bd0e06bc6633",
+              "_fhirID": null,
+              "status": "active",
+              "name": "Ibombo",
+              "description": "oEBf29y8JP8",
+              "partOf": "Location/c6a583aa-5816-4681-8e96-0f8fe32b8a13",
+              "type": "ADMIN_STRUCTURE",
+              "telecom": null,
+              "address": null,
+              "longitude": null,
+              "latitude": null,
+              "altitude": null,
+              "geoData": null
+            },
+            "office": {
+              "id": "5f22d65c-afbd-44d0-9209-f296c736c6bd",
+              "_fhirID": null,
+              "status": "active",
+              "name": "Ibombo District Office",
+              "description": null,
+              "partOf": "Location/eab9ecdb-01ea-4281-b7e0-bd0e06bc6633",
+              "type": "CRVS_OFFICE",
+              "telecom": null,
+              "address": null,
+              "longitude": null,
+              "latitude": null,
+              "altitude": null,
+              "geoData": null
+            },
+            "timeLogged": 0
+          },
+          {
+            "id": "f07b67cf-a51b-48e3-9473-d9bf78ad33f1",
+            "user": {
+              "id": "6751864f5db8a2d6f32f0eec",
+              "userMgntUserID": "6751864f5db8a2d6f32f0eec",
+              "practitionerId": "a14a2a51-7713-40d1-b845-3a0336a6c216",
+              "username": "k.mweene",
+              "mobile": "+260933333333",
+              "role": {
+                "id": "LOCAL_REGISTRAR",
+                "label": {
+                  "id": "userRole.localRegistrar",
+                  "defaultMessage": "Local Registrar",
+                  "description": "Name for user role Local Registrar"
+                }
+              },
+              "email": "kalushabwalya1.7@gmail.com",
+              "underInvestigation": false,
+              "primaryOffice": {
+                "id": "5f22d65c-afbd-44d0-9209-f296c736c6bd",
+                "_fhirID": null,
+                "status": "active",
+                "name": "Ibombo District Office",
+                "description": null,
+                "partOf": "Location/eab9ecdb-01ea-4281-b7e0-bd0e06bc6633",
+                "type": "CRVS_OFFICE",
+                "telecom": null,
+                "address": null,
+                "longitude": null,
+                "latitude": null,
+                "altitude": null,
+                "geoData": null
+              },
+              "localRegistrar": {
+                "name": [
+                  {
+                    "use": "en",
+                    "firstNames": "Kennedy",
+                    "middleName": "",
+                    "familyName": "Mweene",
+                    "marriedLastName": null
+                  }
+                ],
+                "role": "LOCAL_REGISTRAR",
+                "signature": {
+                  "data": null,
+                  "type": null
+                }
+              },
+              "identifier": null,
+              "signature": {
+                "data": "/ocrvs/687dfbe1-ea5f-4834-b983-375b13296f81.png",
+                "type": "image/png"
+              },
+              "creationDate": "2024-12-05T10:54:07.831Z",
+              "avatar": null,
+              "device": "xyz"
+            },
+            "timestamp": "2025-05-16T06:15:35.274Z",
+            "reason": null,
+            "location": {
+              "id": "eab9ecdb-01ea-4281-b7e0-bd0e06bc6633",
+              "_fhirID": null,
+              "status": "active",
+              "name": "Ibombo",
+              "description": "oEBf29y8JP8",
+              "partOf": "Location/c6a583aa-5816-4681-8e96-0f8fe32b8a13",
+              "type": "ADMIN_STRUCTURE",
+              "telecom": null,
+              "address": null,
+              "longitude": null,
+              "latitude": null,
+              "altitude": null,
+              "geoData": null
+            },
+            "office": {
+              "id": "5f22d65c-afbd-44d0-9209-f296c736c6bd",
+              "_fhirID": null,
+              "status": "active",
+              "name": "Ibombo District Office",
+              "description": null,
+              "partOf": "Location/eab9ecdb-01ea-4281-b7e0-bd0e06bc6633",
+              "type": "CRVS_OFFICE",
+              "telecom": null,
+              "address": null,
+              "longitude": null,
+              "latitude": null,
+              "altitude": null,
+              "geoData": null
+            },
+            "timeLogged": 0
+          },
+          {
+            "id": "04e03311-6792-4dcf-83ad-205a69f98ec5",
+            "user": {
+              "id": "6751864f5db8a2d6f32f0eec",
+              "userMgntUserID": "6751864f5db8a2d6f32f0eec",
+              "practitionerId": "a14a2a51-7713-40d1-b845-3a0336a6c216",
+              "username": "k.mweene",
+              "mobile": "+260933333333",
+              "role": {
+                "id": "LOCAL_REGISTRAR",
+                "label": {
+                  "id": "userRole.localRegistrar",
+                  "defaultMessage": "Local Registrar",
+                  "description": "Name for user role Local Registrar"
+                }
+              },
+              "email": "kalushabwalya1.7@gmail.com",
+              "underInvestigation": false,
+              "primaryOffice": {
+                "id": "5f22d65c-afbd-44d0-9209-f296c736c6bd",
+                "_fhirID": null,
+                "status": "active",
+                "name": "Ibombo District Office",
+                "description": null,
+                "partOf": "Location/eab9ecdb-01ea-4281-b7e0-bd0e06bc6633",
+                "type": "CRVS_OFFICE",
+                "telecom": null,
+                "address": null,
+                "longitude": null,
+                "latitude": null,
+                "altitude": null,
+                "geoData": null
+              },
+              "localRegistrar": {
+                "name": [
+                  {
+                    "use": "en",
+                    "firstNames": "Kennedy",
+                    "middleName": "",
+                    "familyName": "Mweene",
+                    "marriedLastName": null
+                  }
+                ],
+                "role": "LOCAL_REGISTRAR",
+                "signature": {
+                  "data": null,
+                  "type": null
+                }
+              },
+              "identifier": null,
+              "signature": {
+                "data": "/ocrvs/687dfbe1-ea5f-4834-b983-375b13296f81.png",
+                "type": "image/png"
+              },
+              "creationDate": "2024-12-05T10:54:07.831Z",
+              "avatar": null,
+              "device": "xyz"
+            },
+            "timestamp": "2025-05-16T06:15:34.105Z",
+            "reason": null,
+            "location": {
+              "id": "eab9ecdb-01ea-4281-b7e0-bd0e06bc6633",
+              "_fhirID": null,
+              "status": "active",
+              "name": "Ibombo",
+              "description": "oEBf29y8JP8",
+              "partOf": "Location/c6a583aa-5816-4681-8e96-0f8fe32b8a13",
+              "type": "ADMIN_STRUCTURE",
+              "telecom": null,
+              "address": null,
+              "longitude": null,
+              "latitude": null,
+              "altitude": null,
+              "geoData": null
+            },
+            "office": {
+              "id": "5f22d65c-afbd-44d0-9209-f296c736c6bd",
+              "_fhirID": null,
+              "status": "active",
+              "name": "Ibombo District Office",
+              "description": null,
+              "partOf": "Location/eab9ecdb-01ea-4281-b7e0-bd0e06bc6633",
+              "type": "CRVS_OFFICE",
+              "telecom": null,
+              "address": null,
+              "longitude": null,
+              "latitude": null,
+              "altitude": null,
+              "geoData": null
+            },
+            "timeLogged": 0
+          }
+        ],
+        "inCompleteFields": null,
+        "attachments": null,
+        "certificates": [
+          null
+        ],
+        "duplicates": null
+      },
+      "child": {
+        "id": "46d58efc-22b9-4372-980a-335edcbf01d3",
+        "_fhirID": null,
+        "identifier": [
+          {
+            "id": "2025B2EJQW5",
+            "type": "BIRTH_REGISTRATION_NUMBER",
+            "otherType": null,
+            "fieldsModifiedByIdentity": null
+          },
+          {
+            "id": "",
+            "type": "BIRTH_CONFIGURABLE_IDENTIFIER_1",
+            "otherType": null,
+            "fieldsModifiedByIdentity": null
+          },
+          {
+            "id": "",
+            "type": "BIRTH_CONFIGURABLE_IDENTIFIER_2",
+            "otherType": null,
+            "fieldsModifiedByIdentity": null
+          },
+          {
+            "id": "",
+            "type": "BIRTH_CONFIGURABLE_IDENTIFIER_3",
+            "otherType": null,
+            "fieldsModifiedByIdentity": null
+          }
+        ],
+        "name": [
+          {
+            "use": "en",
+            "firstNames": "Alfredxo",
+            "middleName": "",
+            "familyName": "Emmanuelfa",
+            "marriedLastName": null
+          }
+        ],
+        "telecom": null,
+        "gender": "male",
+        "birthDate": "2025-04-30",
+        "age": null,
+        "maritalStatus": null,
+        "occupation": null,
+        "detailsExist": true,
+        "reasonNotApplying": null,
+        "dateOfMarriage": null,
+        "multipleBirth": null,
+        "address": null,
+        "photo": null,
+        "deceased": {
+          "deceased": null,
+          "deathDate": null
+        },
+        "nationality": null,
+        "educationalAttainment": null,
+        "ageOfIndividualInYears": null,
+        "exactDateOfBirthUnknown": null
+      },
+      "mother": {
+        "id": "175b6e6b-8651-4826-9d4f-09a24a9de2e3",
+        "_fhirID": null,
+        "identifier": [
+          {
+            "id": "4638221380",
+            "type": "NATIONAL_ID",
+            "otherType": null,
+            "fieldsModifiedByIdentity": null
+          }
+        ],
+        "name": [
+          {
+            "use": "en",
+            "firstNames": "Annabell",
+            "middleName": "",
+            "familyName": "Schulist",
+            "marriedLastName": null
+          }
+        ],
+        "telecom": null,
+        "gender": null,
+        "birthDate": "1984-05-16",
+        "age": null,
+        "maritalStatus": "SINGLE",
+        "occupation": null,
+        "detailsExist": true,
+        "reasonNotApplying": null,
+        "dateOfMarriage": null,
+        "multipleBirth": null,
+        "address": [
+          {
+            "use": null,
+            "type": "PRIMARY_ADDRESS",
+            "text": null,
+            "line": [
+              "343",
+              "Example Street",
+              "Example Residential Area",
+              "",
+              "",
+              "URBAN",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              ""
+            ],
+            "lineName": [
+              "343",
+              "Example Street",
+              "Example Residential Area",
+              "",
+              "",
+              "URBAN",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              ""
+            ],
+            "city": "Example Town",
+            "district": "eab9ecdb-01ea-4281-b7e0-bd0e06bc6633",
+            "districtName": "Ibombo",
+            "state": "c6a583aa-5816-4681-8e96-0f8fe32b8a13",
+            "stateName": "Central",
+            "postalCode": "534534",
+            "country": "FAR",
+            "from": null,
+            "to": null,
+            "partOf": "eab9ecdb-01ea-4281-b7e0-bd0e06bc6633"
+          }
+        ],
+        "photo": null,
+        "deceased": {
+          "deceased": null,
+          "deathDate": null
+        },
+        "nationality": [
+          "FAR"
+        ],
+        "educationalAttainment": "NO_SCHOOLING",
+        "ageOfIndividualInYears": 80,
+        "exactDateOfBirthUnknown": true
+      },
+      "father": {
+        "id": "d6709f40-d286-4042-bdb1-707b31c91161",
+        "_fhirID": null,
+        "identifier": [
+          {
+            "id": "4457106622",
+            "type": "NATIONAL_ID",
+            "otherType": null,
+            "fieldsModifiedByIdentity": null
+          }
+        ],
+        "name": [
+          {
+            "use": "en",
+            "firstNames": "Shad",
+            "middleName": "",
+            "familyName": "Bogisich",
+            "marriedLastName": null
+          }
+        ],
+        "telecom": null,
+        "gender": null,
+        "birthDate": "1987-05-16",
+        "age": null,
+        "maritalStatus": "SINGLE",
+        "occupation": null,
+        "detailsExist": true,
+        "reasonNotApplying": null,
+        "dateOfMarriage": null,
+        "multipleBirth": null,
+        "address": [
+          {
+            "use": null,
+            "type": "PRIMARY_ADDRESS",
+            "text": null,
+            "line": [
+              "343",
+              "Example Street",
+              "Example Residential Area",
+              "",
+              "",
+              "URBAN",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              ""
+            ],
+            "lineName": [
+              "343",
+              "Example Street",
+              "Example Residential Area",
+              "",
+              "",
+              "URBAN",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              ""
+            ],
+            "city": "Example Town",
+            "district": "eab9ecdb-01ea-4281-b7e0-bd0e06bc6633",
+            "districtName": "Ibombo",
+            "state": "c6a583aa-5816-4681-8e96-0f8fe32b8a13",
+            "stateName": "Central",
+            "postalCode": "534534",
+            "country": "FAR",
+            "from": null,
+            "to": null,
+            "partOf": "eab9ecdb-01ea-4281-b7e0-bd0e06bc6633"
+          }
+        ],
+        "photo": null,
+        "deceased": {
+          "deceased": null,
+          "deathDate": null
+        },
+        "nationality": [
+          "FAR"
+        ],
+        "educationalAttainment": "NO_SCHOOLING",
+        "ageOfIndividualInYears": null,
+        "exactDateOfBirthUnknown": null
+      },
+      "informant": {
+        "id": "aaf3fe6b-4d13-436f-90c9-442714a33ba7",
+        "_fhirID": null,
+        "_fhirIDPatient": "175b6e6b-8651-4826-9d4f-09a24a9de2e3",
+        "relationship": "MOTHER",
+        "otherRelationship": null,
+        "affidavit": null,
+        "identifier": [
+          {
+            "id": "4638221380",
+            "type": "NATIONAL_ID",
+            "otherType": null,
+            "fieldsModifiedByIdentity": null
+          }
+        ],
+        "name": [
+          {
+            "use": "en",
+            "firstNames": "Annabell",
+            "middleName": "",
+            "familyName": "Schulist",
+            "marriedLastName": null
+          }
+        ],
+        "telecom": null,
+        "gender": null,
+        "birthDate": "1984-05-16",
+        "age": null,
+        "maritalStatus": "SINGLE",
+        "occupation": null,
+        "detailsExist": true,
+        "reasonNotApplying": null,
+        "dateOfMarriage": null,
+        "multipleBirth": null,
+        "address": [
+          {
+            "use": null,
+            "type": "PRIMARY_ADDRESS",
+            "text": null,
+            "line": [
+              "343",
+              "Example Street",
+              "Example Residential Area",
+              "",
+              "",
+              "URBAN",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              ""
+            ],
+            "lineName": [
+              "343",
+              "Example Street",
+              "Example Residential Area",
+              "",
+              "",
+              "URBAN",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              ""
+            ],
+            "city": "Example Town",
+            "district": "eab9ecdb-01ea-4281-b7e0-bd0e06bc6633",
+            "districtName": "Ibombo",
+            "state": "c6a583aa-5816-4681-8e96-0f8fe32b8a13",
+            "stateName": "Central",
+            "postalCode": "534534",
+            "country": "FAR",
+            "from": null,
+            "to": null,
+            "partOf": "eab9ecdb-01ea-4281-b7e0-bd0e06bc6633"
+          }
+        ],
+        "photo": null,
+        "deceased": {
+          "deceased": null,
+          "deathDate": null
+        },
+        "nationality": [
+          "FAR"
+        ],
+        "educationalAttainment": "NO_SCHOOLING",
+        "ageOfIndividualInYears": 80,
+        "exactDateOfBirthUnknown": true
+      },
+      "eventLocation": {
+        "id": "a723136e-506a-4d2f-8a38-23af468e0414",
+        "_fhirID": null,
+        "status": "active",
+        "name": "Ibombo Rural Health Centre",
+        "description": null,
+        "partOf": "Location/eab9ecdb-01ea-4281-b7e0-bd0e06bc6633",
+        "type": "HEALTH_FACILITY",
+        "telecom": null,
+        "address": null,
+        "longitude": null,
+        "latitude": null,
+        "altitude": null,
+        "geoData": null
+      },
+      "birthType": "SINGLE",
+      "questionnaire": [
+        {
+          "fieldId": "birth.mother.mother-view-group.motherIdType",
+          "value": "NATIONAL_ID"
+        },
+        {
+          "fieldId": "birth.father.father-view-group.fatherIdType",
+          "value": "NATIONAL_ID"
+        },
+        {
+          "fieldId": "birth.informant.informant-view-group.informantIdType",
+          "value": "NATIONAL_ID"
+        }
+      ],
+      "weightAtBirth": 2,
+      "attendantAtBirth": "PHYSICIAN",
+      "otherAttendantAtBirth": null,
+      "childrenBornAliveToMother": null,
+      "foetalDeathsToMother": null,
+      "lastPreviousLiveBirth": null,
+      "createdAt": "2025-05-16T06:15:34.105Z",
+      "updatedAt": null,
+      "history": [
+        {
+          "user": {
+            "id": "6751864d5db8a2d6f32f0ee3",
+            "userMgntUserID": "6751864d5db8a2d6f32f0ee3",
+            "practitionerId": "b4467b2f-454a-43c3-8302-809e4bda2972",
+            "username": "f.katongo",
+            "mobile": "+260922222222",
+            "role": {
+              "id": "REGISTRATION_AGENT",
+              "label": {
+                "id": "userRole.registrationOfficer",
+                "defaultMessage": "Registration Officer",
+                "description": "Name for user role Registration Officer"
+              }
+            },
+            "email": "kalushabwalya17+@gmail.com",
+            "underInvestigation": false,
+            "primaryOffice": {
+              "id": "5f22d65c-afbd-44d0-9209-f296c736c6bd",
+              "_fhirID": null,
+              "status": "active",
+              "name": "Ibombo District Office",
+              "description": null,
+              "partOf": "Location/eab9ecdb-01ea-4281-b7e0-bd0e06bc6633",
+              "type": "CRVS_OFFICE",
+              "telecom": null,
+              "address": null,
+              "longitude": null,
+              "latitude": null,
+              "altitude": null,
+              "geoData": null
+            },
+            "localRegistrar": {
+              "name": [
+                {
+                  "use": "en",
+                  "firstNames": "Felix",
+                  "middleName": "",
+                  "familyName": "Katongo",
+                  "marriedLastName": null
+                }
+              ],
+              "role": "REGISTRATION_AGENT",
+              "signature": null
+            },
+            "identifier": null,
+            "signature": null,
+            "creationDate": "2024-12-05T10:54:05.453Z",
+            "avatar": null,
+            "device": "xyz"
+          },
+          "date": "2025-05-16T06:15:48.268+00:00",
+          "ipAddress": null,
+          "note": "",
+          "statusReason": null,
+          "reason": null,
+          "requester": "",
+          "requesterOther": "",
+          "hasShowedVerifiedDocument": false,
+          "certificateTemplateId": null,
+          "noSupportingDocumentationRequired": false,
+          "otherReason": "",
+          "system": null,
+          "location": {
+            "id": "eab9ecdb-01ea-4281-b7e0-bd0e06bc6633",
+            "_fhirID": null,
+            "status": "active",
+            "name": "Ibombo",
+            "description": "oEBf29y8JP8",
+            "partOf": "Location/c6a583aa-5816-4681-8e96-0f8fe32b8a13",
+            "type": "ADMIN_STRUCTURE",
+            "telecom": null,
+            "address": null,
+            "longitude": null,
+            "latitude": null,
+            "altitude": null,
+            "geoData": null
+          },
+          "office": {
+            "id": "5f22d65c-afbd-44d0-9209-f296c736c6bd",
+            "_fhirID": null,
+            "status": "active",
+            "name": "Ibombo District Office",
+            "description": null,
+            "partOf": "Location/eab9ecdb-01ea-4281-b7e0-bd0e06bc6633",
+            "type": "CRVS_OFFICE",
+            "telecom": null,
+            "address": null,
+            "longitude": null,
+            "latitude": null,
+            "altitude": null,
+            "geoData": null
+          },
+          "dhis2Notification": false,
+          "input": [],
+          "output": [],
+          "certificates": [
+            null
+          ],
+          "signature": null,
+          "payment": null,
+          "duplicateOf": null
+        },
+        {
+          "user": {
+            "id": "6751864f5db8a2d6f32f0eec",
+            "userMgntUserID": "6751864f5db8a2d6f32f0eec",
+            "practitionerId": "a14a2a51-7713-40d1-b845-3a0336a6c216",
+            "username": "k.mweene",
+            "mobile": "+260933333333",
+            "role": {
+              "id": "LOCAL_REGISTRAR",
+              "label": {
+                "id": "userRole.localRegistrar",
+                "defaultMessage": "Local Registrar",
+                "description": "Name for user role Local Registrar"
+              }
+            },
+            "email": "kalushabwalya1.7@gmail.com",
+            "underInvestigation": false,
+            "primaryOffice": {
+              "id": "5f22d65c-afbd-44d0-9209-f296c736c6bd",
+              "_fhirID": null,
+              "status": "active",
+              "name": "Ibombo District Office",
+              "description": null,
+              "partOf": "Location/eab9ecdb-01ea-4281-b7e0-bd0e06bc6633",
+              "type": "CRVS_OFFICE",
+              "telecom": null,
+              "address": null,
+              "longitude": null,
+              "latitude": null,
+              "altitude": null,
+              "geoData": null
+            },
+            "localRegistrar": {
+              "name": [
+                {
+                  "use": "en",
+                  "firstNames": "Kennedy",
+                  "middleName": "",
+                  "familyName": "Mweene",
+                  "marriedLastName": null
+                }
+              ],
+              "role": "LOCAL_REGISTRAR",
+              "signature": {
+                "data": null,
+                "type": null
+              }
+            },
+            "identifier": null,
+            "signature": {
+              "data": "/ocrvs/687dfbe1-ea5f-4834-b983-375b13296f81.png",
+              "type": "image/png"
+            },
+            "creationDate": "2024-12-05T10:54:07.831Z",
+            "avatar": null,
+            "device": "xyz"
+          },
+          "date": "2025-05-16T06:15:36.149+00:00",
+          "ipAddress": null,
+          "note": "",
+          "statusReason": null,
+          "reason": null,
+          "requester": "",
+          "requesterOther": "",
+          "hasShowedVerifiedDocument": false,
+          "certificateTemplateId": null,
+          "noSupportingDocumentationRequired": false,
+          "otherReason": "",
+          "system": null,
+          "location": {
+            "id": "eab9ecdb-01ea-4281-b7e0-bd0e06bc6633",
+            "_fhirID": null,
+            "status": "active",
+            "name": "Ibombo",
+            "description": "oEBf29y8JP8",
+            "partOf": "Location/c6a583aa-5816-4681-8e96-0f8fe32b8a13",
+            "type": "ADMIN_STRUCTURE",
+            "telecom": null,
+            "address": null,
+            "longitude": null,
+            "latitude": null,
+            "altitude": null,
+            "geoData": null
+          },
+          "office": {
+            "id": "5f22d65c-afbd-44d0-9209-f296c736c6bd",
+            "_fhirID": null,
+            "status": "active",
+            "name": "Ibombo District Office",
+            "description": null,
+            "partOf": "Location/eab9ecdb-01ea-4281-b7e0-bd0e06bc6633",
+            "type": "CRVS_OFFICE",
+            "telecom": null,
+            "address": null,
+            "longitude": null,
+            "latitude": null,
+            "altitude": null,
+            "geoData": null
+          },
+          "dhis2Notification": false,
+          "input": [],
+          "output": [],
+          "certificates": [
+            null
+          ],
+          "signature": {
+            "data": "/ocrvs/687dfbe1-ea5f-4834-b983-375b13296f81.png",
+            "type": "image/png"
+          },
+          "payment": null,
+          "duplicateOf": null
+        },
+        {
+          "user": {
+            "id": "6751864f5db8a2d6f32f0eec",
+            "userMgntUserID": "6751864f5db8a2d6f32f0eec",
+            "practitionerId": "a14a2a51-7713-40d1-b845-3a0336a6c216",
+            "username": "k.mweene",
+            "mobile": "+260933333333",
+            "role": {
+              "id": "LOCAL_REGISTRAR",
+              "label": {
+                "id": "userRole.localRegistrar",
+                "defaultMessage": "Local Registrar",
+                "description": "Name for user role Local Registrar"
+              }
+            },
+            "email": "kalushabwalya1.7@gmail.com",
+            "underInvestigation": false,
+            "primaryOffice": {
+              "id": "5f22d65c-afbd-44d0-9209-f296c736c6bd",
+              "_fhirID": null,
+              "status": "active",
+              "name": "Ibombo District Office",
+              "description": null,
+              "partOf": "Location/eab9ecdb-01ea-4281-b7e0-bd0e06bc6633",
+              "type": "CRVS_OFFICE",
+              "telecom": null,
+              "address": null,
+              "longitude": null,
+              "latitude": null,
+              "altitude": null,
+              "geoData": null
+            },
+            "localRegistrar": {
+              "name": [
+                {
+                  "use": "en",
+                  "firstNames": "Kennedy",
+                  "middleName": "",
+                  "familyName": "Mweene",
+                  "marriedLastName": null
+                }
+              ],
+              "role": "LOCAL_REGISTRAR",
+              "signature": {
+                "data": null,
+                "type": null
+              }
+            },
+            "identifier": null,
+            "signature": {
+              "data": "/ocrvs/687dfbe1-ea5f-4834-b983-375b13296f81.png",
+              "type": "image/png"
+            },
+            "creationDate": "2024-12-05T10:54:07.831Z",
+            "avatar": null,
+            "device": "xyz"
+          },
+          "date": "2025-05-16T06:15:35.357+00:00",
+          "ipAddress": null,
+          "note": "",
+          "statusReason": null,
+          "reason": null,
+          "requester": "",
+          "requesterOther": "",
+          "hasShowedVerifiedDocument": false,
+          "certificateTemplateId": null,
+          "noSupportingDocumentationRequired": false,
+          "otherReason": "",
+          "system": null,
+          "location": {
+            "id": "eab9ecdb-01ea-4281-b7e0-bd0e06bc6633",
+            "_fhirID": null,
+            "status": "active",
+            "name": "Ibombo",
+            "description": "oEBf29y8JP8",
+            "partOf": "Location/c6a583aa-5816-4681-8e96-0f8fe32b8a13",
+            "type": "ADMIN_STRUCTURE",
+            "telecom": null,
+            "address": null,
+            "longitude": null,
+            "latitude": null,
+            "altitude": null,
+            "geoData": null
+          },
+          "office": {
+            "id": "5f22d65c-afbd-44d0-9209-f296c736c6bd",
+            "_fhirID": null,
+            "status": "active",
+            "name": "Ibombo District Office",
+            "description": null,
+            "partOf": "Location/eab9ecdb-01ea-4281-b7e0-bd0e06bc6633",
+            "type": "CRVS_OFFICE",
+            "telecom": null,
+            "address": null,
+            "longitude": null,
+            "latitude": null,
+            "altitude": null,
+            "geoData": null
+          },
+          "dhis2Notification": false,
+          "input": [],
+          "output": [],
+          "certificates": [
+            null
+          ],
+          "signature": null,
+          "payment": null,
+          "duplicateOf": null
+        },
+        {
+          "user": {
+            "id": "6751864f5db8a2d6f32f0eec",
+            "userMgntUserID": "6751864f5db8a2d6f32f0eec",
+            "practitionerId": "a14a2a51-7713-40d1-b845-3a0336a6c216",
+            "username": "k.mweene",
+            "mobile": "+260933333333",
+            "role": {
+              "id": "LOCAL_REGISTRAR",
+              "label": {
+                "id": "userRole.localRegistrar",
+                "defaultMessage": "Local Registrar",
+                "description": "Name for user role Local Registrar"
+              }
+            },
+            "email": "kalushabwalya1.7@gmail.com",
+            "underInvestigation": false,
+            "primaryOffice": {
+              "id": "5f22d65c-afbd-44d0-9209-f296c736c6bd",
+              "_fhirID": null,
+              "status": "active",
+              "name": "Ibombo District Office",
+              "description": null,
+              "partOf": "Location/eab9ecdb-01ea-4281-b7e0-bd0e06bc6633",
+              "type": "CRVS_OFFICE",
+              "telecom": null,
+              "address": null,
+              "longitude": null,
+              "latitude": null,
+              "altitude": null,
+              "geoData": null
+            },
+            "localRegistrar": {
+              "name": [
+                {
+                  "use": "en",
+                  "firstNames": "Kennedy",
+                  "middleName": "",
+                  "familyName": "Mweene",
+                  "marriedLastName": null
+                }
+              ],
+              "role": "LOCAL_REGISTRAR",
+              "signature": {
+                "data": null,
+                "type": null
+              }
+            },
+            "identifier": null,
+            "signature": {
+              "data": "/ocrvs/687dfbe1-ea5f-4834-b983-375b13296f81.png",
+              "type": "image/png"
+            },
+            "creationDate": "2024-12-05T10:54:07.831Z",
+            "avatar": null,
+            "device": "xyz"
+          },
+          "date": "2025-05-16T06:15:35.190+00:00",
+          "ipAddress": null,
+          "note": "",
+          "statusReason": null,
+          "reason": null,
+          "requester": "",
+          "requesterOther": "",
+          "hasShowedVerifiedDocument": false,
+          "certificateTemplateId": null,
+          "noSupportingDocumentationRequired": false,
+          "otherReason": "",
+          "system": null,
+          "location": {
+            "id": "eab9ecdb-01ea-4281-b7e0-bd0e06bc6633",
+            "_fhirID": null,
+            "status": "active",
+            "name": "Ibombo",
+            "description": "oEBf29y8JP8",
+            "partOf": "Location/c6a583aa-5816-4681-8e96-0f8fe32b8a13",
+            "type": "ADMIN_STRUCTURE",
+            "telecom": null,
+            "address": null,
+            "longitude": null,
+            "latitude": null,
+            "altitude": null,
+            "geoData": null
+          },
+          "office": {
+            "id": "5f22d65c-afbd-44d0-9209-f296c736c6bd",
+            "_fhirID": null,
+            "status": "active",
+            "name": "Ibombo District Office",
+            "description": null,
+            "partOf": "Location/eab9ecdb-01ea-4281-b7e0-bd0e06bc6633",
+            "type": "CRVS_OFFICE",
+            "telecom": null,
+            "address": null,
+            "longitude": null,
+            "latitude": null,
+            "altitude": null,
+            "geoData": null
+          },
+          "dhis2Notification": false,
+          "input": [],
+          "output": [],
+          "certificates": [
+            null
+          ],
+          "signature": {
+            "data": "/ocrvs/687dfbe1-ea5f-4834-b983-375b13296f81.png",
+            "type": "image/png"
+          },
+          "payment": null,
+          "duplicateOf": null
+        }
+      ]
+    }
+  }
+}
