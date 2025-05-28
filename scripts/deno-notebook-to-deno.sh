@@ -9,4 +9,11 @@ if [ -z "$FILE" ] || [ -z "$OUTPUT" ]; then
   exit 1
 fi
 
+FILE_DIR="$(cd "$(dirname "$FILE")" && pwd)"
+OUTPUT_DIR="$(cd "$(dirname "$OUTPUT")" && pwd)"
+
+
 jq -r '.cells[].source[]' "$FILE" > "$OUTPUT"
+
+# Copy all potential TypeScript files to the output directory
+rsync -av --include='*.ts' --exclude='*' "$FILE_DIR"/ "$OUTPUT_DIR"/

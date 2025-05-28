@@ -11,14 +11,17 @@ on:
         required: true
         type: string
       domain:
-        description: 'The domain/gateway URL (without protocol)'
+        description: 'The environment domain (without protocol or subdomains)'
         required: true
         type: string
         default: 'farajaland-qa.opencrvs.org'
 
 jobs:
   fetch-and-transform:
+    name: Migrate ${{ github.event.inputs.record_id }} in ${{ github.event.inputs.domain }}
     runs-on: ubuntu-latest
+    outputs:
+      script_output: ${{ steps.deno-script.outputs.script_output }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -33,9 +36,20 @@ jobs:
       - name: Convert notebook to TypeScript
         run: |
           mkdir -p tmp
-          bash ./notebooks/scripts/deno-notebook-to-deno.sh ./notebooks/v1-to-v2-data-migration/fetch-and-transform.ipynb ./tmp/fetch-and-transform.ts
+          bash ./scripts/deno-notebook-to-deno.sh ./v1-to-v2-data-migration/fetch-and-transform.ipynb ./tmp/fetch-and-transform.ts
 
       - name: Run the script with Deno
+        id: deno-script
         run: |
-          deno run --allow-net ./tmp/fetch-and-transform.ts ${{ github.event.inputs.record_id }} ${{ github.event.inputs.domain }}
+          echo "script_output<<EOF" >> $GITHUB_OUTPUT
+          deno run --allow-net ./tmp/fetch-and-transform.ts ${{ github.event.inputs.record_id }} ${{ github.event.inputs.domain }} | tee /dev/stderr >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
+
+      - name: Generate summary
+        run: |
+          echo "## Notebook result" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "${{ steps.deno-script.outputs.script_output }}" >> $GITHUB_STEP_SUMMARY
+
 
