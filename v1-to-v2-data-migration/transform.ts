@@ -1,5 +1,45 @@
 import { v4 as uuidv4 } from "npm:uuid";
 
+function convertAddress(address) {
+  const international = address.country !== "FAR";
+  if (international) {
+    return {
+      addressType: "INTERNATIONAL",
+      country: address.country,
+      state: address.state,
+      district2: address.district,
+      cityOrTown: address.city,
+      addressLine1: address.line.filter(Boolean)[0],
+      addressLine2: address.line.filter(Boolean)[1],
+      addressLine3: address.line.filter(Boolean).slice(2).join(", "),
+      postcodeOrZip: address.postalCode,
+    };
+  }
+
+  const rural = address.line.some((line) => line === "RURAL");
+
+  if (rural) {
+    return {
+      addressType: "DOMESTIC",
+      urbanOrRural: "RURAL",
+      country: address.country,
+      province: address.state,
+      district: address.district,
+      village: address.line.find((line) => line.trim() !== ""),
+    };
+  }
+
+  return {
+    addressType: "DOMESTIC",
+    urbanOrRural: "URBAN",
+    country: address.country,
+    province: address.state,
+    district: address.district,
+    town: address.city,
+    zipCode: address.postalCode,
+  };
+}
+
 const resolver = {
   "child.firstname": (data) => data.child.name[0].firstNames,
 
@@ -16,19 +56,18 @@ const resolver = {
    * @todo Addresses need to be properly handled
    */
   "child.placeOfBirth": (data) => data.eventLocation.type,
-  "child.birthLocation": (data) => data.eventLocation.id,
-  "child.address.privateHome": (data) => ({
-      country: data.eventLocation.address.country,
-      addressType: 'INTERNATIONAL', /* @todo */
-      state: data.eventLocation.address.state,
-      district2: data.eventLocation.address.district,
-      cityOrTown: data.eventLocation.address.city,
-      addressLine1: data.eventLocation.address.line.filter(Boolean)[0],
-      addressLine2: data.eventLocation.address.line.filter(Boolean)[1],
-      addressLine3: data.eventLocation.address.line.filter(Boolean).slice(2).join(', '),
-      postcodeOrZip: data.eventLocation.address.postalCode,
-  }), // FieldType.ADDRESS,
-  "child.address.other": (data) => null, // FieldType.ADDRESS,
+  "child.birthLocation": (data) =>
+    data.eventLocation.type === "HEALTH_FACILITY"
+      ? data.eventLocation.id
+      : null,
+  "child.address.privateHome": (data) =>
+    data.eventLocation.type === "PRIVATE_HOME"
+      ? convertAddress(data.eventLocation.address)
+      : null,
+  "child.address.other": (data) =>
+    data.eventLocation.type === "OTHER"
+      ? convertAddress(data.eventLocation.address)
+      : null,
   /*
    * MISSING FIELDS that are in GraphQL but not in the form
    * In GraphQL there's a field "otherAttendantAtBirth". I wonder what that is
@@ -44,19 +83,10 @@ const resolver = {
    */
   "informant.dob": (data) => data.informant.birthDate, // type: 'DATE',
   /* @todo Addresses need to be properly handled */
-  "informant.address": (data) => ({
-      country: data.informant.address[0].country,
-      addressType: 'INTERNATIONAL',
-      state: data.informant.address[0].state,
-      district2: data.informant.address[0].district,
-      cityOrTown: data.informant.address[0].city,
-      addressLine1: data.informant.address[0].line.filter(Boolean)[0],
-      addressLine2: data.informant.address[0].line.filter(Boolean)[1],
-      addressLine3: data.informant.address[0].line.filter(Boolean).slice(2).join(', '),
-      postcodeOrZip: data.informant.address[0].postalCode,
-  }), // type: FieldType.ADDRESS,
+  "informant.address": (data) => convertAddress(data.informant.address[0]), // type: FieldType.ADDRESS,
   // @question, is informant.telecom correct or this?
-  "informant.phoneNo": (data) => data.registration.contactPhoneNumber?.replace('+26', ''), // @todo https://github.com/opencrvs/opencrvs-core/issues/9601
+  "informant.phoneNo": (data) =>
+    data.registration.contactPhoneNumber?.replace("+26", ""), // @todo https://github.com/opencrvs/opencrvs-core/issues/9601
   "informant.email": (data) => data.registration.contactEmail, // type: FieldType.EMAIL,
   "informant.relation": (data) => data.informant.relationship, // FieldType.SELECT
   "informant.other.relation": (data) => data.informant.otherRelationship, // FieldType.TEXT
@@ -65,7 +95,8 @@ const resolver = {
   "informant.surname": (data) => data.informant.name[0].familyName, // FieldType.TEXT
   "informant.dobUnknown": (data) => data.informant.exactDateOfBirthUnknown, // FieldType.CHECKBOX
   // @question, is this informant.age or informant.ageOfIndividualInYears?
-  "informant.age": (data) => data.informant.ageOfIndividualInYears?.toString() /* @todo not a fan of this */,
+  "informant.age": (data) =>
+    data.informant.ageOfIndividualInYears?.toString() /* @todo not a fan of this */,
   "informant.nationality": (data) => data.informant.nationality?.[0], // FieldType.COUNTRY
   "mother.detailsNotAvailable": (data) => !data.mother.detailsExist,
   "mother.reason": (data) => data.mother.reasonNotApplying,
@@ -73,23 +104,14 @@ const resolver = {
   "mother.surname": (data) => data.mother.name?.[0].familyName,
   "mother.dob": (data) => data.mother.birthDate,
   "mother.dobUnknown": (data) => data.mother.exactDateOfBirthUnknown,
-  "mother.age": (data) => data.mother.ageOfIndividualInYears?.toString() /* @todo not a fan of this */,
+  "mother.age": (data) =>
+    data.mother.ageOfIndividualInYears?.toString() /* @todo not a fan of this */,
   "mother.nationality": (data) => data.mother.nationality?.[0],
   "mother.maritalStatus": (data) => data.mother.maritalStatus,
   "mother.educationalAttainment": (data) => data.mother.educationalAttainment,
   "mother.occupation": (data) => data.mother.occupation,
   "mother.previousBirths": (data) => data.mother.multipleBirth,
-  "mother.address": (data) => ({
-      country: data.mother.address[0].country,
-      addressType: 'INTERNATIONAL',
-      state: data.mother.address[0].state,
-      district2: data.mother.address[0].district,
-      cityOrTown: data.mother.address[0].city,
-      addressLine1: data.mother.address[0].line.filter(Boolean)[0],
-      addressLine2: data.mother.address[0].line.filter(Boolean)[1],
-      addressLine3: data.mother.address[0].line.filter(Boolean).slice(2).join(', '),
-      postcodeOrZip: data.mother.address[0].postalCode,
-  }),
+  "mother.address": (data) => convertAddress(data.mother.address[0]),
   "father.detailsNotAvailable": (data) => !data.father.detailsExist,
   // @question, is this the right field?
   "father.reason": (data) => data.father.reasonNotApplying,
@@ -97,15 +119,21 @@ const resolver = {
   "father.surname": (data) => data.father.name?.[0].familyName,
   "father.dob": (data) => data.father.birthDate,
   "father.dobUnknown": (data) => data.father.exactDateOfBirthUnknown,
-  "father.age": (data) => data.father.ageOfIndividualInYears?.toString() /* @todo not a fan of this */,
+  "father.age": (data) =>
+    data.father.ageOfIndividualInYears?.toString() /* @todo not a fan of this */,
   "father.nationality": (data) => data.father.nationality?.[0],
   "father.maritalStatus": (data) => data.father.maritalStatus,
   "father.educationalAttainment": (data) => data.father.educationalAttainment,
   "father.occupation": (data) => data.father.occupation,
   "father.previousBirths": (data) => data.father.multipleBirth,
+  "father.address": (data) => convertAddress(data.father.address[0]),
   // @todo this is a nasty one as it never was a field in the database
   // but instead a computed field that just copied mothers address data for father as
-  "father.addressSameAs": (data) => null,
+  "father.addressSameAs": (data) =>
+    JSON.stringify(data.father.address[0]) ===
+    JSON.stringify(data.mother.address[0])
+      ? "YES"
+      : "NO",
 
   // @todo
   // PARENT: 'PARENT',
@@ -119,8 +147,8 @@ const resolver = {
       return null;
     }
     return {
-      filename: document.uri.replace('/ocrvs/', ''),
-      originalFilename: document.uri.replace('/ocrvs/', ''),
+      filename: document.uri.replace("/ocrvs/", ""),
+      originalFilename: document.uri.replace("/ocrvs/", ""),
       type: document.contentType,
     };
   },
@@ -131,12 +159,14 @@ const resolver = {
     if (!document) {
       return null;
     }
-    return [{
-      filename: document.uri.replace('/ocrvs/', ''),
-      originalFilename: document.uri.replace('/ocrvs/', ''),
-      type: document.contentType,
-      option: document.type,
-    }];
+    return [
+      {
+        filename: document.uri.replace("/ocrvs/", ""),
+        originalFilename: document.uri.replace("/ocrvs/", ""),
+        type: document.contentType,
+        option: document.type,
+      },
+    ];
   },
   "documents.proofOfFather": (data) => {
     const document = data.registration.attachments?.find(
@@ -145,12 +175,14 @@ const resolver = {
     if (!document) {
       return null;
     }
-    return [{
-      filename: document.uri.replace('/ocrvs/', ''),
-      originalFilename: document.uri.replace('/ocrvs/', ''),
-      type: document.contentType,
-      option: document.type,
-    }];
+    return [
+      {
+        filename: document.uri.replace("/ocrvs/", ""),
+        originalFilename: document.uri.replace("/ocrvs/", ""),
+        type: document.contentType,
+        option: document.type,
+      },
+    ];
   },
   "documents.proofOfInformant": (data) => {
     const document = data.registration.attachments?.find(
@@ -159,12 +191,14 @@ const resolver = {
     if (!document) {
       return null;
     }
-    return [{
-      filename: document.uri.replace('/ocrvs/', ''),
-      originalFilename: document.uri.replace('/ocrvs/', ''),
-      type: document.contentType,
-      option: document.type,
-    }];
+    return [
+      {
+        filename: document.uri.replace("/ocrvs/", ""),
+        originalFilename: document.uri.replace("/ocrvs/", ""),
+        type: document.contentType,
+        option: document.type,
+      },
+    ];
   },
   "documents.proofOther": (data) => {
     const document = data.registration.attachments?.find(
@@ -173,12 +207,14 @@ const resolver = {
     if (!document) {
       return null;
     }
-    return [{
-      filename: document.uri.replace('/ocrvs/', ''),
-      originalFilename: document.uri.replace('/ocrvs/', ''),
-      type: document.contentType,
-      option: document.type,
-    }];
+    return [
+      {
+        filename: document.uri.replace("/ocrvs/", ""),
+        originalFilename: document.uri.replace("/ocrvs/", ""),
+        type: document.contentType,
+        option: document.type,
+      },
+    ];
   },
 
   // Previously custom fields
@@ -255,13 +291,13 @@ function legacyHistoryItemToV2ActionType(record, declaration, historyItem) {
       return {
         type: "REGISTER",
         declaration: {},
-        status: 'Requested'
+        status: "Requested",
       };
     }
     if (historyItem.regStatus === "VALIDATED") {
       return {
         type: "VALIDATE",
-        declaration: {}
+        declaration: {},
       };
     }
   }
@@ -275,7 +311,7 @@ function legacyHistoryItemToV2ActionType(record, declaration, historyItem) {
     REJECTED_CORRECTION: "REJECT_CORRECTION",
   }[historyItem.action];
   if (!type) {
-    console.log('Invalid action', historyItem);
+    console.log("Invalid action", historyItem);
   }
 
   return { type, declaration: {} };
@@ -285,12 +321,17 @@ export function transform(birthRegistration) {
   const result = Object.entries(resolver).map(([fieldId, resolver]) => {
     return [fieldId, resolver(birthRegistration)];
   });
-  const withOutNulls = result.filter(([_, value]) => value !== null && value !== undefined);
+  const withOutNulls = result.filter(
+    ([_, value]) => value !== null && value !== undefined
+  );
   const declaration = Object.fromEntries(withOutNulls);
 
-  const historyAsc = birthRegistration.history.sort(
-    (a, b) => new Date(a.date).valueOf() - new Date(b.date).valueOf()
-  ).filter((history) => history.action !== "ASSIGNED" && history.action !== "UNASSIGNED");
+  const historyAsc = birthRegistration.history
+    .sort((a, b) => new Date(a.date).valueOf() - new Date(b.date).valueOf())
+    .filter(
+      (history) =>
+        history.action !== "ASSIGNED" && history.action !== "UNASSIGNED"
+    );
   const newest = historyAsc[historyAsc.length - 1];
 
   const documents = {
@@ -314,24 +355,24 @@ export function transform(birthRegistration) {
         transactionId: uuidv4(),
       },
       ...historyAsc
-        .filter((history) => history.action !== 'VIEWED')
+        .filter((history) => history.action !== "VIEWED")
         .map((history) => {
-        return {
-          id: uuidv4(), // history.id /* @todo add to graphql */,
-          transactionId: uuidv4(),
-          createdAt: new Date(history.date).toISOString(),
-          createdBy: history.user.id,
-          createdByRole: history.user.role.id,
-          createdAtLocation: history.office.id,
-          updatedAtLocation: history.office.id,
-          status: "Accepted",
-          ...legacyHistoryItemToV2ActionType(
-            birthRegistration,
-            declaration,
-            history
-          ),
-        };
-      }),
+          return {
+            id: uuidv4(), // history.id /* @todo add to graphql */,
+            transactionId: uuidv4(),
+            createdAt: new Date(history.date).toISOString(),
+            createdBy: history.user.id,
+            createdByRole: history.user.role.id,
+            createdAtLocation: history.office.id,
+            updatedAtLocation: history.office.id,
+            status: "Accepted",
+            ...legacyHistoryItemToV2ActionType(
+              birthRegistration,
+              declaration,
+              history
+            ),
+          };
+        }),
     ],
   };
 
