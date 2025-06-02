@@ -1,5 +1,6 @@
 import { v4 as uuidv4 } from "npm:uuid";
 
+
 function convertAddress(address) {
   const international = address.country !== "FAR";
   if (international) {
@@ -40,7 +41,7 @@ function convertAddress(address) {
   };
 }
 
-const resolver = {
+export const resolver = {
   "child.firstname": (data) => data.child.name[0].firstNames,
 
   /*
@@ -125,7 +126,6 @@ const resolver = {
   "father.maritalStatus": (data) => data.father.maritalStatus,
   "father.educationalAttainment": (data) => data.father.educationalAttainment,
   "father.occupation": (data) => data.father.occupation,
-  "father.previousBirths": (data) => data.father.multipleBirth,
   "father.address": (data) => convertAddress(data.father.address[0]),
   // @todo this is a nasty one as it never was a field in the database
   // but instead a computed field that just copied mothers address data for father as
@@ -216,28 +216,6 @@ const resolver = {
       },
     ];
   },
-
-  // Previously custom fields
-  "child.reason": (data) =>
-    data.questionnaire.find(
-      ({ fieldId }) =>
-        fieldId === "birth.child.child-view-group.reasonForLateRegistration"
-    )?.value,
-
-  "informant.idType": (data) =>
-    data.questionnaire.find(
-      ({ fieldId }) =>
-        fieldId === "birth.informant.informant-view-group.informantIdType"
-    )?.value,
-  "mother.idType": (data) =>
-    data.questionnaire.find(
-      ({ fieldId }) => fieldId === "birth.mother.mother-view-group.motherIdType"
-    )?.value,
-  "father.idType": (data) =>
-    data.questionnaire.find(
-      ({ fieldId }) => fieldId === "birth.father.father-view-group.fatherIdType"
-    )?.value,
-
   "informant.brn": (data) =>
     data.informant.identifier.find(
       ({ type }) => type === "BIRTH_REGISTRATION_NUMBER"
@@ -264,7 +242,28 @@ const resolver = {
     data.mother.identifier?.find(({ type }) => type === "PASSPORT")?.id,
   "father.passport": (data) =>
     data.father.identifier?.find(({ type }) => type === "PASSPORT")?.id,
+
+  // Previously custom fields
+  "child.reason": (data) =>
+    getCustomField(data, "birth.child.child-view-group.reasonForLateRegistration"),
+
+  "informant.idType": (data) =>
+    getCustomField(data, "birth.informant.informant-view-group.informantIdType"),
+
+  "mother.idType": (data) =>
+    getCustomField(data, "birth.mother.mother-view-group.motherIdType"),
+
+  "father.idType": (data) =>
+    getCustomField(data, "birth.father.father-view-group.fatherIdType"),
 };
+
+export function generateFieldId() {}
+
+function getCustomField(data, id) {
+  return data.questionnaire.find(
+      ({ fieldId }) => fieldId === id
+    )?.value
+}
 
 function legacyHistoryItemToV2ActionType(record, declaration, historyItem) {
   if (!historyItem.action) {
