@@ -112,7 +112,12 @@ export const resolver = {
   "mother.educationalAttainment": (data) => data.mother.educationalAttainment,
   "mother.occupation": (data) => data.mother.occupation,
   "mother.previousBirths": (data) => data.mother.multipleBirth,
-  "mother.address": (data) => convertAddress(data.mother.address[0]),
+  "mother.address": (data) => data.mother.address ? convertAddress(data.mother.address[0]) : data.mother.address,
+  "mother.addressSameAs": (data) => data.mother.address && data.father.address ?
+    JSON.stringify(data.mother.address[0]) ===
+    JSON.stringify(data.father.address[0])
+      ? "YES"
+      : "NO" : data.mother.address,
   "father.detailsNotAvailable": (data) => !data.father.detailsExist,
   // @question, is this the right field?
   "father.reason": (data) => data.father.reasonNotApplying,
@@ -126,14 +131,14 @@ export const resolver = {
   "father.maritalStatus": (data) => data.father.maritalStatus,
   "father.educationalAttainment": (data) => data.father.educationalAttainment,
   "father.occupation": (data) => data.father.occupation,
-  "father.address": (data) => convertAddress(data.father.address[0]),
+  "father.address": (data) => data.father.address ? convertAddress(data.father.address[0]) : data.father.address,
   // @todo this is a nasty one as it never was a field in the database
   // but instead a computed field that just copied mothers address data for father as
-  "father.addressSameAs": (data) =>
+  "father.addressSameAs": (data) => data.father.address && data.mother.address ?
     JSON.stringify(data.father.address[0]) ===
     JSON.stringify(data.mother.address[0])
       ? "YES"
-      : "NO",
+      : "NO" : data.father.address,
 
   // @todo
   // PARENT: 'PARENT',
