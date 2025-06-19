@@ -1,4 +1,5 @@
-export const MAPPING = {
+export const DEFAULT_FIELD_MAPPINGS = {
+  // birth
   'birth.child-view-group.firstNamesEng': 'child.firstname',
   'birth.child-view-group.familyNameEng': 'child.surname',
   'birth.child-view-group.gender': 'child.gender',
@@ -170,6 +171,185 @@ export const MAPPING = {
     'documents.proofOfInformant',
   'birth.documents-view-group.uploadDocForProofOfLegalGuardian':
     'documents.proofOther',
+
+  // death
+  //"death.information-group.list": "",
+  'death.deceased-view-group.firstNamesEng': 'deceased.firstname',
+  'death.deceased-view-group.familyNameEng': 'deceased.surname',
+  'death.deceased-view-group.gender': 'deceased.gender',
+  'death.deceased-view-group.deceasedBirthDate': 'deceased.dob',
+  'death.deceased-view-group.exactDateOfBirthUnknown': 'deceased.dobUnknown',
+  'death.deceased-view-group.ageOfIndividualInYears': 'deceased.age',
+  'death.deceased-view-group.nationality': 'deceased.nationality',
+  'death.deceased-view-group.deceasedIdType': 'deceased.idType',
+  'death.deceased-view-group.deceasedNationalId': 'deceased.nid',
+  'death.deceased-view-group.deceasedPassport': 'deceased.passport',
+  'death.deceased-view-group.deceasedBirthRegistrationNumber': 'deceased.brn',
+  'death.deceased-view-group.maritalStatus': 'deceased.maritalStatus',
+  'death.deceased-view-group.numberOfDependants': 'deceased.numberOfDependants',
+  'death.deceased-view-group.primaryAddress': 'deceased.address',
+  'death.deceased-view-group.countryPrimaryDeceased': 'deceased.address',
+  'death.deceased-view-group.statePrimaryDeceased': 'deceased.address',
+  'death.deceased-view-group.districtPrimaryDeceased': 'deceased.address',
+  'death.deceased-view-group.cityPrimaryDeceased': 'deceased.address',
+  'death.deceased-view-group.addressLine1PrimaryDeceased': 'deceased.address',
+  'death.deceased-view-group.addressLine2PrimaryDeceased': 'deceased.address',
+  'death.deceased-view-group.addressLine3PrimaryDeceased': 'deceased.address',
+  'death.deceased-view-group.postalCodePrimaryDeceased': 'deceased.address',
+  'death.deceased-view-group.internationalStatePrimaryDeceased':
+    'deceased.address',
+  'death.deceased-view-group.internationalDistrictPrimaryDeceased':
+    'deceased.address',
+  'death.deceased-view-group.internationalCityPrimaryDeceased':
+    'deceased.address',
+  'death.deceased-view-group.internationalAddressLine1PrimaryDeceased':
+    'deceased.address',
+  'death.deceased-view-group.internationalAddressLine2PrimaryDeceased':
+    'deceased.address',
+  'death.deceased-view-group.internationalAddressLine3PrimaryDeceased':
+    'deceased.address',
+  'death.deceased-view-group.internationalPostalCodePrimaryDeceased':
+    'deceased.address',
+
+  'death.death-event-details.deathDate': 'eventDetails.date',
+  'death.death-event-details.reasonForLateRegistration':
+    'eventDetails.reasonForLateRegistration',
+  'death.death-event-details.mannerOfDeath': 'eventDetails.manner',
+  'death.death-event-details.causeOfDeathEstablished':
+    'eventDetails.causeOfDeathEstablished',
+  'death.death-event-details.causeOfDeathMethod':
+    'eventDetails.sourceCauseDeath',
+  'death.death-event-details.deathDescription': 'eventDetails.mannerOfDeath',
+  // "death.death-event-details.placeOfDeathTitle":
+  // "death.death-event-details.place-of-death-seperator":
+  'death.death-event-details.placeOfDeath': 'eventDetails.placeOfDeath',
+  'death.death-event-details.deathLocation': 'eventDetails.deathLocation',
+  'death.death-event-details.countryPlaceofdeath':
+    'eventDetails.deathLocationOther',
+  'death.death-event-details.statePlaceofdeath':
+    'eventDetails.deathLocationOther',
+  'death.death-event-details.districtPlaceofdeath':
+    'eventDetails.deathLocationOther',
+  'death.death-event-details.cityPlaceofdeath':
+    'eventDetails.deathLocationOther',
+  'death.death-event-details.addressLine1Placeofdeath':
+    'eventDetails.deathLocationOther',
+  'death.death-event-details.addressLine2Placeofdeath':
+    'eventDetails.deathLocationOther',
+  'death.death-event-details.addressLine3Placeofdeath':
+    'eventDetails.deathLocationOther',
+  'death.death-event-details.postalCodePlaceofdeath':
+    'eventDetails.deathLocationOther',
+  'death.death-event-details.internationalStatePlaceofdeath':
+    'eventDetails.deathLocationOther',
+  'death.death-event-details.internationalDistrictPlaceofdeath':
+    'eventDetails.deathLocationOther',
+  'death.death-event-details.internationalCityPlaceofdeath':
+    'eventDetails.deathLocationOther',
+  'death.death-event-details.internationalAddressLine1Placeofdeath':
+    'eventDetails.deathLocationOther',
+  'death.death-event-details.internationalAddressLine2Placeofdeath':
+    'eventDetails.deathLocationOther',
+  'death.death-event-details.internationalAddressLine3Placeofdeath':
+    'eventDetails.deathLocationOther',
+  'death.death-event-details.internationalPostalCodePlaceofdeath':
+    'eventDetails.deathLocationOther',
+
+  'death.informant-view-group.informantType': 'informant.relation',
+  'death.informant-view-group.otherInformantType': 'informant.other.relation',
+  'death.informant-view-group.firstNamesEng': 'informant.firstname',
+  'death.informant-view-group.familyNameEng': 'informant.surname',
+  'death.informant-view-group.informantBirthDate': 'informant.dob',
+  'death.informant-view-group.exactDateOfBirthUnknown': 'informant.dobUnknown',
+  'death.informant-view-group.ageOfIndividualInYears': 'informant.age',
+  'death.informant-view-group.nationality': 'informant.nationality',
+  'death.informant-view-group.informantIdType': 'informant.idType',
+  'death.informant-view-group.informantNationalId': 'informant.nid',
+  'death.informant-view-group.informantPassport': 'informant.passport',
+  'death.informant-view-group.informantBirthRegistrationNumber':
+    'informant.brn',
+  'death.informant-view-group.primaryAddressSameAsOtherPrimary':
+    'informant.addressSameAs',
+  'death.informant-view-group.primaryAddress': 'informant.address',
+  'death.informant-view-group.countryPrimaryInformant': 'informant.address',
+  'death.informant-view-group.statePrimaryInformant': 'informant.address',
+  'death.informant-view-group.districtPrimaryInformant': 'informant.address',
+  'death.informant-view-group.cityPrimaryInformant': 'informant.address',
+  'death.informant-view-group.addressLine1PrimaryInformant':
+    'informant.address',
+  'death.informant-view-group.addressLine2PrimaryInformant':
+    'informant.address',
+  'death.informant-view-group.addressLine3PrimaryInformant':
+    'informant.address',
+  'death.informant-view-group.postalCodePrimaryInformant': 'informant.address',
+  'death.informant-view-group.internationalStatePrimaryInformant':
+    'informant.address',
+  'death.informant-view-group.internationalDistrictPrimaryInformant':
+    'informant.address',
+  'death.informant-view-group.internationalCityPrimaryInformant':
+    'informant.address',
+  'death.informant-view-group.internationalAddressLine1PrimaryInformant':
+    'informant.address',
+  'death.informant-view-group.internationalAddressLine2PrimaryInformant':
+    'informant.address',
+  'death.informant-view-group.internationalAddressLine3PrimaryInformant':
+    'informant.address',
+  'death.informant-view-group.internationalPostalCodePrimaryInformant':
+    'informant.address',
+  // "death.informant-view-group.informant-address-separator":
+  'death.informant-view-group.registrationPhone': 'informant.phoneNo',
+  'death.informant-view-group.registrationEmail': 'informant.email',
+
+  'death.spouse-view-group.detailsExist': 'spouse.detailsNotAvailable',
+  // "death.spouse-view-group.spouse-details-seperator":
+  'death.spouse-view-group.reasonNotApplying': 'spouse.reason',
+  'death.spouse-view-group.firstNamesEng': 'spouse.firstname',
+  'death.spouse-view-group.familyNameEng': 'spouse.surname',
+  'death.spouse-view-group.spouseBirthDate': 'spouse.dob',
+  'death.spouse-view-group.exactDateOfBirthUnknown': 'spouse.dobUnknown',
+  'death.spouse-view-group.ageOfIndividualInYears': 'spouse.age',
+  'death.spouse-view-group.nationality': 'spouse.nationality',
+  'death.spouse-view-group.spouseIdType': 'spouse.idType',
+  'death.spouse-view-group.spouseNationalId': 'spouse.nid',
+  'death.spouse-view-group.spousePassport': 'spouse.passport',
+  'death.spouse-view-group.spouseBirthRegistrationNumber': 'spouse.brn',
+  'death.spouse-view-group.primaryAddress': 'spouse.address',
+  'death.spouse-view-group.primaryAddressSameAsOtherPrimary':
+    'spouse.addressSameAs',
+  'death.spouse-view-group.countryPrimarySpouse': 'spouse.address',
+  'death.spouse-view-group.statePrimarySpouse': 'spouse.address',
+  'death.spouse-view-group.districtPrimarySpouse': 'spouse.address',
+  'death.spouse-view-group.cityPrimarySpouse': 'spouse.address',
+  'death.spouse-view-group.addressLine1PrimarySpouse': 'spouse.address',
+  'death.spouse-view-group.addressLine2PrimarySpouse': 'spouse.address',
+  'death.spouse-view-group.addressLine3PrimarySpouse': 'spouse.address',
+  'death.spouse-view-group.postalCodePrimarySpouse': 'spouse.address',
+  'death.spouse-view-group.internationalStatePrimarySpouse': 'spouse.address',
+  'death.spouse-view-group.internationalDistrictPrimarySpouse':
+    'spouse.address',
+  'death.spouse-view-group.internationalCityPrimarySpouse': 'spouse.address',
+  'death.spouse-view-group.internationalAddressLine1PrimarySpouse':
+    'spouse.address',
+  'death.spouse-view-group.internationalAddressLine2PrimarySpouse':
+    'spouse.address',
+  'death.spouse-view-group.internationalAddressLine3PrimarySpouse':
+    'spouse.address',
+  'death.spouse-view-group.internationalPostalCodePrimarySpouse':
+    'spouse.address',
+  // "death.spouse-view-group.spouse-address-separator":
+
+  'death.documents-view-group.paragraph': 'documents.helper',
+  'death.documents-view-group.uploadDocForDeceased':
+    'documents.proofOfDeceased',
+  'death.documents-view-group.uploadDocForInformant':
+    'documents.proofOfInformant',
+  'death.documents-view-group.uploadDocForDeceasedDeath':
+    'documents.proofOfDeath',
+  'death.documents-view-group.uploadDocForCauseOfDeath':
+    'documents.proofOfCauseOfDeath',
+
+  'death.preview-view-group.informantSignature': 'review.signature',
+  'death.review-view-group.informantSignature': 'review.signature',
 }
 
 export const MAPPING_FOR_CUSTOM_FIELDS = {
@@ -202,7 +382,7 @@ export const POSTFIX_MAP = {
   },
 }
 
-export const LABEL_MAPPING = {
+export const DEFAULT_LABEL_MAPPING = {
   'birth.information-group.list': 'form.section.information.birth.bulletList',
   'register.eventInfo.birth.title':
     'v2.form.section.information.birth.bulletList.label',
