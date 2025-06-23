@@ -15,5 +15,14 @@ export const extractFieldType = (obj, fieldName) => {
   }
 
   recurse(obj)
-  return fields
+  return fields.flatMap((x) => x)
 }
+
+export const extractFormFields = (form, formName) =>
+  form[formName].sections
+    .map((section) =>
+      section.groups.flatMap((g) =>
+        g.fields.map((f) => ({ ...f, id: `${formName}.${g.id}.${f.name}` }))
+      )
+    )
+    .flatMap((x) => x)
