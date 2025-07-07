@@ -8,3 +8,7 @@ export const GATEWAY = `http://${
 export const COUNTRY_CONFIG = `http://${
   domain.includes('localhost') ? `${domain}:3040` : `gateway.${domain}`
 }`
+
+export const REGISTER_APP = `http://${
+  domain.includes('localhost') ? `${domain}:3000` : `register.${domain}`
+}`
