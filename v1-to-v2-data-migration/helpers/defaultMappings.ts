@@ -11,6 +11,9 @@ export const DEFAULT_FIELD_MAPPINGS = {
   'birth.child-view-group.districtPlaceofbirth': 'child.placeOfBirth',
   'birth.child-view-group.ruralOrUrbanPlaceofbirth': 'child.placeOfBirth',
   'birth.child-view-group.cityPlaceofbirth': 'child.placeOfBirth',
+  'birth.child-view-group.addressLine1Placeofbirth': 'child.placeOfBirth',
+  'birth.child-view-group.addressLine2Placeofbirth': 'child.placeOfBirth',
+  'birth.child-view-group.addressLine3Placeofbirth': 'child.placeOfBirth',
   'birth.child-view-group.addressLine2UrbanOptionPlaceofbirth':
     'child.placeOfBirth',
   'birth.child-view-group.addressLine3UrbanOptionPlaceofbirth':
@@ -44,6 +47,12 @@ export const DEFAULT_FIELD_MAPPINGS = {
   'birth.informant-view-group.ruralOrUrbanPrimaryInformant':
     'informant.address',
   'birth.informant-view-group.cityPrimaryInformant': 'informant.address',
+  'birth.informant-view-group.addressLine1PrimaryInformant':
+    'informant.address',
+  'birth.informant-view-group.addressLine2PrimaryInformant':
+    'informant.address',
+  'birth.informant-view-group.addressLine3PrimaryInformant':
+    'informant.address',
   'birth.informant-view-group.addressLine1UrbanOptionPrimaryInformant':
     'informant.address',
   'birth.informant-view-group.addressLine2UrbanOptionPrimaryInformant':
@@ -99,6 +108,9 @@ export const DEFAULT_FIELD_MAPPINGS = {
   'birth.mother-view-group.districtPrimaryMother': 'mother.address',
   'birth.mother-view-group.ruralOrUrbanPrimaryMother': 'mother.address',
   'birth.mother-view-group.cityPrimaryMother': 'mother.address',
+  'birth.mother-view-group.addressLine1PrimaryMother': 'mother.address',
+  'birth.mother-view-group.addressLine2PrimaryMother': 'mother.address',
+  'birth.mother-view-group.addressLine3PrimaryMother': 'mother.address',
   'birth.mother-view-group.addressLine1UrbanOptionPrimaryMother':
     'mother.address',
   'birth.mother-view-group.addressLine2UrbanOptionPrimaryMother':
@@ -142,6 +154,9 @@ export const DEFAULT_FIELD_MAPPINGS = {
   'birth.father-view-group.districtPrimaryFather': 'father.address',
   'birth.father-view-group.ruralOrUrbanPrimaryFather': 'father.address',
   'birth.father-view-group.cityPrimaryFather': 'father.address',
+  'birth.father-view-group.addressLine1PrimaryFather': 'father.address',
+  'birth.father-view-group.addressLine2PrimaryFather': 'father.address',
+  'birth.father-view-group.addressLine3PrimaryFather': 'father.address',
   'birth.father-view-group.addressLine1UrbanOptionPrimaryFather':
     'father.address',
   'birth.father-view-group.addressLine2UrbanOptionPrimaryFather':
@@ -221,7 +236,6 @@ export const DEFAULT_FIELD_MAPPINGS = {
     'eventDetails.sourceCauseDeath',
   'death.death-event-details.deathDescription': 'eventDetails.mannerOfDeath',
   // "death.death-event-details.placeOfDeathTitle":
-  // "death.death-event-details.place-of-death-seperator":
   'death.death-event-details.placeOfDeath': 'eventDetails.placeOfDeath',
   'death.death-event-details.deathLocation': 'eventDetails.deathLocation',
   'death.death-event-details.countryPlaceofdeath':
@@ -296,12 +310,10 @@ export const DEFAULT_FIELD_MAPPINGS = {
     'informant.address',
   'death.informant-view-group.internationalPostalCodePrimaryInformant':
     'informant.address',
-  // "death.informant-view-group.informant-address-separator":
   'death.informant-view-group.registrationPhone': 'informant.phoneNo',
   'death.informant-view-group.registrationEmail': 'informant.email',
 
   'death.spouse-view-group.detailsExist': 'spouse.detailsNotAvailable',
-  // "death.spouse-view-group.spouse-details-seperator":
   'death.spouse-view-group.reasonNotApplying': 'spouse.reason',
   'death.spouse-view-group.firstNamesEng': 'spouse.firstname',
   'death.spouse-view-group.familyNameEng': 'spouse.surname',
@@ -336,7 +348,6 @@ export const DEFAULT_FIELD_MAPPINGS = {
     'spouse.address',
   'death.spouse-view-group.internationalPostalCodePrimarySpouse':
     'spouse.address',
-  // "death.spouse-view-group.spouse-address-separator":
 
   'death.documents-view-group.paragraph': 'documents.helper',
   'death.documents-view-group.uploadDocForDeceased':
@@ -386,7 +397,6 @@ export const DEFAULT_LABEL_MAPPING = {
   'birth.information-group.list': 'form.section.information.birth.bulletList',
   'register.eventInfo.birth.title':
     'v2.form.section.information.birth.bulletList.label',
-  'birth.child-view-group.place-of-birth': 'child.divider_1',
   'form.field.label.iDType':
     'v2.event.birth.action.declare.form.section.person.field.idType.label',
   'form.field.label.maritalStatus':
@@ -402,8 +412,6 @@ export const DEFAULT_LABEL_MAPPING = {
     'v2.event.birth.action.declare.form.section.documents.field.proofOfFather.label',
   'form.field.label.otherBirthSupportingDocuments':
     'v2.event.birth.action.declare.form.section.documents.field.proofOther.label',
-  'birth.child-view-group.place-of-birth-seperator': 'child.divider_2',
-  'birth.mother-view-group.mother-details-seperator': 'mother.details.divider',
   'form.section.information.birth.bullet1':
     'v2.form.section.information.birth.bullet1',
   'form.section.information.birth.bullet2':
