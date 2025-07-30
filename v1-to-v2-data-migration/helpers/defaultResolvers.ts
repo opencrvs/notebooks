@@ -9,14 +9,14 @@ import {
 const informantResolver = {
   'informant.dob': (data) => data.informant.birthDate, // type: 'DATE',
   /* @todo Addresses need to be properly handled */
-  'informant.address': (data) => convertAddress(data.informant.address[0]), // type: FieldType.ADDRESS,
+  'informant.address': (data) => convertAddress(data.informant.address?.[0]), // type: FieldType.ADDRESS,
   // @question, is informant.telecom correct or this?
   'informant.phoneNo': (data) =>
     data.registration.contactPhoneNumber?.replace('+26', ''), // @todo https://github.com/opencrvs/opencrvs-core/issues/9601
   'informant.email': (data) => data.registration.contactEmail, // type: FieldType.EMAIL,
   'informant.relation': (data) => data.informant.relationship, // FieldType.SELECT
   'informant.other.relation': (data) => data.informant.otherRelationship, // FieldType.TEXT
-  'informant.name': (data) => getName(data.informant.name[0]), // FieldType.TEXT
+  'informant.name': (data) => getName(data.informant.name?.[0]), // FieldType.TEXT
   'informant.dobUnknown': (data) => data.informant.exactDateOfBirthUnknown, // FieldType.CHECKBOX
   // @question, is this informant.age or informant.ageOfIndividualInYears?
   'informant.age': (data) =>
@@ -26,6 +26,20 @@ const informantResolver = {
     getIdentifier(data.informant, 'BIRTH_REGISTRATION_NUMBER'),
   'informant.nid': (data) => getIdentifier(data.informant, 'NATIONAL_ID'),
   'informant.passport': (data) => getIdentifier(data.informant, 'PASSPORT'),
+}
+
+const documentsResolver = {
+  'documents.proofOfBirth': (data) => getDocuments(data, 'CHILD'),
+  'documents.proofOfMother': (data) => getDocuments(data, 'MOTHER'),
+  'documents.proofOfFather': (data) => getDocuments(data, 'FATHER'),
+  'documents.proofOfInformant': (data) =>
+    getDocuments(data, 'INFORMANT_ID_PROOF'),
+  'documents.proofOther': (data) => getDocuments(data, 'OTHER'),
+  'documents.proofOfDeceased': (data) =>
+    getDocuments(data, 'DECEASED_ID_PROOF'),
+  'documents.proofOfDeath': (data) => getDocuments(data, 'INFORMANT_ID_PROOF'), // TODO not this
+  'documents.proofOfCauseOfDeath': (data) =>
+    getDocuments(data, 'DECEASED_DEATH_PROOF'),
 }
 
 export const deathResolver = {
@@ -82,7 +96,7 @@ export const deathResolver = {
     ),
   'spouse.detailsNotAvailable': (data) => !data.spouse.detailsExist,
   'spouse.reason': (data) => data.spouse.reasonNotApplying,
-  'spouse.name': (data) => getName(data.spouse?.name[0]),
+  'spouse.name': (data) => getName(data.spouse?.name?.[0]),
   'spouse.dob': (data) => data.spouse.birthDate,
   'spouse.dobUnknown': (data) => data.spouse.exactDateOfBirthUnknown,
   'spouse.age': (data) => data.spouse.ageOfIndividualInYears,
@@ -93,17 +107,12 @@ export const deathResolver = {
   'spouse.passport': (data) => getIdentifier(data.spouse, 'PASSPORT'),
   'spouse.brn': (data) =>
     getIdentifier(data.spouse, 'BIRTH_REGISTRATION_NUMBER'),
-  'spouse.address': (data) => convertAddress(data.spouse.address[0]),
+  'spouse.address': (data) => convertAddress(data.spouse.address?.[0]),
   'spouse.addressSameAs': (data) =>
     JSON.stringify(data.deceased.address[0]) ===
-    JSON.stringify(data.spouse.address[0])
+    JSON.stringify(data.spouse.address?.[0])
       ? 'YES'
       : 'NO',
-  'documents.proofOfDeceased': (data) =>
-    getDocuments(data, 'DECEASED_ID_PROOF'),
-  'documents.proofOfDeath': (data) => getDocuments(data, 'INFORMANT_ID_PROOF'), // TODO not this
-  'documents.proofOfCauseOfDeath': (data) =>
-    getDocuments(data, 'DECEASED_DEATH_PROOF'),
 }
 
 export const birthResolver = {
@@ -170,7 +179,7 @@ export const birthResolver = {
   'father.maritalStatus': (data) => data.father.maritalStatus,
   'father.educationalAttainment': (data) => data.father.educationalAttainment,
   'father.occupation': (data) => data.father.occupation,
-  'father.address': (data) => convertAddress(data.father.address[0]),
+  'father.address': (data) => convertAddress(data.father.address?.[0]),
   // @todo this is a nasty one as it never was a field in the database
   // but instead a computed field that just copied mothers address data for father as
   'father.addressSameAs': (data) =>
@@ -183,12 +192,6 @@ export const birthResolver = {
   // PARENT: 'PARENT',
   // INFORMANT_ID_PROOF: 'INFORMANT_ID_PROOF',
   // LEGAL_GUARDIAN_PROOF: 'LEGAL_GUARDIAN_PROOF'
-  'documents.proofOfBirth': (data) => getDocuments(data, 'CHILD'),
-  'documents.proofOfMother': (data) => getDocuments(data, 'MOTHER'),
-  'documents.proofOfFather': (data) => getDocuments(data, 'FATHER'),
-  'documents.proofOfInformant': (data) =>
-    getDocuments(data, 'INFORMANT_ID_PROOF'),
-  'documents.proofOther': (data) => getDocuments(data, 'OTHER'),
 
   'informant.brn': (data) =>
     getIdentifier(data.informant, 'BIRTH_REGISTRATION_NUMBER'),
@@ -223,4 +226,9 @@ export const birthResolver = {
     getCustomField(data, 'birth.father.father-view-group.fatherIdType'),
 }
 
-export default { ...birthResolver, ...deathResolver, ...informantResolver }
+export default {
+  ...birthResolver,
+  ...deathResolver,
+  ...informantResolver,
+  ...documentsResolver,
+}

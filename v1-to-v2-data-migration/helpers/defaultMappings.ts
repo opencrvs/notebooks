@@ -1,7 +1,7 @@
 export const DEFAULT_FIELD_MAPPINGS = {
   // birth
-  'birth.child-view-group.firstNamesEng': 'child.firstname',
-  'birth.child-view-group.familyNameEng': 'child.surname',
+  'birth.child-view-group.firstNamesEng': 'child.name',
+  'birth.child-view-group.familyNameEng': 'child.name',
   'birth.child-view-group.gender': 'child.gender',
   'birth.child-view-group.childBirthDate': 'child.dob',
 
@@ -83,15 +83,15 @@ export const DEFAULT_FIELD_MAPPINGS = {
   'birth.informant-view-group.registrationEmail': 'informant.email',
   'birth.informant-view-group.informantType': 'informant.relation',
   'birth.informant-view-group.otherInformantType': 'informant.other.relation',
-  'birth.informant-view-group.firstNamesEng': 'informant.firstname',
-  'birth.informant-view-group.familyNameEng': 'informant.surname',
+  'birth.informant-view-group.firstNamesEng': 'informant.name',
+  'birth.informant-view-group.familyNameEng': 'informant.name',
   'birth.informant-view-group.exactDateOfBirthUnknown': 'informant.dobUnknown',
   'birth.informant-view-group.ageOfIndividualInYears': 'informant.age',
   'birth.informant-view-group.nationality': 'informant.nationality',
   'birth.mother-view-group.detailsExist': 'mother.detailsNotAvailable',
   'birth.mother-view-group.reasonNotApplying': 'mother.reason',
-  'birth.mother-view-group.firstNamesEng': 'mother.firstname',
-  'birth.mother-view-group.familyNameEng': 'mother.surname',
+  'birth.mother-view-group.firstNamesEng': 'mother.name',
+  'birth.mother-view-group.familyNameEng': 'mother.name',
   'birth.mother-view-group.motherBirthDate': 'mother.dob',
   'birth.mother-view-group.exactDateOfBirthUnknown': 'mother.dobUnknown',
   'birth.mother-view-group.ageOfIndividualInYears': 'mother.age',
@@ -135,8 +135,8 @@ export const DEFAULT_FIELD_MAPPINGS = {
 
   'birth.father-view-group.detailsExist': 'father.detailsNotAvailable',
   'birth.father-view-group.reasonNotApplying': 'father.reason',
-  'birth.father-view-group.firstNamesEng': 'father.firstname',
-  'birth.father-view-group.familyNameEng': 'father.surname',
+  'birth.father-view-group.firstNamesEng': 'father.name',
+  'birth.father-view-group.familyNameEng': 'father.name',
   'birth.father-view-group.fatherBirthDate': 'father.dob',
   'birth.father-view-group.exactDateOfBirthUnknown': 'father.dobUnknown',
   'birth.father-view-group.ageOfIndividualInYears': 'father.age',
@@ -189,8 +189,8 @@ export const DEFAULT_FIELD_MAPPINGS = {
 
   // death
   //"death.information-group.list": "",
-  'death.deceased-view-group.firstNamesEng': 'deceased.firstname',
-  'death.deceased-view-group.familyNameEng': 'deceased.surname',
+  'death.deceased-view-group.firstNamesEng': 'deceased.name',
+  'death.deceased-view-group.familyNameEng': 'deceased.name',
   'death.deceased-view-group.gender': 'deceased.gender',
   'death.deceased-view-group.deceasedBirthDate': 'deceased.dob',
   'death.deceased-view-group.exactDateOfBirthUnknown': 'deceased.dobUnknown',
@@ -229,12 +229,12 @@ export const DEFAULT_FIELD_MAPPINGS = {
   'death.death-event-details.deathDate': 'eventDetails.date',
   'death.death-event-details.reasonForLateRegistration':
     'eventDetails.reasonForLateRegistration',
-  'death.death-event-details.mannerOfDeath': 'eventDetails.manner',
+  'death.death-event-details.mannerOfDeath': 'eventDetails.mannerOfDeath',
   'death.death-event-details.causeOfDeathEstablished':
     'eventDetails.causeOfDeathEstablished',
   'death.death-event-details.causeOfDeathMethod':
     'eventDetails.sourceCauseDeath',
-  'death.death-event-details.deathDescription': 'eventDetails.mannerOfDeath',
+  'death.death-event-details.deathDescription': 'eventDetails.description',
   // "death.death-event-details.placeOfDeathTitle":
   'death.death-event-details.placeOfDeath': 'eventDetails.placeOfDeath',
   'death.death-event-details.deathLocation': 'eventDetails.deathLocation',
@@ -271,8 +271,8 @@ export const DEFAULT_FIELD_MAPPINGS = {
 
   'death.informant-view-group.informantType': 'informant.relation',
   'death.informant-view-group.otherInformantType': 'informant.other.relation',
-  'death.informant-view-group.firstNamesEng': 'informant.firstname',
-  'death.informant-view-group.familyNameEng': 'informant.surname',
+  'death.informant-view-group.firstNamesEng': 'informant.name',
+  'death.informant-view-group.familyNameEng': 'informant.name',
   'death.informant-view-group.informantBirthDate': 'informant.dob',
   'death.informant-view-group.exactDateOfBirthUnknown': 'informant.dobUnknown',
   'death.informant-view-group.ageOfIndividualInYears': 'informant.age',
@@ -315,8 +315,8 @@ export const DEFAULT_FIELD_MAPPINGS = {
 
   'death.spouse-view-group.detailsExist': 'spouse.detailsNotAvailable',
   'death.spouse-view-group.reasonNotApplying': 'spouse.reason',
-  'death.spouse-view-group.firstNamesEng': 'spouse.firstname',
-  'death.spouse-view-group.familyNameEng': 'spouse.surname',
+  'death.spouse-view-group.firstNamesEng': 'spouse.name',
+  'death.spouse-view-group.familyNameEng': 'spouse.name',
   'death.spouse-view-group.spouseBirthDate': 'spouse.dob',
   'death.spouse-view-group.exactDateOfBirthUnknown': 'spouse.dobUnknown',
   'death.spouse-view-group.ageOfIndividualInYears': 'spouse.age',

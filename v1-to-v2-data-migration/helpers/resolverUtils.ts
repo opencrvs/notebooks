@@ -3,7 +3,7 @@ export function convertAddress(address) {
   if (!address) {
     return null
   }
-  const international = address.country !== 'FAR'
+  const international = address.country !== 'FAR' //This doesn't work for other countries
   if (international) {
     return {
       addressType: 'INTERNATIONAL',
@@ -28,6 +28,9 @@ export function convertAddress(address) {
       province: address.state,
       district: address.district,
       village: address.line.find((line) => line.trim() !== ''),
+      addressLine1: address.line.filter(Boolean)[0],
+      addressLine2: address.line.filter(Boolean)[1],
+      addressLine3: address.line.filter(Boolean).slice(2).join(', '),
     }
   }
 
@@ -38,12 +41,15 @@ export function convertAddress(address) {
     province: address.state,
     district: address.district,
     town: address.city,
+    addressLine1: address.line.filter(Boolean)[0],
+    addressLine2: address.line.filter(Boolean)[1],
+    addressLine3: address.line.filter(Boolean).slice(2).join(', '),
     zipCode: address.postalCode,
   }
 }
 
 export const getIdentifier = (data, identifier) =>
-  data.identifier?.find(({ type }) => type === identifier)?.id
+  data?.identifier?.find(({ type }) => type === identifier)?.id
 
 export const getDocuments = (data, type) => {
   const documents = data.registration.attachments
@@ -54,10 +60,10 @@ export const getDocuments = (data, type) => {
       type: doc.contentType,
       option: doc.type,
     }))
-  if (!documents) {
+  if (!documents?.length) {
     return null
   }
-  return documents
+  return documents[0]
 }
 
 // What about custom fields

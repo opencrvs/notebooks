@@ -1,3 +1,5 @@
+import { GATEWAY } from './routes.ts'
+
 export const registerSystem = async (token) => {
   const response = await fetch(`${GATEWAY}/graphql`, {
     method: 'POST',
