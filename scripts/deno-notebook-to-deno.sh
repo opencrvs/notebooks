@@ -13,7 +13,12 @@ FILE_DIR="$(cd "$(dirname "$FILE")" && pwd)"
 OUTPUT_DIR="$(cd "$(dirname "$OUTPUT")" && pwd)"
 
 
-jq -r '.cells[].source[]' "$FILE" > "$OUTPUT"
+# Extract only code cells, filtering out markdown cells
+jq -r '.cells[] | select(.cell_type == "code") | .source[]' "$FILE" > "$OUTPUT" 2>/dev/null || {
+  # Fallback: if the file doesn't have proper cell_type fields,
+  # try to filter out markdown content using pattern matching
+  jq -r '.cells[].source[]' "$FILE" | grep -v '^\s*##\?\s' | grep -v '^\s*###\s' | grep -v '^\s*####\s' | grep -v '^\s*$' > "$OUTPUT"
+}
 
 # Copy all potential TypeScript files to the output directory
-rsync -av --include='*.ts' --exclude='*' "$FILE_DIR"/ "$OUTPUT_DIR"/
+rsync -av --include='*.ts' --include='*/'  --exclude='*' "$FILE_DIR"/ "$OUTPUT_DIR"/

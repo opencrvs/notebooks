@@ -16,13 +16,6 @@
     "graphql": "npm:graphql@^16.0.0"
   },
   "tasks": {
-    "test": "deno run --allow-net --allow-read simple-test.ts",
-    "example-birth": "deno run --allow-net example-birth-data-usage.ts",
-    "example-death": "deno run --allow-net example-death-data-usage.ts",
-    "integration-test": "deno run --allow-net --allow-read integration-test.ts",
-    "real-api-example": "deno run --allow-net --allow-read real-api-example.ts",
-    "real-db-test": "deno run --allow-net --allow-read --allow-env real-database-integration-test.ts",
-    "simple-db-test": "deno run --allow-net --allow-env simple-real-database-test.ts",
-    "migration": "deno test --allow-env --allow-net roundtrip.test.ts"
+    "migration": "deno test --allow-env --allow-run --allow-net --allow-write roundtrip.test.ts"
   }
 }
