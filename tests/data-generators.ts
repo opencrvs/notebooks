@@ -1,7 +1,8 @@
 import { faker } from '@faker-js/faker'
-import { format, subDays, subYears, addYears } from 'date-fns'
+import { format, subDays, subYears } from 'date-fns'
 import { v4 as uuidv4 } from 'uuid'
-import { random } from 'lodash'
+import { getAllLocations } from './utils.ts'
+import type { fhir } from 'fhir'
 
 // Types for generated data
 export interface GeneratedName {
@@ -31,7 +32,7 @@ export interface GeneratedPerson {
   name: GeneratedName[]
   birthDate?: string
   ageOfIndividualInYears?: number
-  //exactDateOfBirthUnknown?: boolean
+  exactDateOfBirthUnknown?: boolean
   nationality: string[]
   identifier: GeneratedIdentifier[]
   address: GeneratedAddress[]
@@ -45,8 +46,8 @@ export interface GeneratedChild extends GeneratedPerson {
 }
 
 export interface GeneratedEventLocation {
-  type: 'HEALTH_FACILITY' | 'PRIVATE_HOME' | 'OTHER'
-  id?: string
+  type?: 'PRIVATE_HOME' | 'OTHER'
+  _fhirID?: string
   address?: {
     line: string[]
     district: string
@@ -220,7 +221,6 @@ export function generateBirthInfo(options?: {
   if (isUnknown) {
     return {
       ageOfIndividualInYears: faker.number.int({ min: minAge, max: maxAge }),
-      exactDateOfBirthUnknown: true,
     }
   }
 
@@ -291,25 +291,26 @@ export function generateChild(options?: {
 /**
  * Generate event location
  */
-export function generateEventLocation(
-  locations?: [{ id: string }]
-): GeneratedEventLocation {
+export async function generateEventLocation(): Promise<GeneratedEventLocation> {
   const locationType = faker.helpers.arrayElement([
     'HEALTH_FACILITY',
     'PRIVATE_HOME',
     'OTHER',
   ])
 
-  const ids = locations?.map((l) => l.id) || []
   if (locationType === 'HEALTH_FACILITY') {
+    const locations = await getAllLocations('HEALTH_FACILITY')
+    const ids = locations?.map((l: fhir.Location) => l.id) || []
     return {
-      type: 'HEALTH_FACILITY',
-      id: faker.helpers.arrayElement(ids),
+      _fhirID: faker.helpers.arrayElement(ids),
     }
   }
 
+  const locations = await getAllLocations('ADMIN_STRUCTURE')
+  const ids = locations?.map((l: fhir.Location) => l.id) || []
+
   return {
-    type: locationType as 'HEALTH_FACILITY' | 'PRIVATE_HOME' | 'OTHER',
+    type: locationType as 'PRIVATE_HOME' | 'OTHER',
     address: {
       line: [
         faker.location.buildingNumber(),
@@ -408,15 +409,12 @@ export function generateQuestionnaire(
 /**
  * Generate a complete birth registration
  */
-export function generateBirthRegistration(
-  locations?: [{ id: string }],
-  options?: {
-    childAge?: number
-    motherAge?: number
-    fatherAge?: number
-    informantType?: (typeof INFORMANT_RELATIONS)[number]
-  }
-) {
+export async function generateBirthRegistration(options?: {
+  childAge?: number
+  motherAge?: number
+  fatherAge?: number
+  informantType?: (typeof INFORMANT_RELATIONS)[number]
+}) {
   const {
     childAge = faker.number.int({ min: 1, max: 30 }),
     motherAge = faker.number.int({ min: 18, max: 45 }),
@@ -459,7 +457,7 @@ export function generateBirthRegistration(
         : undefined,
     },
     informant,
-    eventLocation: generateEventLocation(locations),
+    eventLocation: await generateEventLocation(),
     attendantAtBirth: faker.helpers.arrayElement(ATTENDANT_TYPES),
     birthType: faker.helpers.arrayElement(BIRTH_TYPES),
     weightAtBirth: faker.number.float({

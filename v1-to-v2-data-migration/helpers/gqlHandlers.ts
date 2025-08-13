@@ -60,7 +60,7 @@ const GetRegistrationsList = async (token, event) => {
     body: JSON.stringify({
       operationName: 'GetRegistrationsListByFilter',
       query: `query GetRegistrationsListByFilter {
-  searchEvents(advancedSearchParameters: { event: ${event} }) {
+  searchEvents(advancedSearchParameters: { event: ${event} }, count: 10000) {
     results {
       ... on ${searchSet} {
         id
@@ -342,6 +342,7 @@ export const fetchBirthRegistration = async (recordId, token) => {
       __typename
     }
     history {
+      id
       otherReason
       requester
       requesterOther

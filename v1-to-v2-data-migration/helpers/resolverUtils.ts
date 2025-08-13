@@ -67,11 +67,12 @@ export const getDocuments = (data, type) => {
 }
 
 // What about custom fields
-export const getName = (name) => ({
-  firstname: name?.firstNames,
-  middleName: name?.middleName,
-  surname: name?.familyName,
-})
+export const getName = (name) =>
+  name && {
+    firstname: name?.firstNames,
+    middleName: name?.middleName,
+    surname: name?.familyName,
+  }
 
 export function getCustomField(data, id) {
   return data.questionnaire.find(({ fieldId }) => fieldId === id)?.value
