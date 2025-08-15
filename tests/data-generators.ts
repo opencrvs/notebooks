@@ -184,7 +184,10 @@ export function generateAddress(): GeneratedAddress {
 /**
  * Generate identifiers
  */
-export function generateIdentifiers(count: number = 1): GeneratedIdentifier[] {
+export function generateIdentifiers(
+  count: number = 1,
+  specificType?: GeneratedIdentifier['type']
+): GeneratedIdentifier[] {
   const identifierTypes = [
     'NATIONAL_ID',
     'PASSPORT',
@@ -195,7 +198,7 @@ export function generateIdentifiers(count: number = 1): GeneratedIdentifier[] {
   for (let i = 0; i < count; i++) {
     identifiers.push({
       id: faker.string.numeric(10),
-      type: faker.helpers.arrayElement(identifierTypes),
+      type: specificType || faker.helpers.arrayElement(identifierTypes),
     })
   }
 
@@ -244,15 +247,22 @@ export function generatePerson(options?: {
   minAge?: number
   maxAge?: number
   includeOptionalFields?: boolean
+  identifierType?: GeneratedIdentifier['type']
 }): GeneratedPerson {
-  const { gender, minAge, maxAge, includeOptionalFields = true } = options || {}
+  const {
+    gender,
+    minAge,
+    maxAge,
+    includeOptionalFields = true,
+    identifierType,
+  } = options || {}
   const birthInfo = generateBirthInfo({ minAge, maxAge, allowUnknown: true })
 
   const person: GeneratedPerson = {
     name: [generateName(gender)],
     ...birthInfo,
     nationality: [faker.helpers.arrayElement(COUNTRIES)],
-    identifier: generateIdentifiers(faker.number.int({ min: 1, max: 2 })),
+    identifier: generateIdentifiers(1, identifierType),
     address: [generateAddress()],
   }
 
@@ -354,56 +364,68 @@ export function generateRegistration(): GeneratedRegistration {
 /**
  * Generate questionnaire responses
  */
-export function generateQuestionnaire(
-  eventType: 'birth' | 'death'
-): Array<{ fieldId: string; value: string }> {
+export function generateQuestionnaire(eventType: 'birth' | 'death'): {
+  questionnaire: Array<{ fieldId: string; value: string }>
+  identifierTypes: {
+    motherIdType?: GeneratedIdentifier['type']
+    fatherIdType?: GeneratedIdentifier['type']
+    informantIdType?: GeneratedIdentifier['type']
+    deceasedIdType?: GeneratedIdentifier['type']
+  }
+} {
+  const identifierTypes = [
+    'NATIONAL_ID',
+    'PASSPORT',
+    'BIRTH_REGISTRATION_NUMBER',
+  ] as const
+
   if (eventType === 'birth') {
-    return [
-      {
-        fieldId: 'birth.mother.mother-view-group.motherIdType',
-        value: faker.helpers.arrayElement([
-          'NATIONAL_ID',
-          'PASSPORT',
-          'BIRTH_REGISTRATION_NUMBER',
-        ]),
+    const motherIdType = faker.helpers.arrayElement(identifierTypes)
+    const fatherIdType = faker.helpers.arrayElement(identifierTypes)
+    const informantIdType = faker.helpers.arrayElement(identifierTypes)
+
+    return {
+      questionnaire: [
+        {
+          fieldId: 'birth.mother.mother-view-group.motherIdType',
+          value: motherIdType,
+        },
+        {
+          fieldId: 'birth.father.father-view-group.fatherIdType',
+          value: fatherIdType,
+        },
+        {
+          fieldId: 'birth.informant.informant-view-group.informantIdType',
+          value: informantIdType,
+        },
+      ],
+      identifierTypes: {
+        motherIdType,
+        fatherIdType,
+        informantIdType,
       },
-      {
-        fieldId: 'birth.father.father-view-group.fatherIdType',
-        value: faker.helpers.arrayElement([
-          'NATIONAL_ID',
-          'PASSPORT',
-          'BIRTH_REGISTRATION_NUMBER',
-        ]),
-      },
-      {
-        fieldId: 'birth.informant.informant-view-group.informantIdType',
-        value: faker.helpers.arrayElement([
-          'NATIONAL_ID',
-          'PASSPORT',
-          'BIRTH_REGISTRATION_NUMBER',
-        ]),
-      },
-    ]
+    }
   }
 
-  return [
-    {
-      fieldId: 'death.informant.informant-view-group.informantIdType',
-      value: faker.helpers.arrayElement([
-        'NATIONAL_ID',
-        'PASSPORT',
-        'BIRTH_REGISTRATION_NUMBER',
-      ]),
+  const informantIdType = faker.helpers.arrayElement(identifierTypes)
+  const deceasedIdType = faker.helpers.arrayElement(identifierTypes)
+
+  return {
+    questionnaire: [
+      {
+        fieldId: 'death.informant.informant-view-group.informantIdType',
+        value: informantIdType,
+      },
+      {
+        fieldId: 'death.deceased.deceased-view-group.deceasedIdType',
+        value: deceasedIdType,
+      },
+    ],
+    identifierTypes: {
+      informantIdType,
+      deceasedIdType,
     },
-    {
-      fieldId: 'death.deceased.deceased-view-group.deceasedIdType',
-      value: faker.helpers.arrayElement([
-        'NATIONAL_ID',
-        'PASSPORT',
-        'BIRTH_REGISTRATION_NUMBER',
-      ]),
-    },
-  ]
+  }
 }
 
 /**
@@ -422,18 +444,25 @@ export async function generateBirthRegistration(options?: {
     informantType,
   } = options || {}
 
+  // Generate questionnaire first to get identifier types
+  const { questionnaire, identifierTypes } = generateQuestionnaire('birth')
+
   const child = generateChild({ ageInDays: childAge })
   const mother = generatePerson({
     gender: 'female',
     minAge: motherAge - 2,
     maxAge: motherAge + 2,
+    identifierType: identifierTypes.motherIdType,
   })
   const father = generatePerson({
     gender: 'male',
     minAge: fatherAge - 2,
     maxAge: fatherAge + 2,
+    identifierType: identifierTypes.fatherIdType,
   })
-  const informant = generatePerson()
+  const informant = generatePerson({
+    identifierType: identifierTypes.informantIdType,
+  })
 
   const registration = generateRegistration()
   if (informantType) {
@@ -465,7 +494,7 @@ export async function generateBirthRegistration(options?: {
       max: 5.5,
       fractionDigits: 1,
     }),
-    questionnaire: generateQuestionnaire('birth'),
+    questionnaire,
   }
 }
 
@@ -516,13 +545,19 @@ export function generateDeathRegistration(options?: {
     includeSpouse = faker.datatype.boolean(0.7),
   } = options || {}
 
+  // Generate questionnaire first to get identifier types
+  const { questionnaire, identifierTypes } = generateQuestionnaire('death')
+
   const deceased = generatePerson({
     minAge: deceasedAge - 2,
     maxAge: deceasedAge + 2,
     includeOptionalFields: true,
+    identifierType: identifierTypes.deceasedIdType,
   })
 
-  const informant = generatePerson()
+  const informant = generatePerson({
+    identifierType: identifierTypes.informantIdType,
+  })
   const eventDetails = generateDeathEventDetails()
 
   const registration = generateRegistration()
@@ -541,7 +576,7 @@ export function generateDeathRegistration(options?: {
     informant,
     eventLocation: generateEventLocation(),
     ...eventDetails,
-    questionnaire: generateQuestionnaire('death'),
+    questionnaire,
   }
 
   if (includeSpouse && deceased.maritalStatus === 'MARRIED') {
