@@ -342,7 +342,6 @@ export const fetchBirthRegistration = async (recordId, token) => {
       __typename
     }
     history {
-      id
       otherReason
       requester
       requesterOther

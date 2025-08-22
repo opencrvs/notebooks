@@ -72,7 +72,6 @@ export async function runMigration() {
     throw new Error(`Notebook conversion failed with code ${convertCode}`)
   }
 
-  // Run the converted TypeScript file with Deno
   const runCommand = new Deno.Command('deno', {
     args: ['run', '--allow-net', './tmp/fetch-and-transform-all.ts'],
     stdout: 'inherit',
