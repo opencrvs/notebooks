@@ -1,5 +1,21 @@
 # OpenCRVS Events v1.0 to v2.0 data migration
 
+## Steps to run
+
+- Start your environment locally for the country you want to migrate
+- Run `./get-field-diff.ipynb`
+- The output will tell you which fields you have not mapped or resolved:
+  - "Unmapped V1 fields":
+    - Add the field mapping to `./helpers/countryMappings`
+  - "V1 form fields mapped to a V2 field that does not exist":
+    - Override the field default mapping in `./helpers/countryMappings`
+  - "V1 form fields mapped but V2 field does not have a resolver":
+    - Add custom resolvers to `./helpers/countryResolvers`
+- Once you get "Ok to proceed with migration" 
+  - Run `./fetch-and-transform-all.ipynb`
+- If the migration is successful, it will print out a list of successful migrations
+
+
 ## Findings
 
 - "Duplicates" array Task fetching might have to be added to MongoDB query
