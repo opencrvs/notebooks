@@ -1,6 +1,7 @@
 import { v4 as uuidv4 } from 'npm:uuid'
 import { DEFAULT_FIELD_MAPPINGS } from './helpers/correctionMappings.ts'
 import { COUNTRY_FIELD_MAPPINGS } from './helpers/countryMappings.ts'
+import { COLLECTOR_RESOLVER } from './helpers/collectorResolver.ts'
 
 const mappings = { ...DEFAULT_FIELD_MAPPINGS, ...COUNTRY_FIELD_MAPPINGS }
 
@@ -27,10 +28,10 @@ function transformCorrection(historyItem, resolver, event: 'birth' | 'death') {
     acc[`${event}.${curr.valueCode}.${curr.valueId}`] = curr.value
     return acc
   }, {})
-  console.log('Original v1Declaration:', v1Declaration)
+  //console.log('Original v1Declaration:', v1Declaration)
 
   const transformedData = patternMatch(v1Declaration)
-  console.log('Transformed: ', transformedData)
+  //console.log('Transformed: ', transformedData)
 
   return transformedData
 }
@@ -72,12 +73,24 @@ function legacyHistoryItemToV2ActionType(
           declaration: {},
         }
       case 'CERTIFIED':
+      case 'ISSUED':
+        console.log(JSON.stringify(historyItem))
+        const annotation = {}
+        Object.keys(COLLECTOR_RESOLVER).forEach((key) => {
+          const resolver = COLLECTOR_RESOLVER[key]
+          const value = resolver(historyItem.certificates[0])
+          if (value) {
+            annotation[key] = value
+          }
+        })
+
         return {
           type: 'PRINT_CERTIFICATE',
           content: {
             templateId: historyItem.certificateTemplateId,
           },
           declaration: {},
+          annotation: annotation,
         }
       default:
         break
@@ -126,10 +139,19 @@ function legacyHistoryItemToV2ActionType(
   return { type, declaration: {} }
 }
 
+function nonNullObjectKeys(obj) {
+  return Object.fromEntries(
+    Object.entries(obj).filter(
+      ([_, value]) => value !== null && value !== undefined
+    )
+  )
+}
+
 export function transform(eventRegistration, resolver: Object) {
   const result = Object.entries(resolver).map(([fieldId, r]) => {
     return [fieldId, r(eventRegistration)]
   })
+
   const withOutNulls = result.filter(
     ([_, value]) => value !== null && value !== undefined
   )
@@ -137,6 +159,8 @@ export function transform(eventRegistration, resolver: Object) {
 
   // Handle CORRECTED items by duplicating them
   const processedHistory: any[] = []
+  const issued: any[] = []
+  let issuances = 0
   for (const historyItem of eventRegistration.history) {
     if (historyItem.action === 'CORRECTED') {
       const requestCorrectionId = uuidv4()
@@ -154,6 +178,29 @@ export function transform(eventRegistration, resolver: Object) {
         action: 'APPROVED_CORRECTION',
         requestId: requestCorrectionId,
       })
+    } else if (!historyItem.action && historyItem.regStatus === 'CERTIFIED') {
+      const matchingIssue = issued.pop()
+
+      const issuedNotNull: any = matchingIssue
+        ? nonNullObjectKeys(matchingIssue)
+        : { certificates: [{}] }
+
+      const cert = historyItem.certificates.reverse()[issuances]
+
+      processedHistory.push({
+        ...historyItem,
+        ...issuedNotNull,
+        certificates: [
+          { ...cert, ...nonNullObjectKeys(issuedNotNull.certificates[0]) },
+        ],
+      })
+      issuances++
+    } else if (!historyItem.action && historyItem.regStatus === 'ISSUED') {
+      issued.push({
+        ...historyItem,
+        certificates: [historyItem.certificates.reverse()[issuances]],
+      })
+      issuances++
     } else {
       processedHistory.push(historyItem)
     }
@@ -185,27 +232,25 @@ export function transform(eventRegistration, resolver: Object) {
         id: uuidv4(),
         transactionId: uuidv4(),
       },
-      ...historyAsc
-        .filter((history) => history.regStatus !== 'ISSUED') // TODO merge the PRINT and ISSUED items
-        .map((history) => {
-          return {
-            id: history.id || uuidv4(), // TODO for some reason the backend can send items with the same id, breaking Pkey
-            transactionId: uuidv4(),
-            createdAt: new Date(history.date).toISOString(),
-            createdBy: history.user.id,
-            createdByUserType: 'user',
-            createdByRole: history.user.role.id,
-            createdAtLocation: history.office.id,
-            updatedAtLocation: history.office.id,
-            status: 'Accepted',
-            ...legacyHistoryItemToV2ActionType(
-              eventRegistration,
-              declaration,
-              history,
-              resolver
-            ),
-          }
-        }),
+      ...historyAsc.map((history) => {
+        return {
+          id: history.id || uuidv4(), // TODO for some reason the backend can send items with the same id, breaking Pkey
+          transactionId: uuidv4(),
+          createdAt: new Date(history.date).toISOString(),
+          createdBy: history.user.id,
+          createdByUserType: 'user',
+          createdByRole: history.user.role.id,
+          createdAtLocation: history.office.id,
+          updatedAtLocation: history.office.id,
+          status: 'Accepted',
+          ...legacyHistoryItemToV2ActionType(
+            eventRegistration,
+            declaration,
+            history,
+            resolver
+          ),
+        }
+      }),
     ],
   }
 

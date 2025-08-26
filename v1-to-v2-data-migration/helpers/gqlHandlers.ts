@@ -276,6 +276,12 @@ export const fetchBirthRegistration = async (recordId, token) => {
             use
             __typename
           }
+          identifier {
+            id
+            type
+            otherType
+            __typename
+          }
           __typename
         }
         __typename
@@ -473,6 +479,12 @@ export const fetchBirthRegistration = async (recordId, token) => {
             system
             value
             use
+            __typename
+          }
+          identifier {
+            id
+            type
+            otherType
             __typename
           }
           __typename
@@ -781,6 +793,12 @@ export const fetchDeathRegistration = async (recordId, token) => {
             use
             __typename
           }
+          identifier {
+            id
+            type
+            otherType
+            __typename
+          }
           __typename
         }
         __typename
@@ -985,6 +1003,12 @@ export const fetchDeathRegistration = async (recordId, token) => {
             use
             __typename
           }
+          identifier {
+            id
+            type
+            otherType
+            __typename
+          }          
           __typename
         }
         certifier {
