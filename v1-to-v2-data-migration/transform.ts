@@ -45,11 +45,17 @@ function legacyHistoryItemToV2ActionType(
   if (!historyItem.action) {
     switch (historyItem.regStatus) {
       case 'DECLARED':
+        const signed = record.registration.informantsSignature
+        const uri = signed && new URL(signed)
         return {
           type: 'DECLARE',
           declaration: declaration,
           annotation: {
-            'review.signature': record.registration.informantsSignature,
+            'review.signature': signed && {
+              path: uri.pathname,
+              originalFilename: uri.pathname.replace('/ocrvs/', ''),
+              type: 'image/png',
+            },
             'review.comment': historyItem.comments
               ?.map(({ comment }) => comment)
               .join('\n'),
@@ -72,9 +78,7 @@ function legacyHistoryItemToV2ActionType(
           type: 'VALIDATE',
           declaration: {},
         }
-      case 'CERTIFIED':
       case 'ISSUED':
-        console.log(JSON.stringify(historyItem))
         const annotation = {}
         Object.keys(COLLECTOR_RESOLVER).forEach((key) => {
           const resolver = COLLECTOR_RESOLVER[key]
@@ -92,6 +96,23 @@ function legacyHistoryItemToV2ActionType(
           declaration: {},
           annotation: annotation,
         }
+      case 'REJECTED':
+        return {
+          status: 'Rejected',
+          type: 'REJECT',
+          declaration: {},
+          content: {
+            reason: historyItem.statusReason.text,
+          },
+        }
+      case 'ARCHIVED':
+        return {
+          type: 'ARCHIVE',
+          declaration: {},
+          content: {
+            reason: historyItem.statusReason.text || 'None',
+          },
+        }
       default:
         break
     }
@@ -100,18 +121,31 @@ function legacyHistoryItemToV2ActionType(
   switch (historyItem.action) {
     case 'REQUESTED_CORRECTION':
       return {
+        status: 'Requested',
         type: 'REQUEST_CORRECTION',
         declaration: transformCorrection(
           historyItem,
           resolver,
           record.child ? 'birth' : 'death'
         ),
+        annotation: {
+          'fees.amount': historyItem.payment?.amount,
+          'reason.option': historyItem.reason,
+          'reason.other': historyItem.otherReason,
+          'requester.identity.verify': historyItem.hasShowedVerifiedDocument,
+          'requester.type':
+            historyItem.requester === 'REGISTRAR'
+              ? 'ME'
+              : historyItem.requester,
+          'requester.other': historyItem.requesterOther,
+        },
       }
     case 'APPROVED_CORRECTION':
       return {
         type: 'APPROVE_CORRECTION',
         requestId: historyItem.requestId,
         declaration: {},
+        annotation: historyItem.annotation,
       }
     case 'ASSIGNED':
       return {
@@ -119,16 +153,35 @@ function legacyHistoryItemToV2ActionType(
         assignedTo: historyItem.user?.id,
         declaration: {},
       }
+    case 'REJECTED_CORRECTION':
+      return {
+        status: 'Rejected',
+        type: 'REJECT_CORRECTION',
+        requestId: historyItem.requestId,
+        declaration: {},
+        content: {
+          reason: historyItem.reason,
+        },
+      }
+    case 'FLAGGED_AS_POTENTIAL_DUPLICATE':
+      return {
+        type: 'DUPLICATE_DETECTED',
+        declaration: {},
+        content: {
+          duplicates: record.registration.duplicates.map(
+            (x) => x.compositionId
+          ),
+        },
+      }
 
     default:
       break
   }
 
   const type = {
-    FLAGGED_AS_POTENTIAL_DUPLICATE: 'DETECT_DUPLICATE',
-    MARKED_AS_DUPLICATE: 'MARKED_AS_DUPLICATE',
+    MARKED_AS_DUPLICATE: 'MARK_AS_DUPLICATE',
+    MARKED_AS_NOT_DUPLICATE: 'MARK_NOT_DUPLICATE',
     DOWNLOADED: 'READ',
-    REJECTED_CORRECTION: 'REJECT_CORRECTION',
     UNASSIGNED: 'UNASSIGN',
     VIEWED: 'READ',
   }[historyItem.action]
@@ -160,6 +213,7 @@ export function transform(eventRegistration, resolver: Object) {
   // Handle CORRECTED items by duplicating them
   const processedHistory: any[] = []
   const issued: any[] = []
+  const rejected: any[] = []
   let issuances = 0
   for (const historyItem of eventRegistration.history) {
     if (historyItem.action === 'CORRECTED') {
@@ -177,7 +231,16 @@ export function transform(eventRegistration, resolver: Object) {
         ...historyItem,
         action: 'APPROVED_CORRECTION',
         requestId: requestCorrectionId,
+        annotation: {
+          isImmediateCorrection: true,
+        },
       })
+    } else if (historyItem.action === 'REJECTED_CORRECTION') {
+      rejected.push(historyItem)
+    } else if (historyItem.action === 'REQUESTED_CORRECTION') {
+      historyItem.id = uuidv4()
+      const rej = rejected.pop()
+      rej.requestId = historyItem.id
     } else if (!historyItem.action && historyItem.regStatus === 'CERTIFIED') {
       const matchingIssue = issued.pop()
 
@@ -232,25 +295,27 @@ export function transform(eventRegistration, resolver: Object) {
         id: uuidv4(),
         transactionId: uuidv4(),
       },
-      ...historyAsc.map((history) => {
-        return {
-          id: history.id || uuidv4(), // TODO for some reason the backend can send items with the same id, breaking Pkey
-          transactionId: uuidv4(),
-          createdAt: new Date(history.date).toISOString(),
-          createdBy: history.user.id,
-          createdByUserType: 'user',
-          createdByRole: history.user.role.id,
-          createdAtLocation: history.office.id,
-          updatedAtLocation: history.office.id,
-          status: 'Accepted',
-          ...legacyHistoryItemToV2ActionType(
-            eventRegistration,
-            declaration,
-            history,
-            resolver
-          ),
-        }
-      }),
+      ...historyAsc
+        .filter((x) => !(!x.action && x.regStatus === 'CERTIFIED')) // filter out items without action or regStatus
+        .map((history) => {
+          return {
+            id: history.id || uuidv4(), // TODO for some reason the backend can send items with the same id, breaking Pkey
+            transactionId: uuidv4(),
+            createdAt: new Date(history.date).toISOString(),
+            createdBy: history.user.id,
+            createdByUserType: 'user',
+            createdByRole: history.user.role.id,
+            createdAtLocation: history.office.id,
+            updatedAtLocation: history.office.id,
+            status: 'Accepted',
+            ...legacyHistoryItemToV2ActionType(
+              eventRegistration,
+              declaration,
+              history,
+              resolver
+            ),
+          }
+        }),
     ],
   }
 

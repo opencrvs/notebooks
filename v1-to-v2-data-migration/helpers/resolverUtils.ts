@@ -54,16 +54,18 @@ export const getIdentifier = (data, identifier) =>
 export const getDocuments = (data, type) => {
   const documents = data.registration.attachments
     ?.filter(({ subject }) => subject === type)
-    ?.map((doc) => ({
-      filename: doc.uri.replace('/ocrvs/', ''),
-      originalFilename: doc.uri.replace('/ocrvs/', ''),
-      type: doc.contentType,
-      option: doc.type,
-    }))
+    ?.map((doc) => {
+      return {
+        path: doc.uri,
+        originalFilename: doc.uri.replace('/ocrvs/', ''),
+        type: doc.contentType,
+        option: doc.type,
+      }
+    })
   if (!documents?.length) {
     return null
   }
-  return documents[0]
+  return documents
 }
 
 // What about custom fields
