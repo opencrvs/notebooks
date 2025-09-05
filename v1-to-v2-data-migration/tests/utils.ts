@@ -1,4 +1,4 @@
-import { GATEWAY } from '../v1-to-v2-data-migration/helpers/routes.ts'
+import { GATEWAY } from '../helpers/routes.ts'
 import type { fhir } from 'fhir'
 import { CREATE_BIRTH_REGISTRATION } from './queries.ts'
 

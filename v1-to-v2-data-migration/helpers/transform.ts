@@ -1,7 +1,7 @@
 import { v4 as uuidv4 } from 'npm:uuid'
-import { DEFAULT_FIELD_MAPPINGS } from './helpers/correctionMappings.ts'
-import { COUNTRY_FIELD_MAPPINGS } from './helpers/countryMappings.ts'
-import { COLLECTOR_RESOLVER } from './helpers/collectorResolver.ts'
+import { DEFAULT_FIELD_MAPPINGS } from './correctionMappings.ts'
+import { COUNTRY_FIELD_MAPPINGS } from './countryMappings.ts'
+import { COLLECTOR_RESOLVER } from './collectorResolver.ts'
 
 const mappings = { ...DEFAULT_FIELD_MAPPINGS, ...COUNTRY_FIELD_MAPPINGS }
 

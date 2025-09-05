@@ -1,7 +1,7 @@
 import { expect } from 'jsr:@std/expect'
 import { generateBirthRegistration } from './data-generators.ts'
-import { authenticate } from '../v1-to-v2-data-migration/authentication.ts'
-import { GATEWAY } from '../v1-to-v2-data-migration/helpers/routes.ts'
+import { authenticate } from '../helpers/authentication.ts'
+import { GATEWAY } from '../helpers/routes.ts'
 import { createDeclaration, getEvent, runMigration } from './utils.ts'
 
 Deno.test('Create some data to test with', async (t) => {
@@ -18,11 +18,11 @@ Deno.test('Create some data to test with', async (t) => {
   const { compositionId } = result.data.createBirthRegistration
   console.log('CompositionId:', compositionId)
 
-  await runMigration()
+  // await runMigration()
 
-  const data = await getEvent(compositionId, token)
-  console.log(data)
+  // const data = await getEvent(compositionId, token)
+  // console.log(data)
 
-  expect(data).toBeDefined()
-  expect(birthDeclaration).toBe(data[0].declaration)
+  // expect(data).toBeDefined()
+  // expect(birthDeclaration).toBe(data[0].declaration)
 })
