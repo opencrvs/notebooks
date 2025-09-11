@@ -1,5 +1,31 @@
 import { GATEWAY } from './routes.ts'
 
+export const declareEvent = async (document, token) => {
+  const response = await fetch(`${GATEWAY}/events/event.import`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify({
+      json: document,
+      meta: {
+        values: {
+          declaration: ['undefined'],
+        },
+      },
+    }),
+  })
+
+  if (!response.ok) {
+    console.log('DECLARE ERROR!')
+    console.log((await response.json()).error)
+
+    throw new Error(`Event creation failed: ${response.statusText}`)
+  }
+  return response.json()
+}
+
 export const registerSystem = async (token) => {
   const response = await fetch(`${GATEWAY}/graphql`, {
     method: 'POST',
@@ -11,8 +37,8 @@ export const registerSystem = async (token) => {
       operationName: 'registerSystem',
       variables: {
         system: {
-          type: 'IMPORT',
-          name: 'Import',
+          type: 'IMPORT_EXPORT',
+          name: 'Migration',
         },
       },
       query: `mutation registerSystem($system: SystemInput) {
@@ -48,7 +74,8 @@ export const registerSystem = async (token) => {
   return response.json()
 }
 
-const GetRegistrationsList = async (token, event) => {
+const GetRegistrationsList = async (token, event, page, pageSize) => {
+  const skip = (page - 1) * pageSize
   const searchSet =
     event === 'birth' ? 'BirthEventSearchSet' : 'DeathEventSearchSet'
   const response = await fetch(`${GATEWAY}/graphql`, {
@@ -60,7 +87,8 @@ const GetRegistrationsList = async (token, event) => {
     body: JSON.stringify({
       operationName: 'GetRegistrationsListByFilter',
       query: `query GetRegistrationsListByFilter {
-  searchEvents(advancedSearchParameters: { event: ${event} }, count: 10000) {
+  searchEvents(advancedSearchParameters: { event: ${event} }, count: ${pageSize}, skip: ${skip}) {
+    totalItems
     results {
       ... on ${searchSet} {
         id
@@ -76,12 +104,12 @@ const GetRegistrationsList = async (token, event) => {
   return response.json()
 }
 
-export const fetchAllBirthRegistrations = async (token) => {
-  return await GetRegistrationsList(token, 'birth')
+export const fetchAllBirthRegistrations = async (token, page, pageSize) => {
+  return await GetRegistrationsList(token, 'birth', page, pageSize)
 }
 
-export const fetchAllDeathRegistrations = async (token) => {
-  return await GetRegistrationsList(token, 'death')
+export const fetchAllDeathRegistrations = async (token, page, pageSize) => {
+  return await GetRegistrationsList(token, 'death', page, pageSize)
 }
 
 export const fetchBirthRegistration = async (recordId, token) => {

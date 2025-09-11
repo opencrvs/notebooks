@@ -1,0 +1,50 @@
+name: Migrate all records of an event from v1 to v2
+
+on:
+  workflow_dispatch:
+    inputs:
+      event:
+        description: 'The event ID to process'
+        required: true
+        type: string
+      domain:
+        description: 'The environment domain (without protocol or subdomains)'
+        required: true
+        type: string
+        default: 'farajaland-qa.opencrvs.org'
+
+jobs:
+  fetch-and-transform:
+    name: Migrate ${{ github.event.inputs.event }} in ${{ github.event.inputs.domain }}
+    runs-on: ubuntu-latest
+    outputs:
+      script_output: ${{ steps.deno-script.outputs.script_output }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y jq
+          curl -fsSL https://deno.land/install.sh | sh
+          echo "$HOME/.deno/bin" >> $GITHUB_PATH
+
+      - name: Convert notebook to TypeScript
+        run: |
+          mkdir -p tmp
+          bash ./scripts/deno-notebook-to-deno.sh ./v1-to-v2-data-migration/fetch-and-transform-all.ipynb ./tmp/fetch-and-transform-all.ts
+
+      - name: Run the script with Deno
+        id: deno-script
+        run: |
+          echo "script_output<<EOF" >> $GITHUB_OUTPUT
+          deno run --allow-net ./tmp/fetch-and-transform-all.ts ${{ github.event.inputs.event }} ${{ github.event.inputs.domain }} | tee /dev/stderr >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
+
+      - name: Generate summary
+        run: |
+          echo "## Notebook result" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "${{ steps.deno-script.outputs.script_output }}" >> $GITHUB_STEP_SUMMARY

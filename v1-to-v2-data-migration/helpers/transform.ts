@@ -28,10 +28,8 @@ function transformCorrection(historyItem, resolver, event: 'birth' | 'death') {
     acc[`${event}.${curr.valueCode}.${curr.valueId}`] = curr.value
     return acc
   }, {})
-  //console.log('Original v1Declaration:', v1Declaration)
 
   const transformedData = patternMatch(v1Declaration)
-  //console.log('Transformed: ', transformedData)
 
   return transformedData
 }
@@ -240,7 +238,7 @@ export function transform(eventRegistration, resolver: Object) {
     } else if (historyItem.action === 'REQUESTED_CORRECTION') {
       historyItem.id = uuidv4()
       const rej = rejected.pop()
-      rej.requestId = historyItem.id
+      rej.requestId = historyItem?.id
     } else if (!historyItem.action && historyItem.regStatus === 'CERTIFIED') {
       const matchingIssue = issued.pop()
 
@@ -269,14 +267,16 @@ export function transform(eventRegistration, resolver: Object) {
     }
   }
 
-  const historyAsc = processedHistory.sort(
-    (a, b) => new Date(a.date).valueOf() - new Date(b.date).valueOf()
-  )
+  const historyAsc = processedHistory
+    .sort((a, b) => new Date(a.date).valueOf() - new Date(b.date).valueOf())
+    .filter((x) => x.system?.type !== 'IMPORT_EXPORT') // Remove migration system actions
+    .filter((x) => x.action || x.regStatus !== 'CERTIFIED') // We're dropping certified in favour of issued
+
   const newest = historyAsc[historyAsc.length - 1]
 
   const documents = {
     id: eventRegistration.id,
-    type: eventRegistration.child ? 'v2.birth' : 'v2.death',
+    type: eventRegistration.child ? 'birth' : 'death',
     createdAt: new Date(historyAsc[0].date).toISOString(),
     updatedAt: new Date(newest.date).toISOString(),
     updatedAtLocation: newest.office.id,
@@ -295,27 +295,25 @@ export function transform(eventRegistration, resolver: Object) {
         id: uuidv4(),
         transactionId: uuidv4(),
       },
-      ...historyAsc
-        .filter((x) => !(!x.action && x.regStatus === 'CERTIFIED')) // filter out items without action or regStatus
-        .map((history) => {
-          return {
-            id: history.id || uuidv4(), // TODO for some reason the backend can send items with the same id, breaking Pkey
-            transactionId: uuidv4(),
-            createdAt: new Date(history.date).toISOString(),
-            createdBy: history.user.id,
-            createdByUserType: 'user',
-            createdByRole: history.user.role.id,
-            createdAtLocation: history.office.id,
-            updatedAtLocation: history.office.id,
-            status: 'Accepted',
-            ...legacyHistoryItemToV2ActionType(
-              eventRegistration,
-              declaration,
-              history,
-              resolver
-            ),
-          }
-        }),
+      ...historyAsc.map((history) => {
+        return {
+          id: history?.id || uuidv4(), // TODO for some reason the backend can send items with the same id, breaking Pkey
+          transactionId: uuidv4(),
+          createdAt: new Date(history.date).toISOString(),
+          createdBy: history.user?.id || history.system?.type,
+          createdByUserType: history.user ? 'user' : 'system',
+          createdByRole: history.user?.role?.id || history.system?.type,
+          createdAtLocation: history.office?.id,
+          updatedAtLocation: history.office?.id,
+          status: 'Accepted',
+          ...legacyHistoryItemToV2ActionType(
+            eventRegistration,
+            declaration,
+            history,
+            resolver
+          ),
+        }
+      }),
     ],
   }
 
