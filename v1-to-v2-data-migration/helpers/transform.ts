@@ -2,11 +2,16 @@ import { v4 as uuidv4 } from 'npm:uuid'
 import { DEFAULT_FIELD_MAPPINGS } from './correctionMappings.ts'
 import { COUNTRY_FIELD_MAPPINGS } from './countryMappings.ts'
 import { COLLECTOR_RESOLVER } from './collectorResolver.ts'
+import { NAME_CONFIG } from './nameConfig.ts'
+import { ADDRESS_CONFIG } from './addressConfig.ts'
 
 const mappings = { ...DEFAULT_FIELD_MAPPINGS, ...COUNTRY_FIELD_MAPPINGS }
 
-function patternMatch(correction) {
-  const transformedData = {}
+function patternMatch(
+  correction: Record<string, any>,
+  declaration: Record<string, any>
+) {
+  const transformedData: Record<string, any> = {}
 
   for (const [key, value] of Object.entries(correction)) {
     const parts = key.split('.')
@@ -16,29 +21,67 @@ function patternMatch(correction) {
       (m) => m.startsWith(prefix) && m.endsWith(suffix)
     )
     if (mapKey) {
-      // TODO this ignores all names and addresses for now
-      transformedData[mappings[mapKey]] = value
+      transformedData[mappings[mapKey as keyof typeof mappings]] = value
+    } else if (NAME_CONFIG[key]) {
+      const nameMapping = NAME_CONFIG[key](value as string)
+      const nameKey = Object.keys(nameMapping)[0]
+      const existing = transformedData[nameKey] || {}
+      transformedData[nameKey] = { ...existing, ...nameMapping[nameKey] }
+    } else if (ADDRESS_CONFIG[key]) {
+      const addressMapping = ADDRESS_CONFIG[key](value as string)
+      let addressKey = Object.keys(addressMapping)[0]
+      let addressData = null
+      if (addressKey === 'child.address.privateHome') {
+        addressKey = declaration[addressKey]
+          ? addressKey
+          : 'child.address.other'
+      }
+
+      const transformedWithSameKey = transformedData[addressKey] || {}
+      console.log(addressKey)
+      // Handle streetLevelDetails specially for deep merging
+      addressData = addressMapping[addressKey]
+      const currentAddress = declaration[addressKey] || {}
+      transformedData[addressKey] = {
+        ...currentAddress,
+        ...transformedWithSameKey,
+        ...addressData,
+        streetLevelDetails: {
+          ...(currentAddress.streetLevelDetails || {}),
+          ...(transformedWithSameKey.streetLevelDetails || {}),
+          ...addressData.streetLevelDetails,
+        },
+      }
     }
   }
+  console.log('Transformed data:', transformedData)
+
   return transformedData
 }
 
-function transformCorrection(historyItem, resolver, event: 'birth' | 'death') {
-  const v1Declaration = historyItem.output.reduce((acc, curr) => {
-    acc[`${event}.${curr.valueCode}.${curr.valueId}`] = curr.value
-    return acc
-  }, {})
+export function transformCorrection(
+  historyItem: any,
+  event: 'birth' | 'death',
+  declaration: Record<string, any>
+) {
+  const v1Declaration = historyItem.output.reduce(
+    (acc: Record<string, any>, curr: any) => {
+      acc[`${event}.${curr.valueCode}.${curr.valueId}`] = curr.value
+      return acc
+    },
+    {}
+  )
 
-  const transformedData = patternMatch(v1Declaration)
+  const transformedData = patternMatch(v1Declaration, declaration)
 
   return transformedData
 }
 
 function legacyHistoryItemToV2ActionType(
-  record,
-  declaration,
-  historyItem,
-  resolver
+  record: any,
+  declaration: any,
+  historyItem: any,
+  resolver: any
 ) {
   if (!historyItem.action) {
     switch (historyItem.regStatus) {
@@ -55,7 +98,7 @@ function legacyHistoryItemToV2ActionType(
               type: 'image/png',
             },
             'review.comment': historyItem.comments
-              ?.map(({ comment }) => comment)
+              ?.map(({ comment }: any) => comment)
               .join('\n'),
           },
         }
@@ -79,10 +122,11 @@ function legacyHistoryItemToV2ActionType(
       case 'ISSUED':
         const annotation = {}
         Object.keys(COLLECTOR_RESOLVER).forEach((key) => {
-          const resolver = COLLECTOR_RESOLVER[key]
+          const resolver =
+            COLLECTOR_RESOLVER[key as keyof typeof COLLECTOR_RESOLVER]
           const value = resolver(historyItem.certificates[0])
           if (value) {
-            annotation[key] = value
+            ;(annotation as any)[key] = value
           }
         })
 
@@ -123,8 +167,8 @@ function legacyHistoryItemToV2ActionType(
         type: 'REQUEST_CORRECTION',
         declaration: transformCorrection(
           historyItem,
-          resolver,
-          record.child ? 'birth' : 'death'
+          record.child ? 'birth' : 'death',
+          declaration
         ),
         annotation: {
           'fees.amount': historyItem.payment?.amount,
@@ -167,7 +211,7 @@ function legacyHistoryItemToV2ActionType(
         declaration: {},
         content: {
           duplicates: record.registration.duplicates.map(
-            (x) => x.compositionId
+            (x: any) => x.compositionId
           ),
         },
       }
@@ -176,13 +220,15 @@ function legacyHistoryItemToV2ActionType(
       break
   }
 
-  const type = {
-    MARKED_AS_DUPLICATE: 'MARK_AS_DUPLICATE',
-    MARKED_AS_NOT_DUPLICATE: 'MARK_NOT_DUPLICATE',
-    DOWNLOADED: 'READ',
-    UNASSIGNED: 'UNASSIGN',
-    VIEWED: 'READ',
-  }[historyItem.action]
+  const type = (
+    {
+      MARKED_AS_DUPLICATE: 'MARK_AS_DUPLICATE',
+      MARKED_AS_NOT_DUPLICATE: 'MARK_NOT_DUPLICATE',
+      DOWNLOADED: 'READ',
+      UNASSIGNED: 'UNASSIGN',
+      VIEWED: 'READ',
+    } as any
+  )[historyItem.action]
   if (!type) {
     console.log('Invalid action', historyItem)
   }
@@ -190,7 +236,7 @@ function legacyHistoryItemToV2ActionType(
   return { type, declaration: {} }
 }
 
-function nonNullObjectKeys(obj) {
+function nonNullObjectKeys(obj: Record<string, any>) {
   return Object.fromEntries(
     Object.entries(obj).filter(
       ([_, value]) => value !== null && value !== undefined
@@ -198,7 +244,10 @@ function nonNullObjectKeys(obj) {
   )
 }
 
-export function transform(eventRegistration, resolver: Object) {
+export function transform(
+  eventRegistration: any,
+  resolver: Record<string, any>
+) {
   const result = Object.entries(resolver).map(([fieldId, r]) => {
     return [fieldId, r(eventRegistration)]
   })

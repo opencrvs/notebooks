@@ -1,5 +1,5 @@
 // TODO How will this work for Uganda's location levels?
-export function convertAddress(address) {
+export function convertAddress(address: any) {
   if (!address) {
     return null
   }
@@ -8,43 +8,29 @@ export function convertAddress(address) {
     return {
       addressType: 'INTERNATIONAL',
       country: address.country,
-      state: address.state,
-      district2: address.district,
-      cityOrTown: address.city,
-      addressLine1: address.line.filter(Boolean)[0],
-      addressLine2: address.line.filter(Boolean)[1],
-      addressLine3: address.line.filter(Boolean).slice(2).join(', '),
-      postcodeOrZip: address.postalCode,
-    }
-  }
-
-  const rural = address.line.some((line) => line === 'RURAL')
-
-  if (rural) {
-    return {
-      addressType: 'DOMESTIC',
-      urbanOrRural: 'RURAL',
-      country: address.country,
-      province: address.state,
-      district: address.district,
-      village: address.line.find((line) => line.trim() !== ''),
-      addressLine1: address.line.filter(Boolean)[0],
-      addressLine2: address.line.filter(Boolean)[1],
-      addressLine3: address.line.filter(Boolean).slice(2).join(', '),
+      streetLevelDetails: {
+        state: address.state,
+        district2: address.district,
+        cityOrTown: address.city,
+        addressLine1: address.line.filter(Boolean)[0],
+        addressLine2: address.line.filter(Boolean)[1],
+        addressLine3: address.line.filter(Boolean).slice(2).join(', '),
+        postcodeOrZip: address.postalCode,
+      },
     }
   }
 
   return {
     addressType: 'DOMESTIC',
-    urbanOrRural: 'URBAN',
     country: address.country,
-    province: address.state,
-    district: address.district,
-    town: address.city,
-    addressLine1: address.line.filter(Boolean)[0],
-    addressLine2: address.line.filter(Boolean)[1],
-    addressLine3: address.line.filter(Boolean).slice(2).join(', '),
-    zipCode: address.postalCode,
+    administrativeArea: address.district,
+    streetLevelDetails: {
+      town: address.city,
+      number: address.line.filter(Boolean)[0],
+      street: address.line.filter(Boolean)[1],
+      residentialArea: address.line.filter(Boolean)[2],
+      zipCode: address.postalCode,
+    },
   }
 }
 
@@ -69,13 +55,13 @@ export const getDocuments = (data, type) => {
 }
 
 // What about custom fields
-export const getName = (name) =>
+export const getName = (name: any) =>
   name && {
     firstname: name?.firstNames,
     middleName: name?.middleName,
     surname: name?.familyName,
   }
 
-export function getCustomField(data, id) {
+export function getCustomField(data: any, id: string) {
   return data.questionnaire.find(({ fieldId }) => fieldId === id)?.value
 }

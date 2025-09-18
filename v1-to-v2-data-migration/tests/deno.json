@@ -15,6 +15,7 @@
     "graphql": "npm:graphql@^16.0.0"
   },
   "tasks": {
-    "migration": "deno test --allow-env --allow-run --allow-net --allow-write roundtrip.test.ts"
+    "migration": "deno test --allow-env --allow-run --allow-net --allow-write roundtrip.test.ts",
+    "transform": "deno test --allow-env --allow-run --allow-net --allow-write transform.test.ts"
   }
 }

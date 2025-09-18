@@ -6,37 +6,43 @@ export const DEFAULT_FIELD_MAPPINGS = {
   'birth.child-view-group.childBirthDate': 'child.dob',
 
   'birth.child-view-group.placeOfBirth': 'child.placeOfBirth',
-  'birth.child-view-group.countryPlaceofbirth': 'child.placeOfBirth',
-  'birth.child-view-group.statePlaceofbirth': 'child.placeOfBirth',
-  'birth.child-view-group.districtPlaceofbirth': 'child.placeOfBirth',
-  'birth.child-view-group.ruralOrUrbanPlaceofbirth': 'child.placeOfBirth',
-  'birth.child-view-group.cityPlaceofbirth': 'child.placeOfBirth',
-  'birth.child-view-group.addressLine1Placeofbirth': 'child.placeOfBirth',
-  'birth.child-view-group.addressLine2Placeofbirth': 'child.placeOfBirth',
-  'birth.child-view-group.addressLine3Placeofbirth': 'child.placeOfBirth',
+  'birth.child-view-group.countryPlaceofbirth': 'child.address.privateHome',
+  'birth.child-view-group.statePlaceofbirth': 'child.address.privateHome',
+  'birth.child-view-group.districtPlaceofbirth': 'child.address.privateHome',
+  'birth.child-view-group.ruralOrUrbanPlaceofbirth':
+    'child.address.privateHome',
+  'birth.child-view-group.cityPlaceofbirth': 'child.address.privateHome',
+  'birth.child-view-group.addressLine1Placeofbirth':
+    'child.address.privateHome',
+  'birth.child-view-group.addressLine2Placeofbirth':
+    'child.address.privateHome',
+  'birth.child-view-group.addressLine3Placeofbirth':
+    'child.address.privateHome',
   'birth.child-view-group.addressLine2UrbanOptionPlaceofbirth':
-    'child.placeOfBirth',
+    'child.address.privateHome',
   'birth.child-view-group.addressLine3UrbanOptionPlaceofbirth':
-    'child.placeOfBirth',
-  'birth.child-view-group.postalCodePlaceofbirth': 'child.placeOfBirth',
-  'birth.child-view-group.internationalStatePlaceofbirth': 'child.placeOfBirth',
+    'child.address.privateHome',
+  'birth.child-view-group.postalCodePlaceofbirth': 'child.address.privateHome',
+  'birth.child-view-group.internationalStatePlaceofbirth':
+    'child.address.privateHome',
   'birth.child-view-group.internationalDistrictPlaceofbirth':
-    'child.placeOfBirth',
-  'birth.child-view-group.internationalCityPlaceofbirth': 'child.placeOfBirth',
+    'child.address.privateHome',
+  'birth.child-view-group.internationalCityPlaceofbirth':
+    'child.address.privateHome',
   'birth.child-view-group.internationalAddressLine1Placeofbirth':
-    'child.placeOfBirth',
+    'child.address.privateHome',
   'birth.child-view-group.internationalAddressLine2Placeofbirth':
-    'child.placeOfBirth',
+    'child.address.privateHome',
   'birth.child-view-group.internationalAddressLine3Placeofbirth':
-    'child.placeOfBirth',
+    'child.address.privateHome',
   'birth.child-view-group.internationalPostalCodePlaceofbirth':
-    'child.placeOfBirth',
+    'child.address.privateHome',
 
   'birth.child-view-group.birthLocation': 'child.birthLocation',
   'birth.child-view-group.addressLine1UrbanOptionPlaceofbirth':
     'child.address.privateHome',
   'birth.child-view-group.addressLine1RuralOptionPlaceofbirth':
-    'child.address.other',
+    'child.address.privateHome',
   'birth.child-view-group.attendantAtBirth': 'child.attendantAtBirth',
   'birth.child-view-group.birthType': 'child.birthType',
   'birth.child-view-group.weightAtBirth': 'child.weightAtBirth',

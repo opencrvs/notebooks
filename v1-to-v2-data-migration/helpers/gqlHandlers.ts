@@ -1,6 +1,6 @@
 import { GATEWAY } from './routes.ts'
 
-export const declareEvent = async (document, token) => {
+export const declareEvent = async (document: any, token: string) => {
   const response = await fetch(`${GATEWAY}/events/event.import`, {
     method: 'POST',
     headers: {
@@ -26,7 +26,7 @@ export const declareEvent = async (document, token) => {
   return response.json()
 }
 
-export const registerSystem = async (token) => {
+export const registerSystem = async (token: string) => {
   const response = await fetch(`${GATEWAY}/graphql`, {
     method: 'POST',
     headers: {
@@ -74,7 +74,12 @@ export const registerSystem = async (token) => {
   return response.json()
 }
 
-const GetRegistrationsList = async (token, event, page, pageSize) => {
+const GetRegistrationsList = async (
+  token: string,
+  event: string,
+  page: number,
+  pageSize: number
+) => {
   const skip = (page - 1) * pageSize
   const searchSet =
     event === 'birth' ? 'BirthEventSearchSet' : 'DeathEventSearchSet'
@@ -104,15 +109,26 @@ const GetRegistrationsList = async (token, event, page, pageSize) => {
   return response.json()
 }
 
-export const fetchAllBirthRegistrations = async (token, page, pageSize) => {
+export const fetchAllBirthRegistrations = async (
+  token: string,
+  page: number,
+  pageSize: number
+) => {
   return await GetRegistrationsList(token, 'birth', page, pageSize)
 }
 
-export const fetchAllDeathRegistrations = async (token, page, pageSize) => {
+export const fetchAllDeathRegistrations = async (
+  token: string,
+  page: number,
+  pageSize: number
+) => {
   return await GetRegistrationsList(token, 'death', page, pageSize)
 }
 
-export const fetchBirthRegistration = async (recordId, token) => {
+export const fetchBirthRegistration = async (
+  recordId: string,
+  token: string
+) => {
   const response = await fetch(`${GATEWAY}/graphql`, {
     method: 'POST',
     headers: {
@@ -556,7 +572,10 @@ export const fetchBirthRegistration = async (recordId, token) => {
   return response.json()
 }
 
-export const fetchDeathRegistration = async (recordId, token) => {
+export const fetchDeathRegistration = async (
+  recordId: string,
+  token: string
+) => {
   const response = await fetch(`${GATEWAY}/graphql`, {
     method: 'POST',
     headers: {
