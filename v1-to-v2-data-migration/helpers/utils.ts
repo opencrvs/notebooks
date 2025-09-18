@@ -1,7 +1,9 @@
-export const extractFieldType = (obj, fieldName) => {
-  const fields = []
+import { FormCollection, FormFieldWithId } from './types.ts'
 
-  function recurse(value) {
+export const extractFieldType = (obj: any, fieldName: string): unknown[] => {
+  const fields: unknown[] = []
+
+  function recurse(value: unknown): void {
     if (Array.isArray(value)) {
       value.forEach((item) => recurse(item))
     } else if (value !== null && typeof value === 'object') {
@@ -18,11 +20,19 @@ export const extractFieldType = (obj, fieldName) => {
   return fields.flatMap((x) => x)
 }
 
-export const extractFormFields = (form, formName) =>
+export const extractFormFields = (
+  form: FormCollection,
+  formName: string | number
+): FormFieldWithId[] =>
   form[formName].sections
     .map((section) =>
-      section.groups.flatMap((g) =>
-        g.fields.map((f) => ({ ...f, id: `${formName}.${g.id}.${f.name}` }))
+      section.groups.flatMap((group) =>
+        group.fields.map((field) => ({
+          ...field,
+          id:
+            field.customQuestionMappingId ||
+            `${formName}.${section.id}.${field.name}`,
+        }))
       )
     )
     .flatMap((x) => x)

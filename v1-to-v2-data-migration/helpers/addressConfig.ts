@@ -68,7 +68,7 @@ export const ADDRESS_CONFIG: Record<string, AddressConfigFunction> = {
     'child.address.privateHome': { streetLevelDetails: { number: data } },
   }),
   'birth.child.addressLine1RuralOptionPlaceofbirth': (data: string) => ({
-    'child.address.other': { streetLevelDetails: { number: data } },
+    'child.address.privateHome': { streetLevelDetails: { number: data } },
   }),
 
   // Birth - Informant Address
@@ -350,79 +350,65 @@ export const ADDRESS_CONFIG: Record<string, AddressConfigFunction> = {
   }),
 
   // Death - Death Event Details Place of Death
-  'death.death-event-details.countryPlaceofdeath': (data: string) => ({
+  'death.deathEvent.countryPlaceofdeath': (data: string) => ({
     'eventDetails.deathLocationOther': { country: data },
   }),
-  'death.death-event-details.statePlaceofdeath': (data: string) => ({
+  'death.deathEvent.statePlaceofdeath': (data: string) => ({
     'eventDetails.deathLocationOther': { streetLevelDetails: { state: data } },
   }),
-  'death.death-event-details.districtPlaceofdeath': (data: string) => ({
+  'death.deathEvent.districtPlaceofdeath': (data: string) => ({
     'eventDetails.deathLocationOther': { administrativeArea: data },
   }),
-  'death.death-event-details.cityPlaceofdeath': (data: string) => ({
+  'death.deathEvent.cityPlaceofdeath': (data: string) => ({
     'eventDetails.deathLocationOther': { streetLevelDetails: { town: data } },
   }),
-  'death.death-event-details.addressLine1Placeofdeath': (data: string) => ({
+  'death.deathEvent.addressLine1Placeofdeath': (data: string) => ({
     'eventDetails.deathLocationOther': { streetLevelDetails: { number: data } },
   }),
-  'death.death-event-details.addressLine2Placeofdeath': (data: string) => ({
+  'death.deathEvent.addressLine2Placeofdeath': (data: string) => ({
     'eventDetails.deathLocationOther': { streetLevelDetails: { street: data } },
   }),
-  'death.death-event-details.addressLine3Placeofdeath': (data: string) => ({
+  'death.deathEvent.addressLine3Placeofdeath': (data: string) => ({
     'eventDetails.deathLocationOther': {
       streetLevelDetails: { residentialArea: data },
     },
   }),
-  'death.death-event-details.postalCodePlaceofdeath': (data: string) => ({
+  'death.deathEvent.postalCodePlaceofdeath': (data: string) => ({
     'eventDetails.deathLocationOther': {
       streetLevelDetails: { zipCode: data },
     },
   }),
-  'death.death-event-details.internationalStatePlaceofdeath': (
-    data: string
-  ) => ({
+  'death.deathEvent.internationalStatePlaceofdeath': (data: string) => ({
     'eventDetails.deathLocationOther': {
       streetLevelDetails: { state: data },
     },
   }),
-  'death.death-event-details.internationalDistrictPlaceofdeath': (
-    data: string
-  ) => ({
+  'death.deathEvent.internationalDistrictPlaceofdeath': (data: string) => ({
     'eventDetails.deathLocationOther': {
       streetLevelDetails: { district2: data },
     },
   }),
-  'death.death-event-details.internationalCityPlaceofdeath': (
-    data: string
-  ) => ({
+  'death.deathEvent.internationalCityPlaceofdeath': (data: string) => ({
     'eventDetails.deathLocationOther': {
       streetLevelDetails: { cityOrTown: data },
     },
   }),
-  'death.death-event-details.internationalAddressLine1Placeofdeath': (
-    data: string
-  ) => ({
+  'death.deathEvent.internationalAddressLine1Placeofdeath': (data: string) => ({
     'eventDetails.deathLocationOther': {
       streetLevelDetails: { addressLine1: data },
     },
   }),
-  'death.death-event-details.internationalAddressLine2Placeofdeath': (
-    data: string
-  ) => ({
+  'death.deathEvent.internationalAddressLine2Placeofdeath': (data: string) => ({
     'eventDetails.deathLocationOther': {
       streetLevelDetails: { addressLine2: data },
     },
   }),
-  'death.death-event-details.internationalAddressLine3Placeofdeath': (
-    data: string
-  ) => ({
+  'death.deathEvent.internationalAddressLine3Placeofdeath': (data: string) => ({
     'eventDetails.deathLocationOther': {
       streetLevelDetails: { addressLine3: data },
     },
   }),
-  'death.death-event-details.internationalPostalCodePlaceofdeath': (
-    data: string
-  ) => ({
+  'death.deathEvent.internationalPostalCodePlaceofdeath': (data: string) => ({
     'eventDetails.deathLocationOther': {
       streetLevelDetails: { postcodeOrZip: data },
     },

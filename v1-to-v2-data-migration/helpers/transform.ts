@@ -1,9 +1,20 @@
 import { v4 as uuidv4 } from 'npm:uuid'
-import { DEFAULT_FIELD_MAPPINGS } from './correctionMappings.ts'
+import {
+  DEFAULT_FIELD_MAPPINGS,
+  MAPPING_FOR_CUSTOM_FIELDS,
+} from './defaultMappings.ts'
 import { COUNTRY_FIELD_MAPPINGS } from './countryMappings.ts'
 import { COLLECTOR_RESOLVER } from './collectorResolver.ts'
 import { NAME_CONFIG } from './nameConfig.ts'
 import { ADDRESS_CONFIG } from './addressConfig.ts'
+import {
+  EventRegistration,
+  HistoryItem,
+  ResolverMap,
+  TransformedDocument,
+  Action,
+  ActionType,
+} from './types.ts'
 
 const mappings = { ...DEFAULT_FIELD_MAPPINGS, ...COUNTRY_FIELD_MAPPINGS }
 
@@ -14,14 +25,9 @@ function patternMatch(
   const transformedData: Record<string, any> = {}
 
   for (const [key, value] of Object.entries(correction)) {
-    const parts = key.split('.')
-    const prefix = parts.slice(0, 2).join('.')
-    const suffix = '.' + parts.slice(2).join('.') // don't think I need the join
-    const mapKey = Object.keys(mappings).find(
-      (m) => m.startsWith(prefix) && m.endsWith(suffix)
-    )
-    if (mapKey) {
-      transformedData[mappings[mapKey as keyof typeof mappings]] = value
+    const valueKey = mappings[key as keyof typeof mappings]
+    if (valueKey) {
+      transformedData[valueKey] = value
     } else if (NAME_CONFIG[key]) {
       const nameMapping = NAME_CONFIG[key](value as string)
       const nameKey = Object.keys(nameMapping)[0]
@@ -31,6 +37,7 @@ function patternMatch(
       const addressMapping = ADDRESS_CONFIG[key](value as string)
       let addressKey = Object.keys(addressMapping)[0]
       let addressData = null
+
       if (addressKey === 'child.address.privateHome') {
         addressKey = declaration[addressKey]
           ? addressKey
@@ -38,8 +45,7 @@ function patternMatch(
       }
 
       const transformedWithSameKey = transformedData[addressKey] || {}
-      console.log(addressKey)
-      // Handle streetLevelDetails specially for deep merging
+
       addressData = addressMapping[addressKey]
       const currentAddress = declaration[addressKey] || {}
       transformedData[addressKey] = {
@@ -52,51 +58,61 @@ function patternMatch(
           ...addressData.streetLevelDetails,
         },
       }
+    } else {
+      const parts = key.split('.')
+      const prefix = parts.slice(0, 2).join('.')
+      const suffix = parts.slice(2).join('.')
+      const mapKey = Object.keys(MAPPING_FOR_CUSTOM_FIELDS).find(
+        (m) => m.startsWith(prefix) && m.endsWith(suffix)
+      )
+      if (mapKey) {
+        const valueKey =
+          MAPPING_FOR_CUSTOM_FIELDS[
+            mapKey as keyof typeof MAPPING_FOR_CUSTOM_FIELDS
+          ]
+        transformedData[valueKey] = value
+      }
     }
   }
-  console.log('Transformed data:', transformedData)
 
   return transformedData
 }
 
 export function transformCorrection(
-  historyItem: any,
+  historyItem: HistoryItem,
   event: 'birth' | 'death',
   declaration: Record<string, any>
-) {
-  const v1Declaration = historyItem.output.reduce(
-    (acc: Record<string, any>, curr: any) => {
+): Record<string, any> {
+  const v1Declaration =
+    historyItem.output?.reduce((acc: Record<string, any>, curr: any) => {
       acc[`${event}.${curr.valueCode}.${curr.valueId}`] = curr.value
       return acc
-    },
-    {}
-  )
+    }, {}) || {}
 
-  const transformedData = patternMatch(v1Declaration, declaration)
-
-  return transformedData
+  return patternMatch(v1Declaration, declaration)
 }
 
 function legacyHistoryItemToV2ActionType(
-  record: any,
-  declaration: any,
-  historyItem: any,
-  resolver: any
-) {
+  record: EventRegistration,
+  declaration: Record<string, any>,
+  historyItem: HistoryItem
+): Partial<Action> {
   if (!historyItem.action) {
     switch (historyItem.regStatus) {
       case 'DECLARED':
         const signed = record.registration.informantsSignature
         const uri = signed && new URL(signed)
         return {
-          type: 'DECLARE',
+          type: 'DECLARE' as ActionType,
           declaration: declaration,
           annotation: {
-            'review.signature': signed && {
-              path: uri.pathname,
-              originalFilename: uri.pathname.replace('/ocrvs/', ''),
-              type: 'image/png',
-            },
+            'review.signature': signed &&
+              uri &&
+              typeof uri !== 'string' && {
+                path: uri.pathname,
+                originalFilename: uri.pathname.replace('/ocrvs/', ''),
+                type: 'image/png',
+              },
             'review.comment': historyItem.comments
               ?.map(({ comment }: any) => comment)
               .join('\n'),
@@ -104,19 +120,19 @@ function legacyHistoryItemToV2ActionType(
         }
       case 'REGISTERED':
         return {
-          type: 'REGISTER',
+          type: 'REGISTER' as ActionType,
           declaration: {},
           registrationNumber: record.registration.registrationNumber,
         }
       case 'WAITING_VALIDATION':
         return {
-          type: 'REGISTER',
+          type: 'REGISTER' as ActionType,
           declaration: {},
           status: 'Requested',
         }
       case 'VALIDATED':
         return {
-          type: 'VALIDATE',
+          type: 'VALIDATE' as ActionType,
           declaration: {},
         }
       case 'ISSUED':
@@ -124,14 +140,15 @@ function legacyHistoryItemToV2ActionType(
         Object.keys(COLLECTOR_RESOLVER).forEach((key) => {
           const resolver =
             COLLECTOR_RESOLVER[key as keyof typeof COLLECTOR_RESOLVER]
-          const value = resolver(historyItem.certificates[0])
+          const value =
+            historyItem.certificates && resolver(historyItem.certificates[0])
           if (value) {
             ;(annotation as any)[key] = value
           }
         })
 
         return {
-          type: 'PRINT_CERTIFICATE',
+          type: 'PRINT_CERTIFICATE' as ActionType,
           content: {
             templateId: historyItem.certificateTemplateId,
           },
@@ -141,18 +158,18 @@ function legacyHistoryItemToV2ActionType(
       case 'REJECTED':
         return {
           status: 'Rejected',
-          type: 'REJECT',
+          type: 'REJECT' as ActionType,
           declaration: {},
           content: {
-            reason: historyItem.statusReason.text,
+            reason: historyItem.statusReason?.text,
           },
         }
       case 'ARCHIVED':
         return {
-          type: 'ARCHIVE',
+          type: 'ARCHIVE' as ActionType,
           declaration: {},
           content: {
-            reason: historyItem.statusReason.text || 'None',
+            reason: historyItem.statusReason?.text || 'None',
           },
         }
       default:
@@ -164,7 +181,7 @@ function legacyHistoryItemToV2ActionType(
     case 'REQUESTED_CORRECTION':
       return {
         status: 'Requested',
-        type: 'REQUEST_CORRECTION',
+        type: 'REQUEST_CORRECTION' as ActionType,
         declaration: transformCorrection(
           historyItem,
           record.child ? 'birth' : 'death',
@@ -184,21 +201,21 @@ function legacyHistoryItemToV2ActionType(
       }
     case 'APPROVED_CORRECTION':
       return {
-        type: 'APPROVE_CORRECTION',
+        type: 'APPROVE_CORRECTION' as ActionType,
         requestId: historyItem.requestId,
         declaration: {},
         annotation: historyItem.annotation,
       }
     case 'ASSIGNED':
       return {
-        type: 'ASSIGN',
+        type: 'ASSIGN' as ActionType,
         assignedTo: historyItem.user?.id,
         declaration: {},
       }
     case 'REJECTED_CORRECTION':
       return {
         status: 'Rejected',
-        type: 'REJECT_CORRECTION',
+        type: 'REJECT_CORRECTION' as ActionType,
         requestId: historyItem.requestId,
         declaration: {},
         content: {
@@ -207,12 +224,12 @@ function legacyHistoryItemToV2ActionType(
       }
     case 'FLAGGED_AS_POTENTIAL_DUPLICATE':
       return {
-        type: 'DUPLICATE_DETECTED',
+        type: 'DUPLICATE_DETECTED' as ActionType,
         declaration: {},
         content: {
-          duplicates: record.registration.duplicates.map(
-            (x: any) => x.compositionId
-          ),
+          duplicates:
+            record.registration.duplicates?.map((x: any) => x.compositionId) ||
+            [],
         },
       }
 
@@ -220,15 +237,15 @@ function legacyHistoryItemToV2ActionType(
       break
   }
 
-  const type = (
-    {
-      MARKED_AS_DUPLICATE: 'MARK_AS_DUPLICATE',
-      MARKED_AS_NOT_DUPLICATE: 'MARK_NOT_DUPLICATE',
-      DOWNLOADED: 'READ',
-      UNASSIGNED: 'UNASSIGN',
-      VIEWED: 'READ',
-    } as any
-  )[historyItem.action]
+  const actionMap: Record<string, ActionType> = {
+    MARKED_AS_DUPLICATE: 'MARK_AS_DUPLICATE',
+    MARKED_AS_NOT_DUPLICATE: 'MARK_NOT_DUPLICATE',
+    DOWNLOADED: 'READ',
+    UNASSIGNED: 'UNASSIGN',
+    VIEWED: 'READ',
+  }
+
+  const type = historyItem.action ? actionMap[historyItem.action] : undefined
   if (!type) {
     console.log('Invalid action', historyItem)
   }
@@ -245,9 +262,9 @@ function nonNullObjectKeys(obj: Record<string, any>) {
 }
 
 export function transform(
-  eventRegistration: any,
-  resolver: Record<string, any>
-) {
+  eventRegistration: EventRegistration,
+  resolver: ResolverMap
+): TransformedDocument {
   const result = Object.entries(resolver).map(([fieldId, r]) => {
     return [fieldId, r(eventRegistration)]
   })
@@ -295,7 +312,7 @@ export function transform(
         ? nonNullObjectKeys(matchingIssue)
         : { certificates: [{}] }
 
-      const cert = historyItem.certificates.reverse()[issuances]
+      const cert = historyItem.certificates?.reverse()?.[issuances]
 
       processedHistory.push({
         ...historyItem,
@@ -308,7 +325,7 @@ export function transform(
     } else if (!historyItem.action && historyItem.regStatus === 'ISSUED') {
       issued.push({
         ...historyItem,
-        certificates: [historyItem.certificates.reverse()[issuances]],
+        certificates: [historyItem.certificates?.reverse()?.[issuances]],
       })
       issuances++
     } else {
@@ -323,22 +340,22 @@ export function transform(
 
   const newest = historyAsc[historyAsc.length - 1]
 
-  const documents = {
+  const documents: TransformedDocument = {
     id: eventRegistration.id,
     type: eventRegistration.child ? 'birth' : 'death',
     createdAt: new Date(historyAsc[0].date).toISOString(),
     updatedAt: new Date(newest.date).toISOString(),
-    updatedAtLocation: newest.office.id,
+    updatedAtLocation: newest.office?.id || '',
     trackingId: eventRegistration.registration.trackingId,
     actions: [
       {
-        type: 'CREATE',
+        type: 'CREATE' as ActionType,
         createdAt: new Date(historyAsc[0].date).toISOString(),
-        createdBy: historyAsc[0].user.id,
-        createdByUserType: 'user',
-        createdByRole: historyAsc[0].user.role.id,
-        createdAtLocation: historyAsc[0].office.id,
-        updatedAtLocation: historyAsc[0].office.id,
+        createdBy: historyAsc[0].user?.id || '',
+        createdByUserType: 'user' as const,
+        createdByRole: historyAsc[0].user?.role?.id || '',
+        createdAtLocation: historyAsc[0].office?.id,
+        updatedAtLocation: historyAsc[0].office?.id,
         status: 'Accepted',
         declaration: {},
         id: uuidv4(),
@@ -349,19 +366,20 @@ export function transform(
           id: history?.id || uuidv4(), // TODO for some reason the backend can send items with the same id, breaking Pkey
           transactionId: uuidv4(),
           createdAt: new Date(history.date).toISOString(),
-          createdBy: history.user?.id || history.system?.type,
-          createdByUserType: history.user ? 'user' : 'system',
-          createdByRole: history.user?.role?.id || history.system?.type,
+          createdBy: history.user?.id || history.system?.type || '',
+          createdByUserType: history.user
+            ? ('user' as const)
+            : ('system' as const),
+          createdByRole: history.user?.role?.id || history.system?.type || '',
           createdAtLocation: history.office?.id,
           updatedAtLocation: history.office?.id,
           status: 'Accepted',
           ...legacyHistoryItemToV2ActionType(
             eventRegistration,
             declaration,
-            history,
-            resolver
+            history
           ),
-        }
+        } as Action
       }),
     ],
   }

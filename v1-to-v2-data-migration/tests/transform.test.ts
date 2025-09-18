@@ -32,6 +32,39 @@ Deno.test('transformCorrection', async (t) => {
     assertEquals(result, expected)
   })
 
+  await t.step('should transform custom fields', () => {
+    const historyItem = {
+      output: [
+        {
+          valueCode: 'informant',
+          valueId: 'informantIdType',
+          value: 'NATIONAL_ID',
+        },
+        {
+          valueCode: 'informant',
+          valueId: 'informantNationalId',
+          value: '0011002211',
+        },
+        {
+          valueCode: 'informant',
+          valueId: 'registrationPhone',
+          value: '0715773955',
+        },
+      ],
+    }
+
+    const event = 'birth' as const
+
+    const result = transformCorrection(historyItem, event, {})
+
+    const expected = {
+      'informant.idType': 'NATIONAL_ID',
+      'informant.nid': '0011002211',
+      'informant.phoneNo': '0715773955',
+    }
+    assertEquals(result, expected)
+  })
+
   await t.step('should transform name values', () => {
     const historyItem = {
       output: [

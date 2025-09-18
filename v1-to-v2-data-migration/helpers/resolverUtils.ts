@@ -1,5 +1,16 @@
+import {
+  Identifier,
+  Document,
+  ProcessedDocument,
+  Address,
+  Name,
+  AddressLine,
+} from './types.ts'
+
 // TODO How will this work for Uganda's location levels?
-export function convertAddress(address: any) {
+export function convertAddress(
+  address: AddressLine | undefined
+): Address | null {
   if (!address) {
     return null
   }
@@ -16,6 +27,9 @@ export function convertAddress(address: any) {
         addressLine2: address.line.filter(Boolean)[1],
         addressLine3: address.line.filter(Boolean).slice(2).join(', '),
         postcodeOrZip: address.postalCode,
+        /* For potential custom field
+        kebele: getCustomField(data, 'birth.child.address.kebele'),
+         */
       },
     }
   }
@@ -34,13 +48,19 @@ export function convertAddress(address: any) {
   }
 }
 
-export const getIdentifier = (data, identifier) =>
+export const getIdentifier = (
+  data: { identifier?: Identifier[] } | undefined,
+  identifier: string
+): string | undefined =>
   data?.identifier?.find(({ type }) => type === identifier)?.id
 
-export const getDocuments = (data, type) => {
-  const documents = data.registration.attachments
-    ?.filter(({ subject }) => subject === type)
-    ?.map((doc) => {
+export const getDocuments = (
+  data: any,
+  type: string
+): ProcessedDocument[] | null => {
+  const documents = data?.registration?.attachments
+    ?.filter(({ subject }: { subject: string }) => subject === type)
+    ?.map((doc: Document): ProcessedDocument => {
       return {
         path: doc.uri,
         originalFilename: doc.uri.replace('/ocrvs/', ''),
@@ -55,13 +75,20 @@ export const getDocuments = (data, type) => {
 }
 
 // What about custom fields
-export const getName = (name: any) =>
-  name && {
-    firstname: name?.firstNames,
-    middleName: name?.middleName,
-    surname: name?.familyName,
-  }
+export const getName = (name: Name | undefined): Name | null =>
+  name
+    ? {
+        firstname: name?.firstNames,
+        middleName: name?.middleName,
+        surname: name?.familyName,
+        /* For potential custom field
+        grandfatherName: getCustomField(data, 'birth.child.grandfatherName'),
+         */
+      }
+    : null
 
-export function getCustomField(data: any, id: string) {
-  return data.questionnaire.find(({ fieldId }) => fieldId === id)?.value
+export function getCustomField(data: any, id: string): any {
+  return data?.questionnaire?.find(
+    ({ fieldId }: { fieldId: string }) => fieldId === id
+  )?.value
 }
