@@ -2,7 +2,7 @@ type NameConfigFunction = (
   data: string
 ) => Record<string, { firstname?: string; surname?: string }>
 
-export const NAME_CONFIG: Record<string, NameConfigFunction> = {
+export const NAME_MAPPINGS: Record<string, NameConfigFunction> = {
   'birth.child.firstNamesEng': (data: string) => ({
     'child.name': { firstname: data },
   }),

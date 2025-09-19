@@ -98,17 +98,13 @@ export const DEFAULT_FIELD_MAPPINGS = {
   'death.spouse.spousePassport': 'spouse.passport',
   'death.spouse.spouseBirthRegistrationNumber': 'spouse.brn',
 
-  'death.documents.paragraph': 'documents.helper',
   'death.documents.uploadDocForDeceased': 'documents.proofOfDeceased',
   'death.documents.uploadDocForInformant': 'documents.proofOfInformant',
   'death.documents.uploadDocForDeceasedDeath': 'documents.proofOfDeath',
   'death.documents.uploadDocForCauseOfDeath': 'documents.proofOfCauseOfDeath',
-
-  'death.preview.informantSignature': 'review.signature',
-  'death.review.informantSignature': 'review.signature',
 }
 
-export const MAPPING_FOR_CUSTOM_FIELDS = {
+export const CUSTOM_FIELD_MAPPINGS = {
   'birth.child.child-view-group.reasonForLateRegistration': 'child.reason',
   'birth.informant.informant-view-group.informantIdType': 'informant.idType',
   'birth.mother.mother-view-group.motherIdType': 'mother.idType',

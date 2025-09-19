@@ -1,12 +1,12 @@
 import { v4 as uuidv4 } from 'npm:uuid'
 import {
   DEFAULT_FIELD_MAPPINGS,
-  MAPPING_FOR_CUSTOM_FIELDS,
+  CUSTOM_FIELD_MAPPINGS,
 } from './defaultMappings.ts'
-import { COUNTRY_FIELD_MAPPINGS } from './countryMappings.ts'
+import { COUNTRY_FIELD_MAPPINGS } from '../countryData/countryMappings.ts'
 import { COLLECTOR_RESOLVER } from './collectorResolver.ts'
-import { NAME_CONFIG } from './nameConfig.ts'
-import { ADDRESS_CONFIG } from './addressConfig.ts'
+import { NAME_MAPPINGS } from '../countryData/nameMappings.ts'
+import { ADDRESS_MAPPINGS } from '../countryData/addressMappings.ts'
 import {
   EventRegistration,
   HistoryItem,
@@ -28,13 +28,13 @@ function patternMatch(
     const valueKey = mappings[key as keyof typeof mappings]
     if (valueKey) {
       transformedData[valueKey] = value
-    } else if (NAME_CONFIG[key]) {
-      const nameMapping = NAME_CONFIG[key](value as string)
+    } else if (NAME_MAPPINGS[key]) {
+      const nameMapping = NAME_MAPPINGS[key](value as string)
       const nameKey = Object.keys(nameMapping)[0]
       const existing = transformedData[nameKey] || {}
       transformedData[nameKey] = { ...existing, ...nameMapping[nameKey] }
-    } else if (ADDRESS_CONFIG[key]) {
-      const addressMapping = ADDRESS_CONFIG[key](value as string)
+    } else if (ADDRESS_MAPPINGS[key]) {
+      const addressMapping = ADDRESS_MAPPINGS[key](value as string)
       let addressKey = Object.keys(addressMapping)[0]
       let addressData = null
 
@@ -62,14 +62,12 @@ function patternMatch(
       const parts = key.split('.')
       const prefix = parts.slice(0, 2).join('.')
       const suffix = parts.slice(2).join('.')
-      const mapKey = Object.keys(MAPPING_FOR_CUSTOM_FIELDS).find(
+      const mapKey = Object.keys(CUSTOM_FIELD_MAPPINGS).find(
         (m) => m.startsWith(prefix) && m.endsWith(suffix)
       )
       if (mapKey) {
         const valueKey =
-          MAPPING_FOR_CUSTOM_FIELDS[
-            mapKey as keyof typeof MAPPING_FOR_CUSTOM_FIELDS
-          ]
+          CUSTOM_FIELD_MAPPINGS[mapKey as keyof typeof CUSTOM_FIELD_MAPPINGS]
         transformedData[valueKey] = value
       }
     }
