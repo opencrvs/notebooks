@@ -1,6 +1,7 @@
 import { Address, AddressLine, EventRegistration } from '../helpers/types.ts'
 
 const COUNTRY_CODE = 'FAR' //Replace with actual country code
+export const COUNTRY_PHONE_CODE = '+26' //Replace with actual country phone code
 
 export function resolveAddress(
   data: EventRegistration,

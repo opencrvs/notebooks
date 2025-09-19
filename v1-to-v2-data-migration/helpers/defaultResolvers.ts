@@ -1,9 +1,10 @@
 import { getCustomField, getDocuments, getIdentifier } from './resolverUtils.ts'
-import { resolveAddress } from '../countryData/addressResolver.ts'
+import {
+  COUNTRY_PHONE_CODE,
+  resolveAddress,
+} from '../countryData/addressResolver.ts'
 import { EventRegistration, ResolverMap } from './types.ts'
 import { resolveName } from '../countryData/nameResolver.ts'
-
-const ZAMBIA_COUNTRY_CODE = '+26'
 
 const informantResolver: ResolverMap = {
   'informant.dob': (data: EventRegistration) => data.informant?.birthDate, // type: 'DATE',
@@ -12,7 +13,7 @@ const informantResolver: ResolverMap = {
     resolveAddress(data, data.informant?.address?.[0]), // type: FieldType.ADDRESS,
   // @question, is informant.telecom correct or this?
   'informant.phoneNo': (data: EventRegistration) =>
-    data.registration.contactPhoneNumber?.replace(ZAMBIA_COUNTRY_CODE, ''), // @todo https://github.com/opencrvs/opencrvs-core/issues/9601
+    data.registration.contactPhoneNumber?.replace(COUNTRY_PHONE_CODE, ''), // @todo https://github.com/opencrvs/opencrvs-core/issues/9601
   'informant.email': (data: EventRegistration) =>
     data.registration.contactEmail, // type: FieldType.EMAIL,
   'informant.relation': (data: EventRegistration) =>

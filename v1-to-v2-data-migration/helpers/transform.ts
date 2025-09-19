@@ -4,9 +4,13 @@ import {
   CUSTOM_FIELD_MAPPINGS,
 } from './defaultMappings.ts'
 import { COUNTRY_FIELD_MAPPINGS } from '../countryData/countryMappings.ts'
-import { COLLECTOR_RESOLVER } from './collectorResolver.ts'
 import { NAME_MAPPINGS } from '../countryData/nameMappings.ts'
 import { ADDRESS_MAPPINGS } from '../countryData/addressMappings.ts'
+import {
+  collectorResolver,
+  correctionResolver,
+  declareResolver,
+} from './historyResolver.ts'
 import {
   EventRegistration,
   HistoryItem,
@@ -38,6 +42,7 @@ function patternMatch(
       let addressKey = Object.keys(addressMapping)[0]
       let addressData = null
 
+      // TODO - How do I make this conditional configurable for countries?
       if (addressKey === 'child.address.privateHome') {
         addressKey = declaration[addressKey]
           ? addressKey
@@ -104,16 +109,8 @@ function legacyHistoryItemToV2ActionType(
           type: 'DECLARE' as ActionType,
           declaration: declaration,
           annotation: {
-            'review.signature': signed &&
-              uri &&
-              typeof uri !== 'string' && {
-                path: uri.pathname,
-                originalFilename: uri.pathname.replace('/ocrvs/', ''),
-                type: 'image/png',
-              },
-            'review.comment': historyItem.comments
-              ?.map(({ comment }: any) => comment)
-              .join('\n'),
+            'review.signature': declareResolver['review.signature'](uri),
+            'review.comment': declareResolver['review.comment'](historyItem),
           },
         }
       case 'REGISTERED':
@@ -135,9 +132,9 @@ function legacyHistoryItemToV2ActionType(
         }
       case 'ISSUED':
         const annotation = {}
-        Object.keys(COLLECTOR_RESOLVER).forEach((key) => {
+        Object.keys(collectorResolver).forEach((key) => {
           const resolver =
-            COLLECTOR_RESOLVER[key as keyof typeof COLLECTOR_RESOLVER]
+            collectorResolver[key as keyof typeof collectorResolver]
           const value =
             historyItem.certificates && resolver(historyItem.certificates[0])
           if (value) {
@@ -185,17 +182,13 @@ function legacyHistoryItemToV2ActionType(
           record.child ? 'birth' : 'death',
           declaration
         ),
-        annotation: {
-          'fees.amount': historyItem.payment?.amount,
-          'reason.option': historyItem.reason,
-          'reason.other': historyItem.otherReason,
-          'requester.identity.verify': historyItem.hasShowedVerifiedDocument,
-          'requester.type':
-            historyItem.requester === 'REGISTRAR'
-              ? 'ME'
-              : historyItem.requester,
-          'requester.other': historyItem.requesterOther,
-        },
+        annotation: Object.fromEntries(
+          Object.entries(correctionResolver).map(([key, resolver]) => [
+            key,
+            resolver(historyItem),
+          ])
+        ),
+        requestId: historyItem.id,
       }
     case 'APPROVED_CORRECTION':
       return {
