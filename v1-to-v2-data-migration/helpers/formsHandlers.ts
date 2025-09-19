@@ -1,6 +1,6 @@
 import { CONFIG, COUNTRY_CONFIG } from './routes.ts'
 
-export const fetchForms = async (token) => {
+export const fetchForms = async (token: string) => {
   const response = await fetch(`${CONFIG}/forms`, {
     method: 'GET',
     headers: {
@@ -15,7 +15,7 @@ export const fetchForms = async (token) => {
   return await response.json()
 }
 
-export const fetchEvents = async (token) => {
+export const fetchEvents = async (token: string) => {
   const response = await fetch(`${COUNTRY_CONFIG}/events`, {
     method: 'GET',
     headers: {

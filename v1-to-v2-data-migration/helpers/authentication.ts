@@ -1,11 +1,10 @@
 import { GATEWAY } from './routes.ts'
 
 export async function authenticate(
-  gatewayUrl: string,
   username: string,
   password: string
 ): Promise<{ nonce: string }> {
-  const response = await fetch(`${gatewayUrl}/auth/authenticate`, {
+  const response = await fetch(`${GATEWAY}/auth/authenticate`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ username, password }),
@@ -29,4 +28,23 @@ export async function authenticate(
   }
 
   return (await verifyCode('000000', nonce)).token
+}
+
+export async function getTokenForSystemClient(
+  clientId: string,
+  clientSecret: string
+): Promise<string> {
+  const authenticateResponse = await fetch(
+    `${GATEWAY}/auth/token?client_id=${clientId}&client_secret=${clientSecret}&grant_type=client_credentials`,
+    {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-correlation-id': clientId + '-' + Date.now(),
+      },
+    }
+  )
+  const res = await authenticateResponse.json()
+
+  return res.token || res.access_token
 }

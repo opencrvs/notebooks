@@ -12,6 +12,14 @@ on:
         required: true
         type: string
         default: 'farajaland-qa.opencrvs.org'
+      client_id:
+        description: 'OAuth Client ID (optional for localhost)'
+        required: false
+        type: string
+      client_secret:
+        description: 'OAuth Client Secret (optional for localhost)'
+        required: false
+        type: string
 
 jobs:
   fetch-and-transform:
@@ -37,9 +45,14 @@ jobs:
 
       - name: Run the script with Deno
         id: deno-script
+        env:
+          OPENCRVS_EVENT: ${{ github.event.inputs.event }}
+          OPENCRVS_DOMAIN: ${{ github.event.inputs.domain }}
+          OPENCRVS_CLIENT_ID: ${{ github.event.inputs.client_id }}
+          OPENCRVS_CLIENT_SECRET: ${{ github.event.inputs.client_secret }}
         run: |
           echo "script_output<<EOF" >> $GITHUB_OUTPUT
-          deno run --allow-net ./tmp/fetch-and-transform-all.ts ${{ github.event.inputs.event }} ${{ github.event.inputs.domain }} | tee /dev/stderr >> $GITHUB_OUTPUT
+          deno run --allow-net --allow-env ./tmp/fetch-and-transform-all.ts | tee /dev/stderr >> $GITHUB_OUTPUT
           echo "EOF" >> $GITHUB_OUTPUT
 
       - name: Generate summary

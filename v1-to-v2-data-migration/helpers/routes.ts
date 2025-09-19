@@ -1,14 +1,15 @@
-const domain = Deno?.args?.[1] || 'localhost'
+import { DOMAIN } from './vars.ts'
+
 export const CONFIG = `http://${
-  domain.includes('localhost') ? `${domain}:2021` : `config.${domain}`
+  DOMAIN.includes('localhost') ? `${DOMAIN}:2021` : `config.${DOMAIN}`
 }`
 export const GATEWAY = `http://${
-  domain.includes('localhost') ? `${domain}:7070` : `gateway.${domain}`
+  DOMAIN.includes('localhost') ? `${DOMAIN}:7070` : `gateway.${DOMAIN}`
 }`
 export const COUNTRY_CONFIG = `http://${
-  domain.includes('localhost') ? `${domain}:3040` : `gateway.${domain}`
+  DOMAIN.includes('localhost') ? `${DOMAIN}:3040` : `countryconfig.${DOMAIN}`
 }`
 
 export const REGISTER_APP = `http://${
-  domain.includes('localhost') ? `${domain}:3000` : `register.${domain}`
+  DOMAIN.includes('localhost') ? `${DOMAIN}:3000` : `register.${DOMAIN}`
 }`
