@@ -54,6 +54,24 @@ export const ADDRESS_MAPPINGS: Record<string, AddressConfigFunction> = {
     },
   }),
 
+  // Birth - Child Place of Birth (Urban/Rural Options)
+  'birth.child.addressLine1UrbanOptionPlaceofbirth': (data: string) => ({
+    'child.address.privateHome': {
+      streetLevelDetails: { residentialArea: data },
+    },
+  }),
+  'birth.child.addressLine2UrbanOptionPlaceofbirth': (data: string) => ({
+    'child.address.privateHome': { streetLevelDetails: { street: data } },
+  }),
+  'birth.child.addressLine3UrbanOptionPlaceofbirth': (data: string) => ({
+    'child.address.privateHome': { streetLevelDetails: { number: data } },
+  }),
+  'birth.child.addressLine1RuralOptionPlaceofbirth': (data: string) => ({
+    'child.address.privateHome': {
+      streetLevelDetails: { residentialArea: data },
+    },
+  }),
+
   // Birth - Informant Address
   'birth.informant.countryPrimaryInformant': (data: string) => ({
     'informant.address': { country: data },
@@ -111,6 +129,28 @@ export const ADDRESS_MAPPINGS: Record<string, AddressConfigFunction> = {
     'informant.address': { streetLevelDetails: { postcodeOrZip: data } },
   }),
 
+  // Birth - Informant Address (Urban/Rural Options)
+  'birth.informant.addressLine1UrbanOptionPrimaryInformant': (
+    data: string
+  ) => ({
+    'informant.address': { streetLevelDetails: { residentialArea: data } },
+  }),
+  'birth.informant.addressLine2UrbanOptionPrimaryInformant': (
+    data: string
+  ) => ({
+    'informant.address': { streetLevelDetails: { street: data } },
+  }),
+  'birth.informant.addressLine3UrbanOptionPrimaryInformant': (
+    data: string
+  ) => ({
+    'informant.address': { streetLevelDetails: { number: data } },
+  }),
+  'birth.informant.addressLine1RuralOptionPrimaryInformant': (
+    data: string
+  ) => ({
+    'informant.address': { streetLevelDetails: { residentialArea: data } },
+  }),
+
   // Birth - Mother Address
   'birth.mother.countryPrimaryMother': (data: string) => ({
     'mother.address': { country: data },
@@ -158,6 +198,20 @@ export const ADDRESS_MAPPINGS: Record<string, AddressConfigFunction> = {
   }),
   'birth.mother.internationalPostalCodePrimaryMother': (data: string) => ({
     'mother.address': { streetLevelDetails: { postcodeOrZip: data } },
+  }),
+
+  // Birth - Mother Address (Urban/Rural Options)
+  'birth.mother.addressLine1UrbanOptionPrimaryMother': (data: string) => ({
+    'mother.address': { streetLevelDetails: { residentialArea: data } },
+  }),
+  'birth.mother.addressLine2UrbanOptionPrimaryMother': (data: string) => ({
+    'mother.address': { streetLevelDetails: { street: data } },
+  }),
+  'birth.mother.addressLine3UrbanOptionPrimaryMother': (data: string) => ({
+    'mother.address': { streetLevelDetails: { number: data } },
+  }),
+  'birth.mother.addressLine1RuralOptionPrimaryMother': (data: string) => ({
+    'mother.address': { streetLevelDetails: { residentialArea: data } },
   }),
 
   // Birth - Father Address
@@ -210,6 +264,20 @@ export const ADDRESS_MAPPINGS: Record<string, AddressConfigFunction> = {
   }),
   'birth.father.internationalPostalCodePrimaryFather': (data: string) => ({
     'father.address': { streetLevelDetails: { postcodeOrZip: data } },
+  }),
+
+  // Birth - Father Address (Urban/Rural Options)
+  'birth.father.addressLine1UrbanOptionPrimaryFather': (data: string) => ({
+    'father.address': { streetLevelDetails: { residentialArea: data } },
+  }),
+  'birth.father.addressLine2UrbanOptionPrimaryFather': (data: string) => ({
+    'father.address': { streetLevelDetails: { street: data } },
+  }),
+  'birth.father.addressLine3UrbanOptionPrimaryFather': (data: string) => ({
+    'father.address': { streetLevelDetails: { number: data } },
+  }),
+  'birth.father.addressLine1RuralOptionPrimaryFather': (data: string) => ({
+    'father.address': { streetLevelDetails: { residentialArea: data } },
   }),
 
   // Death - Deceased Address
@@ -265,6 +333,20 @@ export const ADDRESS_MAPPINGS: Record<string, AddressConfigFunction> = {
   }),
   'death.deceased.internationalPostalCodePrimaryDeceased': (data: string) => ({
     'deceased.address': { streetLevelDetails: { postcodeOrZip: data } },
+  }),
+
+  // Death - Deceased Address (Urban/Rural Options)
+  'death.deceased.addressLine1UrbanOptionPrimaryDeceased': (data: string) => ({
+    'deceased.address': { streetLevelDetails: { residentialArea: data } },
+  }),
+  'death.deceased.addressLine2UrbanOptionPrimaryDeceased': (data: string) => ({
+    'deceased.address': { streetLevelDetails: { street: data } },
+  }),
+  'death.deceased.addressLine3UrbanOptionPrimaryDeceased': (data: string) => ({
+    'deceased.address': { streetLevelDetails: { number: data } },
+  }),
+  'death.deceased.addressLine1RuralOptionPrimaryDeceased': (data: string) => ({
+    'deceased.address': { streetLevelDetails: { residentialArea: data } },
   }),
 
   // Death - Death Event Details Place of Death
@@ -333,6 +415,24 @@ export const ADDRESS_MAPPINGS: Record<string, AddressConfigFunction> = {
     },
   }),
 
+  // Death - Death Event Details Place of Death (Urban/Rural Options)
+  'death.deathEvent.addressLine1UrbanOptionPlaceofdeath': (data: string) => ({
+    'eventDetails.deathLocationOther': {
+      streetLevelDetails: { residentialArea: data },
+    },
+  }),
+  'death.deathEvent.addressLine2UrbanOptionPlaceofdeath': (data: string) => ({
+    'eventDetails.deathLocationOther': { streetLevelDetails: { street: data } },
+  }),
+  'death.deathEvent.addressLine3UrbanOptionPlaceofdeath': (data: string) => ({
+    'eventDetails.deathLocationOther': { streetLevelDetails: { number: data } },
+  }),
+  'death.deathEvent.addressLine1RuralOptionPlaceofdeath': (data: string) => ({
+    'eventDetails.deathLocationOther': {
+      streetLevelDetails: { residentialArea: data },
+    },
+  }),
+
   // Death - Informant Address
   'death.informant.countryPrimaryInformant': (data: string) => ({
     'informant.address': { country: data },
@@ -390,6 +490,31 @@ export const ADDRESS_MAPPINGS: Record<string, AddressConfigFunction> = {
     'informant.address': { streetLevelDetails: { postcodeOrZip: data } },
   }),
 
+  // Death - Informant Address (Urban/Rural Options)
+  'death.informant.ruralOrUrbanPrimaryInformant': (data: string) => ({
+    'informant.addressType': data,
+  }),
+  'death.informant.addressLine1UrbanOptionPrimaryInformant': (
+    data: string
+  ) => ({
+    'informant.address': { streetLevelDetails: { residentialArea: data } },
+  }),
+  'death.informant.addressLine2UrbanOptionPrimaryInformant': (
+    data: string
+  ) => ({
+    'informant.address': { streetLevelDetails: { street: data } },
+  }),
+  'death.informant.addressLine3UrbanOptionPrimaryInformant': (
+    data: string
+  ) => ({
+    'informant.address': { streetLevelDetails: { number: data } },
+  }),
+  'death.informant.addressLine1RuralOptionPrimaryInformant': (
+    data: string
+  ) => ({
+    'informant.address': { streetLevelDetails: { residentialArea: data } },
+  }),
+
   // Death - Spouse Address
   'death.spouse.primaryAddressSameAsOtherPrimary': (data: string) => ({
     'spouse.addressSameAs': data,
@@ -440,5 +565,19 @@ export const ADDRESS_MAPPINGS: Record<string, AddressConfigFunction> = {
   }),
   'death.spouse.internationalPostalCodePrimarySpouse': (data: string) => ({
     'spouse.address': { streetLevelDetails: { postcodeOrZip: data } },
+  }),
+
+  // Death - Spouse Address (Urban/Rural Options)
+  'death.spouse.addressLine1UrbanOptionPrimarySpouse': (data: string) => ({
+    'spouse.address': { streetLevelDetails: { residentialArea: data } },
+  }),
+  'death.spouse.addressLine2UrbanOptionPrimarySpouse': (data: string) => ({
+    'spouse.address': { streetLevelDetails: { street: data } },
+  }),
+  'death.spouse.addressLine3UrbanOptionPrimarySpouse': (data: string) => ({
+    'spouse.address': { streetLevelDetails: { number: data } },
+  }),
+  'death.spouse.addressLine1RuralOptionPrimarySpouse': (data: string) => ({
+    'spouse.address': { streetLevelDetails: { residentialArea: data } },
   }),
 }
