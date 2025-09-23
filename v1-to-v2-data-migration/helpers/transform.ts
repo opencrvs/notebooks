@@ -116,7 +116,7 @@ function legacyHistoryItemToV2ActionType(
       case 'REGISTERED':
         return {
           type: 'REGISTER' as ActionType,
-          declaration: {},
+          declaration: declaration,
           registrationNumber: record.registration.registrationNumber,
         }
       case 'WAITING_VALIDATION':
@@ -128,7 +128,7 @@ function legacyHistoryItemToV2ActionType(
       case 'VALIDATED':
         return {
           type: 'VALIDATE' as ActionType,
-          declaration: {},
+          declaration,
         }
       case 'ISSUED':
         const annotation = {}
@@ -145,7 +145,9 @@ function legacyHistoryItemToV2ActionType(
         return {
           type: 'PRINT_CERTIFICATE' as ActionType,
           content: {
-            templateId: historyItem.certificateTemplateId,
+            templateId:
+              historyItem.certificateTemplateId ||
+              historyItem.certificates?.[0]?.certificateTemplateId,
           },
           declaration: {},
           annotation: annotation,
@@ -166,6 +168,16 @@ function legacyHistoryItemToV2ActionType(
           content: {
             reason: historyItem.statusReason?.text || 'None',
           },
+        }
+      case 'IN_PROGRESS':
+        return {
+          type: 'READ' as ActionType,
+          declaration: {},
+        }
+      case 'DECLARATION_UPDATED': //TODO - check if this is correct
+        return {
+          type: 'DECLARE' as ActionType,
+          declaration: {},
         }
       default:
         break
@@ -234,6 +246,7 @@ function legacyHistoryItemToV2ActionType(
     DOWNLOADED: 'READ',
     UNASSIGNED: 'UNASSIGN',
     VIEWED: 'READ',
+    VERIFIED: 'VALIDATE',
   }
 
   const type = historyItem.action ? actionMap[historyItem.action] : undefined
@@ -268,9 +281,11 @@ export function transform(
   // Handle CORRECTED items by duplicating them
   const processedHistory: any[] = []
   const issued: any[] = []
-  const rejected: any[] = []
+  const corrections: any[] = []
   let issuances = 0
-  for (const historyItem of eventRegistration.history) {
+  for (const historyItem of eventRegistration.history.sort(
+    (a, b) => new Date(b.date).valueOf() - new Date(a.date).valueOf()
+  )) {
     if (historyItem.action === 'CORRECTED') {
       const requestCorrectionId = uuidv4()
 
@@ -290,12 +305,14 @@ export function transform(
           isImmediateCorrection: true,
         },
       })
-    } else if (historyItem.action === 'REJECTED_CORRECTION') {
-      rejected.push(historyItem)
     } else if (historyItem.action === 'REQUESTED_CORRECTION') {
       historyItem.id = uuidv4()
-      const rej = rejected.pop()
-      rej.requestId = historyItem?.id
+      const req = corrections.pop()
+      req.requestId = historyItem?.id //TODO needs better error handling
+    } else if (historyItem.action === 'REJECTED_CORRECTION') {
+      corrections.push(historyItem)
+    } else if (historyItem.action === 'APPROVED_CORRECTION') {
+      corrections.push(historyItem)
     } else if (!historyItem.action && historyItem.regStatus === 'CERTIFIED') {
       const matchingIssue = issued.pop()
 
