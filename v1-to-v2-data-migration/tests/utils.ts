@@ -59,8 +59,8 @@ export async function runMigration() {
   const convertCommand = new Deno.Command('bash', {
     args: [
       '../scripts/deno-notebook-to-deno.sh',
-      '../v1-to-v2-data-migration/fetch-and-transform-all.ipynb',
-      './tmp/fetch-and-transform-all.ts',
+      '../v1-to-v2-data-migration/migrate.ipynb',
+      './tmp/migrate.ts',
     ],
     stdout: 'inherit',
     stderr: 'inherit',
@@ -73,7 +73,7 @@ export async function runMigration() {
   }
 
   const runCommand = new Deno.Command('deno', {
-    args: ['run', '--allow-net', './tmp/fetch-and-transform-all.ts'],
+    args: ['run', '--allow-net', './tmp/migrate.ts'],
     stdout: 'inherit',
     stderr: 'inherit',
   })

@@ -41,7 +41,7 @@ jobs:
       - name: Convert notebook to TypeScript
         run: |
           mkdir -p tmp
-          bash ./scripts/deno-notebook-to-deno.sh ./v1-to-v2-data-migration/fetch-and-transform-all.ipynb ./tmp/fetch-and-transform-all.ts
+          bash ./scripts/deno-notebook-to-deno.sh ./v1-to-v2-data-migration/migrate.ipynb ./tmp/migrate.ts
 
       - name: Run the script with Deno
         id: deno-script
@@ -52,7 +52,7 @@ jobs:
           OPENCRVS_CLIENT_SECRET: ${{ github.event.inputs.client_secret }}
         run: |
           echo "script_output<<EOF" >> $GITHUB_OUTPUT
-          deno run --allow-net --allow-env ./tmp/fetch-and-transform-all.ts | tee /dev/stderr >> $GITHUB_OUTPUT
+          deno run --allow-net --allow-env ./tmp/migrate.ts | tee /dev/stderr >> $GITHUB_OUTPUT
           echo "EOF" >> $GITHUB_OUTPUT
 
       - name: Generate summary

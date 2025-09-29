@@ -5,7 +5,7 @@ import { GATEWAY } from '../helpers/routes.ts'
 import { createDeclaration, getEvent, runMigration } from './utils.ts'
 
 Deno.test('Create some data to test with', async (t) => {
-  const token = await authenticate(GATEWAY, 'k.mweene', 'test')
+  const token = await authenticate('k.mweene', 'test')
 
   const birthDeclaration = await generateBirthRegistration()
 

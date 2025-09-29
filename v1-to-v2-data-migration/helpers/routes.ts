@@ -13,3 +13,7 @@ export const COUNTRY_CONFIG = `http://${
 export const REGISTER_APP = `http://${
   DOMAIN.includes('localhost') ? `${DOMAIN}:3000` : `register.${DOMAIN}`
 }`
+
+export const API = `http://${
+  DOMAIN.includes('localhost') ? `${DOMAIN}:3000` : `${DOMAIN}/api`
+}`

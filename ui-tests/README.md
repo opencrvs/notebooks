@@ -41,7 +41,7 @@ notebooks/
    - Create a few birth and death records using the V1 side.
 
 2. **Run the data migration notebooks:**
-    - Run all the code cells in `fetch-and-transform-all.ipynb` to migrate all the V1 records to V2 side.
+    - Run all the code cells in `migrate.ipynb` to migrate all the V1 records to V2 side.
 
 ## Running the tests to verify migration of records
 
