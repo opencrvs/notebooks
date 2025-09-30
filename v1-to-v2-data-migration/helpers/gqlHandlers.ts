@@ -26,6 +26,32 @@ export const declareEvent = async (document: any, token: string) => {
   return response.json()
 }
 
+export const bulkImport = async (documents: any[], token: string) => {
+  const response = await fetch(`${GATEWAY}/events/event.bulkImport`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify({
+      json: documents,
+      meta: {
+        values: {
+          declaration: ['undefined'],
+        },
+      },
+    }),
+  })
+
+  if (!response.ok) {
+    console.log('DECLARE ERROR!')
+    console.log((await response.json()).error)
+
+    throw new Error(`Event creation failed: ${response.statusText}`)
+  }
+  return response.json()
+}
+
 export const registerSystem = async (token: string) => {
   const response = await fetch(`${GATEWAY}/graphql`, {
     method: 'POST',
@@ -92,7 +118,7 @@ const GetRegistrationsList = async (
     body: JSON.stringify({
       operationName: 'GetRegistrationsListByFilter',
       query: `query GetRegistrationsListByFilter {
-        searchEvents(advancedSearchParameters: { event: ${event} }, count: ${pageSize}, skip: ${skip}) {
+        searchEvents(advancedSearchParameters: { event: ${event} }, count: ${pageSize}, skip: ${skip}, sortColumn: "createdAt.keyword") {
           totalItems
           results {
             ... on ${searchSet} {
