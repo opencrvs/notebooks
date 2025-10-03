@@ -13,7 +13,7 @@ const informantResolver: ResolverMap = {
     resolveAddress(data, data.informant?.address?.[0]), // type: FieldType.ADDRESS,
   // @question, is informant.telecom correct or this?
   'informant.phoneNo': (data: EventRegistration) =>
-    data.registration.contactPhoneNumber?.replace(COUNTRY_PHONE_CODE, ''), // @todo https://github.com/opencrvs/opencrvs-core/issues/9601
+    data.registration.contactPhoneNumber?.replace(COUNTRY_PHONE_CODE, '0'), // @todo https://github.com/opencrvs/opencrvs-core/issues/9601
   'informant.email': (data: EventRegistration) =>
     data.registration.contactEmail, // type: FieldType.EMAIL,
   'informant.relation': (data: EventRegistration) =>

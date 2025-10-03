@@ -1,59 +1,68 @@
-import { getCustomField, getIdentifier } from "./resolverUtils.ts";
+import { getCustomField, getIdentifier } from '../helpers/resolverUtils.ts'
+import { EventRegistration } from '../helpers/types.ts'
+import { COUNTRY_CODE, resolveAddress } from './addressResolver.ts'
 
-function convertChildAddress(data, address) {
-  if (!address) {
-    return null;
-  }
-
+const convertChildAddress = (data: EventRegistration) => {
   const country = getCustomField(
     data,
-    "birth.child.child-view-group.countryPrimaryChild"
-  );
-  const international = country !== "FAR"; //This doesn't work for other countries
-  if (international) {
-    return {
-      addressType: "INTERNATIONAL",
-      country,
-      cityOrTown: getCustomField(
-        data,
-        "birth.child-view-group.internationalCityPrimaryChild"
-      ),
-    };
-  }
+    'birth.child.child-view-group.countryPrimaryChild'
+  )
+
   return {
-    addressType: "DOMESTIC",
-    country,
-    state: getCustomField(data, "birth.child-view-group.statePrimaryChild"),
-    district: getCustomField(
+    addressType: country === COUNTRY_CODE ? 'DOMESTIC' : 'INTERNATIONAL',
+    country: country,
+    administrativeArea: getCustomField(
       data,
-      "birth.child-view-group.districtPrimaryChild"
+      'birth.child-view-group.districtPrimaryChild'
     ),
-    cityOrTown: getCustomField(data, "birth.child-view-group.cityPrimaryChild"),
-    addressLine1: getCustomField(
-      data,
-      "birth.child-view-group.addressLine1PrimaryChild"
-    ),
-    addressLine2: getCustomField(
-      data,
-      "birth.child-view-group.addressLine2PrimaryChild"
-    ),
-    addressLine3: getCustomField(
-      data,
-      "birth.child-view-group.addressLine3PrimaryChild"
-    ),
-    postcodeOrZip: getCustomField(
-      data,
-      "birth.child-view-group.postalCodePrimaryChild"
-    ),
-  };
+    streetLevelDetails: {
+      town: getCustomField(data, 'birth.child-view-group.cityPrimaryChild'),
+      number: getCustomField(
+        data,
+        'birth.child-view-group.addressLine1PrimaryChild'
+      ),
+      street: getCustomField(
+        data,
+        'birth.child-view-group.addressLine2PrimaryChild'
+      ),
+      residentialArea: getCustomField(
+        data,
+        'birth.child-view-group.addressLine3PrimaryChild'
+      ),
+      zipCode: getCustomField(
+        data,
+        'birth.child-view-group.postalCodePrimaryChild'
+      ),
+      internationalCity: getCustomField(
+        data,
+        'birth.child-view-group.internationalCityPrimaryChild'
+      ),
+    },
+  }
 }
 
 export const countryResolver = {
-  "child.nid": (data) => getIdentifier(data.child, "NATIONAL_ID"),
-  "child.address": (data) =>
-    convertChildAddress(data, data.eventLocation.address),
-  "child.attendantName": (data) =>
-    getCustomField(data, "birth.child.child-view-group.birthAttendantName"),
-  "child.attedantAtBirthId": (data) =>
-    getCustomField(data, "birth.child.child-view-group.birthAttendantId"),
-};
+  'child.nid': (data: EventRegistration) =>
+    getIdentifier(data.child, 'NATIONAL_ID'),
+  'child.address': (data: EventRegistration) => convertChildAddress(data),
+  'child.attendantName': (data: EventRegistration) =>
+    getCustomField(data, 'birth.child.child-view-group.birthAttendantName'),
+  'child.attedantAtBirthId': (data: EventRegistration) =>
+    getCustomField(data, 'birth.child.child-view-group.birthAttendantId'),
+  'child.birthLocation.privateHome': (data: EventRegistration) =>
+    data.eventLocation?.type === 'PRIVATE_HOME'
+      ? resolveAddress(data, data.eventLocation?.address)
+      : null,
+  'child.birthLocation.other': (data: EventRegistration) =>
+    data.eventLocation?.type === 'OTHER'
+      ? resolveAddress(data, data.eventLocation?.address)
+      : null,
+  'deceased.placeOfBirth': (data: EventRegistration) =>
+    getCustomField(data, 'death.deceased.deceased-view-group.placeOfBirth'),
+  'deceased.occupation': (data: EventRegistration) =>
+    getCustomField(data, 'death.deceased.deceased-view-group.occupation'),
+  'eventDetails.timeOfDeath': (data: EventRegistration) =>
+    getCustomField(data, 'death.deathEvent.death-event-details.timeOfDeath'),
+  'informant.informantType': (data: EventRegistration) =>
+    data.informant?.relationship,
+}

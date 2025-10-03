@@ -45,6 +45,13 @@ export async function getTokenForSystemClient(
     }
   )
   const res = await authenticateResponse.json()
+  if (!authenticateResponse.ok) {
+    throw new Error(
+      `Failed to get token for system client: ${
+        res.message || authenticateResponse.statusText
+      }`
+    )
+  }
 
   return res.token || res.access_token
 }

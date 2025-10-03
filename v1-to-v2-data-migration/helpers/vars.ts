@@ -1,3 +1,4 @@
+// @ts-nocheck - Using Deno-specific environment variables
 export const DOMAIN =
   Deno?.env?.get('OPENCRVS_DOMAIN') || 'farajaland-staging.opencrvs.org'
 export const EVENT = Deno?.env?.get('OPENCRVS_EVENT') || 'birth'

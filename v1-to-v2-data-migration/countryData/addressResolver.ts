@@ -1,7 +1,25 @@
-import { Address, AddressLine, EventRegistration } from '../helpers/types.ts'
+import { AddressLine, EventRegistration } from '../helpers/types.ts'
 
-const COUNTRY_CODE = 'FAR' //Replace with actual country code
-export const COUNTRY_PHONE_CODE = '+26' //Replace with actual country phone code
+export const COUNTRY_CODE = 'SOM' //Replace with actual country code
+export const COUNTRY_PHONE_CODE = '+252' //Replace with actual country phone code
+
+// Set up street level details as they are in your country config
+// src/form/street-address-configuration.ts
+export type StreetLevelDetails = {
+  city?: string
+  number?: string
+  street?: string
+  residentialArea?: string
+  zipCode?: string
+  internationalCity?: string
+}
+
+export interface Address {
+  addressType?: 'INTERNATIONAL' | 'DOMESTIC'
+  country?: string
+  administrativeArea?: string
+  streetLevelDetails?: StreetLevelDetails
+}
 
 export function resolveAddress(
   data: EventRegistration,
@@ -16,16 +34,7 @@ export function resolveAddress(
       addressType: 'INTERNATIONAL',
       country: address.country,
       streetLevelDetails: {
-        state: address.state,
-        district2: address.district,
-        cityOrTown: address.city,
-        addressLine1: address.line.filter(Boolean)[0],
-        addressLine2: address.line.filter(Boolean)[1],
-        addressLine3: address.line.filter(Boolean).slice(2).join(', '),
-        postcodeOrZip: address.postalCode,
-        /* For potential custom field
-        kebele: getCustomField(data, 'birth.child.address.kebele'),
-         */
+        internationalCity: address.city,
       },
     }
   }
@@ -35,7 +44,7 @@ export function resolveAddress(
     country: address.country,
     administrativeArea: address.district,
     streetLevelDetails: {
-      town: address.city,
+      city: address.city,
       number: address.line.filter(Boolean)[0],
       street: address.line.filter(Boolean)[1],
       residentialArea: address.line.filter(Boolean)[2],

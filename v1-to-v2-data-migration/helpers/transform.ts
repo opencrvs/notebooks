@@ -1,3 +1,4 @@
+// @ts-expect-error - Using Deno-style npm import
 import { v4 as uuidv4 } from 'npm:uuid'
 import {
   DEFAULT_FIELD_MAPPINGS,
@@ -19,6 +20,7 @@ import {
   Action,
   ActionType,
 } from './types.ts'
+import { COUNTRY_CODE } from '../countryData/addressResolver.ts'
 
 const mappings = { ...DEFAULT_FIELD_MAPPINGS, ...COUNTRY_FIELD_MAPPINGS }
 
@@ -41,22 +43,32 @@ function patternMatch(
       const addressMapping = ADDRESS_MAPPINGS[key](value as string)
       let addressKey = Object.keys(addressMapping)[0]
       let addressData = null
-
+      let saveAddressKey = addressKey
       // TODO - How do I make this conditional configurable for countries?
-      if (addressKey === 'child.address.privateHome') {
-        addressKey = declaration[addressKey]
+      if (addressKey === 'child.birthLocation.privateHome') {
+        saveAddressKey = declaration[addressKey]
           ? addressKey
-          : 'child.address.other'
+          : 'child.birthLocation.other'
       }
 
-      const transformedWithSameKey = transformedData[addressKey] || {}
+      const transformedWithSameKey = transformedData[saveAddressKey] || {}
 
       addressData = addressMapping[addressKey]
       const currentAddress = declaration[addressKey] || {}
-      transformedData[addressKey] = {
+
+      const mergedAddress = {
         ...currentAddress,
         ...transformedWithSameKey,
         ...addressData,
+      }
+
+      transformedData[saveAddressKey] = {
+        ...mergedAddress,
+        addressType:
+          mergedAddress.addressType ||
+          (mergedAddress.country === COUNTRY_CODE
+            ? 'DOMESTIC'
+            : 'INTERNATIONAL'),
         streetLevelDetails: {
           ...(currentAddress.streetLevelDetails || {}),
           ...(transformedWithSameKey.streetLevelDetails || {}),
@@ -187,7 +199,7 @@ function legacyHistoryItemToV2ActionType(
   switch (historyItem.action) {
     case 'REQUESTED_CORRECTION':
       return {
-        status: 'Requested',
+        status: 'Accepted',
         type: 'REQUEST_CORRECTION' as ActionType,
         declaration: transformCorrection(
           historyItem,
@@ -204,6 +216,7 @@ function legacyHistoryItemToV2ActionType(
       }
     case 'APPROVED_CORRECTION':
       return {
+        status: 'Accepted',
         type: 'APPROVE_CORRECTION' as ActionType,
         requestId: historyItem.requestId,
         declaration: {},

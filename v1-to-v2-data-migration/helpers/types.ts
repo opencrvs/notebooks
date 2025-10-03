@@ -1,3 +1,5 @@
+import { Address } from '../countryData/addressResolver.ts'
+
 // Form-related types
 export interface FormField {
   name: string
@@ -55,28 +57,6 @@ export interface AddressLine {
   state?: string
   country: string
   postalCode?: string
-}
-
-export interface StreetLevelDetails {
-  state?: string
-  district2?: string
-  cityOrTown?: string
-  addressLine1?: string
-  addressLine2?: string
-  addressLine3?: string
-  postcodeOrZip?: string
-  town?: string
-  number?: string
-  street?: string
-  residentialArea?: string
-  zipCode?: string
-}
-
-export interface Address {
-  addressType: 'INTERNATIONAL' | 'DOMESTIC'
-  country: string
-  administrativeArea?: string
-  streetLevelDetails: StreetLevelDetails
 }
 
 // Name types
