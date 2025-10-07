@@ -1130,5 +1130,5 @@ export const syncLocations = async (token: string) => {
   if (!response.ok) {
     throw new Error(`Sync Locations failed: ${response.statusText}`)
   }
-  return response.json()
+  return response.statusText
 }
