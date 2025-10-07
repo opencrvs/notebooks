@@ -1,4 +1,6 @@
-type AddressConfigFunction = (data: string) => Record<string, any>
+import { Address } from './addressResolver.ts'
+
+type AddressConfigFunction = (data: string) => Record<string, Partial<Address>>
 
 export const ADDRESS_MAPPINGS: Record<string, AddressConfigFunction> = {
   // Birth - Child Place of Birth
@@ -6,7 +8,9 @@ export const ADDRESS_MAPPINGS: Record<string, AddressConfigFunction> = {
     'child.address.privateHome': { country: data },
   }),
   'birth.child.statePlaceofbirth': (data: string) => ({
-    'child.address.privateHome': { state: data },
+    'child.address.privateHome': {
+      /* Ignore: Only map leaf level */
+    },
   }),
   'birth.child.districtPlaceofbirth': (data: string) => ({
     'child.address.privateHome': { administrativeArea: data },
@@ -156,7 +160,9 @@ export const ADDRESS_MAPPINGS: Record<string, AddressConfigFunction> = {
     'mother.address': { country: data },
   }),
   'birth.mother.statePrimaryMother': (data: string) => ({
-    'mother.address': { state: data },
+    'mother.address': {
+      /* Ignore: Only map leaf level */
+    },
   }),
   'birth.mother.districtPrimaryMother': (data: string) => ({
     'mother.address': { administrativeArea: data },
@@ -215,14 +221,13 @@ export const ADDRESS_MAPPINGS: Record<string, AddressConfigFunction> = {
   }),
 
   // Birth - Father Address
-  'birth.father.primaryAddressSameAsOtherPrimary': (data: string) => ({
-    'father.addressSameAs': data,
-  }),
   'birth.father.countryPrimaryFather': (data: string) => ({
     'father.address': { country: data },
   }),
   'birth.father.statePrimaryFather': (data: string) => ({
-    'father.address': { state: data },
+    'father.address': {
+      /* Ignore: Only map leaf level */
+    },
   }),
   'birth.father.districtPrimaryFather': (data: string) => ({
     'father.address': { administrativeArea: data },
@@ -285,7 +290,9 @@ export const ADDRESS_MAPPINGS: Record<string, AddressConfigFunction> = {
     'deceased.address': { country: data },
   }),
   'death.deceased.statePrimaryDeceased': (data: string) => ({
-    'deceased.address': { state: data },
+    'deceased.address': {
+      /* Ignore: Only map leaf level */
+    },
   }),
   'death.deceased.districtPrimaryDeceased': (data: string) => ({
     'deceased.address': { administrativeArea: data },
@@ -491,9 +498,6 @@ export const ADDRESS_MAPPINGS: Record<string, AddressConfigFunction> = {
   }),
 
   // Death - Informant Address (Urban/Rural Options)
-  'death.informant.ruralOrUrbanPrimaryInformant': (data: string) => ({
-    'informant.addressType': data,
-  }),
   'death.informant.addressLine1UrbanOptionPrimaryInformant': (
     data: string
   ) => ({
@@ -516,9 +520,6 @@ export const ADDRESS_MAPPINGS: Record<string, AddressConfigFunction> = {
   }),
 
   // Death - Spouse Address
-  'death.spouse.primaryAddressSameAsOtherPrimary': (data: string) => ({
-    'spouse.addressSameAs': data,
-  }),
   'death.spouse.countryPrimarySpouse': (data: string) => ({
     'spouse.address': { country: data },
   }),

@@ -1,7 +1,35 @@
-import { Address, AddressLine, EventRegistration } from '../helpers/types.ts'
+import { AddressLine, EventRegistration } from '../helpers/types.ts'
 
-const COUNTRY_CODE = 'FAR' //Replace with actual country code
+export const COUNTRY_CODE = 'FAR' //Replace with actual country code
 export const COUNTRY_PHONE_CODE = '+26' //Replace with actual country phone code
+
+// Required to handle 2:1 mapping of birth location fields in corrections
+export const BIRTH_LOCATION_PRIVATE_HOME_KEY = 'birth.address.privateHome'
+export const BIRTH_LOCATION_OTHER_HOME_KEY = 'birth.address.otherHome'
+
+// Set up street level details as they are in your country config
+// src/form/street-address-configuration.ts
+export interface Address {
+  addressType: 'INTERNATIONAL' | 'DOMESTIC'
+  country: string
+  administrativeArea?: string
+  streetLevelDetails: StreetLevelDetails
+}
+
+export interface StreetLevelDetails {
+  state?: string
+  district2?: string
+  cityOrTown?: string
+  addressLine1?: string
+  addressLine2?: string
+  addressLine3?: string
+  postcodeOrZip?: string
+  town?: string
+  number?: string
+  street?: string
+  residentialArea?: string
+  zipCode?: string
+}
 
 export function resolveAddress(
   data: EventRegistration,

@@ -47,6 +47,7 @@ export const DEFAULT_FIELD_MAPPINGS = {
   'birth.father.maritalStatus': 'father.maritalStatus',
   'birth.father.educationalAttainment': 'father.educationalAttainment',
   'birth.father.occupation': 'father.occupation',
+  'birth.father.primaryAddressSameAsOtherPrimary': 'father.addressSameAs',
 
   'birth.documents.uploadDocForChildDOB': 'documents.proofOfBirth',
   'birth.documents.uploadDocForMother': 'documents.proofOfMother',
@@ -87,6 +88,7 @@ export const DEFAULT_FIELD_MAPPINGS = {
   'death.informant.primaryAddressSameAsOtherPrimary': 'informant.addressSameAs',
   'death.informant.registrationPhone': 'informant.phoneNo',
   'death.informant.registrationEmail': 'informant.email',
+  'death.informant.ruralOrUrbanPrimaryInformant': 'informant.addressType',
 
   'death.spouse.detailsExist': 'spouse.detailsNotAvailable',
   'death.spouse.reasonNotApplying': 'spouse.reason',
@@ -97,6 +99,7 @@ export const DEFAULT_FIELD_MAPPINGS = {
   'death.spouse.spouseNationalId': 'spouse.nid',
   'death.spouse.spousePassport': 'spouse.passport',
   'death.spouse.spouseBirthRegistrationNumber': 'spouse.brn',
+  'death.spouse.primaryAddressSameAsOtherPrimary': 'spouse.addressSameAs',
 
   'death.documents.uploadDocForDeceased': 'documents.proofOfDeceased',
   'death.documents.uploadDocForInformant': 'documents.proofOfInformant',
