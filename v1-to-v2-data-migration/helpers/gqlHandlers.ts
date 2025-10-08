@@ -1120,11 +1120,15 @@ export const fetchDeathRegistration = async (
 }
 
 export const syncLocations = async (token: string) => {
-  const res = await fetch(`${API}/events/sync-locations`, {
+  const response = await fetch(`${API}/events/sync-locations`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
       Authorization: `Bearer ${token}`,
     },
   })
+  if (!response.ok) {
+    throw new Error(`Sync Locations failed: ${response.statusText}`)
+  }
+  return response.statusText
 }

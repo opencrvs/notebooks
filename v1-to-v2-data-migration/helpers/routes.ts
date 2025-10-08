@@ -15,5 +15,5 @@ export const REGISTER_APP = `http://${
 }`
 
 export const API = `http://${
-  DOMAIN.includes('localhost') ? `${DOMAIN}:3000` : `${DOMAIN}/api`
+  DOMAIN.includes('localhost') ? `${DOMAIN}:3000/api` : `${DOMAIN}/api`
 }`

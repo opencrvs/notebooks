@@ -3,14 +3,11 @@
 ## Steps to run
 
 - Start your environment locally for the country you want to migrate
+- Create your `.env` file from the `.env.example`
+- For production, a system admin will need to create an Import/Export client and save the client ID and secret and save them as github secrets
+- Set up your Address and StreetLevelDetails types in `./countryData/addressResolver.ts` to match your country config
 - Run `./get-field-diff.ipynb`
-- The output will tell you which fields you have not mapped or resolved:
-  - "Unmapped V1 fields":
-    - Add the field mapping to `./helpers/countryMappings`
-  - "V1 form fields mapped to a V2 field that does not exist":
-    - Override the field default mapping in `./helpers/countryMappings`
-  - "V1 form fields mapped but V2 field does not have a resolver":
-    - Add custom resolvers to `./helpers/countryResolvers`
+- The output will tell you which fields you have not mapped or resolved:  
 - Once you get "Ok to proceed with migration" 
   - Run `./migrate.ipynb`
 - If the migration is successful, it will print out a list of successful migrations

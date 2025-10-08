@@ -20,7 +20,11 @@ import {
   Action,
   ActionType,
 } from './types.ts'
-import { COUNTRY_CODE } from '../countryData/addressResolver.ts'
+import {
+  BIRTH_LOCATION_OTHER_HOME_KEY,
+  BIRTH_LOCATION_PRIVATE_HOME_KEY,
+  COUNTRY_CODE,
+} from '../countryData/addressResolver.ts'
 
 const mappings = { ...DEFAULT_FIELD_MAPPINGS, ...COUNTRY_FIELD_MAPPINGS }
 
@@ -44,11 +48,11 @@ function patternMatch(
       let addressKey = Object.keys(addressMapping)[0]
       let addressData = null
       let saveAddressKey = addressKey
-      // TODO - How do I make this conditional configurable for countries?
-      if (addressKey === 'child.birthLocation.privateHome') {
+
+      if (addressKey === BIRTH_LOCATION_PRIVATE_HOME_KEY) {
         saveAddressKey = declaration[addressKey]
           ? addressKey
-          : 'child.birthLocation.other'
+          : BIRTH_LOCATION_OTHER_HOME_KEY
       }
 
       const transformedWithSameKey = transformedData[saveAddressKey] || {}
