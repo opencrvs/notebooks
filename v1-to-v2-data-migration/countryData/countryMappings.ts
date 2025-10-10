@@ -37,5 +37,4 @@ export const COUNTRY_FIELD_MAPPINGS = {
 'birth.father.iD' : 'father.iD',
 'birth.father.father-view-group.birthPlace' : 'father.birthPlace',
 'birth.father.father-view-group.fokontanyCustomAddress' : 'father.address'
-/* 'birth.documents-view-group.uploadDocForRecognition' : '' */
 }
