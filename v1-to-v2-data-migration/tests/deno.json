@@ -1,0 +1,21 @@
+{
+  "compilerOptions": {
+    "lib": ["deno.window"],
+    "strict": true
+  },
+  "imports": {
+    "@faker-js/faker": "npm:@faker-js/faker@^8.3.1",
+    "@types/fhir": "npm:@types/fhir@^0.0.41",
+    "date-fns": "npm:date-fns@^2.29.3",
+    "date-fns/": "npm:/date-fns@^2.29.3/",
+    "uuid": "npm:uuid@^9.0.1",
+    "lodash": "npm:lodash@^4.17.21",
+    "node-fetch": "npm:node-fetch@^3.0.0",
+    "graphql-tag": "npm:graphql-tag@^2.12.0",
+    "graphql": "npm:graphql@^16.0.0"
+  },
+  "tasks": {
+    "migration": "deno test --allow-env --allow-run --allow-net --allow-write roundtrip.test.ts",
+    "transform": "deno test --allow-env --allow-run --allow-net --allow-write transform.test.ts"
+  }
+}

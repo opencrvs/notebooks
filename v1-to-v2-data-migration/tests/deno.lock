@@ -1,0 +1,164 @@
+{
+  "version": "5",
+  "specifiers": {
+    "jsr:@std/assert@^1.0.13": "1.0.13",
+    "jsr:@std/expect@*": "1.0.16",
+    "jsr:@std/internal@^1.0.6": "1.0.9",
+    "jsr:@std/internal@^1.0.7": "1.0.9",
+    "npm:@faker-js/faker@^8.3.1": "8.4.1",
+    "npm:@types/fhir@*": "0.0.41",
+    "npm:@types/fhir@^0.0.41": "0.0.41",
+    "npm:@types/node@*": "22.10.5",
+    "npm:date-fns@^2.29.3": "2.30.0",
+    "npm:graphql-tag@*": "2.12.6_graphql@16.11.0",
+    "npm:graphql-tag@^2.12.0": "2.12.6_graphql@16.11.0",
+    "npm:graphql@*": "16.11.0",
+    "npm:graphql@16": "16.11.0",
+    "npm:lodash@^4.17.21": "4.17.21",
+    "npm:node-fetch@3": "3.3.2",
+    "npm:uuid@*": "9.0.1",
+    "npm:uuid@^9.0.1": "9.0.1"
+  },
+  "jsr": {
+    "@std/assert@1.0.13": {
+      "integrity": "ae0d31e41919b12c656c742b22522c32fb26ed0cba32975cb0de2a273cb68b29",
+      "dependencies": [
+        "jsr:@std/internal@^1.0.6"
+      ]
+    },
+    "@std/expect@1.0.16": {
+      "integrity": "ceeef6dda21f256a5f0f083fcc0eaca175428b523359a9b1d9b3a1df11cc7391",
+      "dependencies": [
+        "jsr:@std/assert",
+        "jsr:@std/internal@^1.0.7"
+      ]
+    },
+    "@std/internal@1.0.9": {
+      "integrity": "bdfb97f83e4db7a13e8faab26fb1958d1b80cc64366501af78a0aee151696eb8"
+    }
+  },
+  "npm": {
+    "@babel/runtime@7.27.6": {
+      "integrity": "sha512-vbavdySgbTTrmFE+EsiqUTzlOr5bzlnJtUv9PynGCAKvfQqjIXbvFdumPM/GxMDfyuGMJaJAU6TO4zc1Jf1i8Q=="
+    },
+    "@faker-js/faker@8.4.1": {
+      "integrity": "sha512-XQ3cU+Q8Uqmrbf2e0cIC/QN43sTBSC8KF12u29Mb47tWrt2hAgBXSgpZMj4Ao8Uk0iJcU99QsOCaIL8934obCg=="
+    },
+    "@types/fhir@0.0.41": {
+      "integrity": "sha512-MAQAFufNZBZ6V0F94Nhknmmh/E3iMXFK4n/L8RkSNjKtOJnvaAJERivNOj35VVx9VCQBJbE0BHSzikfBahoRhA=="
+    },
+    "@types/node@22.10.5": {
+      "integrity": "sha512-F8Q+SeGimwOo86fiovQh8qiXfFEh2/ocYv7tU5pJ3EXMSSxk1Joj5wefpFK2fHTf/N6HKGSxIDBT9f3gCxXPkQ==",
+      "dependencies": [
+        "undici-types"
+      ]
+    },
+    "data-uri-to-buffer@4.0.1": {
+      "integrity": "sha512-0R9ikRb668HB7QDxT1vkpuUBtqc53YyAwMwGeUFKRojY/NWKvdZ+9UYtRfGmhqNbRkTSVpMbmyhXipFFv2cb/A=="
+    },
+    "date-fns@2.30.0": {
+      "integrity": "sha512-fnULvOpxnC5/Vg3NCiWelDsLiUc9bRwAPs/+LfTLNvetFCtCTN+yQz15C/fs4AwX1R9K5GLtLfn8QW+dWisaAw==",
+      "dependencies": [
+        "@babel/runtime"
+      ]
+    },
+    "fetch-blob@3.2.0": {
+      "integrity": "sha512-7yAQpD2UMJzLi1Dqv7qFYnPbaPx7ZfFK6PiIxQ4PfkGPyNyl2Ugx+a/umUonmKqjhM4DnfbMvdX6otXq83soQQ==",
+      "dependencies": [
+        "node-domexception",
+        "web-streams-polyfill"
+      ]
+    },
+    "formdata-polyfill@4.0.10": {
+      "integrity": "sha512-buewHzMvYL29jdeQTVILecSaZKnt/RJWjoZCF5OW60Z67/GmSLBkOFM7qh1PI3zFNtJbaZL5eQu1vLfazOwj4g==",
+      "dependencies": [
+        "fetch-blob"
+      ]
+    },
+    "graphql-tag@2.12.6_graphql@16.11.0": {
+      "integrity": "sha512-FdSNcu2QQcWnM2VNvSCCDCVS5PpPqpzgFT8+GXzqJuoDd0CBncxCY278u4mhRO7tMgo2JjgJA5aZ+nWSQ/Z+xg==",
+      "dependencies": [
+        "graphql",
+        "tslib"
+      ]
+    },
+    "graphql@16.11.0": {
+      "integrity": "sha512-mS1lbMsxgQj6hge1XZ6p7GPhbrtFwUFYi3wRzXAC/FmYnyXMTvvI3td3rjmQ2u8ewXueaSvRPWaEcgVVOT9Jnw=="
+    },
+    "lodash@4.17.21": {
+      "integrity": "sha512-v2kDEe57lecTulaDIuNTPy3Ry4gLGJ6Z1O3vE1krgXZNrsQ+LFTGHVxVjcXPs17LhbZVGedAJv8XZ1tvj5FvSg=="
+    },
+    "node-domexception@1.0.0": {
+      "integrity": "sha512-/jKZoMpw0F8GRwl4/eLROPA3cfcXtLApP0QzLmUT/HuPCZWyB7IY9ZrMeKw2O/nFIqPQB3PVM9aYm0F312AXDQ==",
+      "deprecated": true
+    },
+    "node-fetch@3.3.2": {
+      "integrity": "sha512-dRB78srN/l6gqWulah9SrxeYnxeddIG30+GOqK/9OlLVyLg3HPnr6SqOWTWOXKRwC2eGYCkZ59NNuSgvSrpgOA==",
+      "dependencies": [
+        "data-uri-to-buffer",
+        "fetch-blob",
+        "formdata-polyfill"
+      ]
+    },
+    "tslib@2.8.1": {
+      "integrity": "sha512-oJFu94HQb+KVduSUQL7wnpmqnfmLsOA/nAh6b6EH0wCEoK0/mPeXU6c3wKDV83MkOuHPRHtSXKKU99IBazS/2w=="
+    },
+    "undici-types@6.20.0": {
+      "integrity": "sha512-Ny6QZ2Nju20vw1SRHe3d9jVu6gJ+4e3+MMpqu7pqE5HT6WsTSlce++GQmK5UXS8mzV8DSYHrQH+Xrf2jVcuKNg=="
+    },
+    "uuid@9.0.1": {
+      "integrity": "sha512-b+1eJOlsR9K8HJpow9Ok3fiWOWSIcIzXodvv0rQjVoOVNpWMpxf1wZNpt4y9h10odCNrqnYp1OBzRktckBe3sA==",
+      "bin": true
+    },
+    "web-streams-polyfill@3.3.3": {
+      "integrity": "sha512-d2JWLCivmZYTSIoge9MsgFCZrt571BikcWGYkjC1khllbTeDlGqZ2D8vD8E/lJa8WGWbb7Plm8/XJYV7IJHZZw=="
+    }
+  },
+  "remote": {
+    "https://deno.land/std@0.210.0/assert/_constants.ts": "8a9da298c26750b28b326b297316cdde860bc237533b07e1337c021379e6b2a9",
+    "https://deno.land/std@0.210.0/assert/_diff.ts": "2c9371f17cf08cbb843c924bc31ca77af422ec4fe162f73d42c651d547573fa8",
+    "https://deno.land/std@0.210.0/assert/_format.ts": "335ce8e15c65b679ad142dbc9e5e97e5d58602c39dd3c9175cef6c85fe22d6d5",
+    "https://deno.land/std@0.210.0/assert/assert.ts": "e265ad50a9341f3b40e51dd4cb41ab253d976943ba78a977106950e52e0302ab",
+    "https://deno.land/std@0.210.0/assert/assert_almost_equals.ts": "a70d637856e1c6128dc733346d32aa73c67058489495116ca85091c39a60c767",
+    "https://deno.land/std@0.210.0/assert/assert_array_includes.ts": "59d005d8897c1fbcbd5792170833f13a867f6a5ecd5a6b34a3d86b4b430de63c",
+    "https://deno.land/std@0.210.0/assert/assert_equals.ts": "991b0c2b437a015d623654f758e48bfd931068211a52e8131b397cdf005c595f",
+    "https://deno.land/std@0.210.0/assert/assert_exists.ts": "f24ecb0d3febad358a6cee235f012551077e07692517ebfe0630a561ba40a703",
+    "https://deno.land/std@0.210.0/assert/assert_false.ts": "99cf237fe374cabf57072d2fb41b3eaff389029f850fbb96f643c875792f10ce",
+    "https://deno.land/std@0.210.0/assert/assert_greater.ts": "e0bba9ac76a780573a864ab6eeb8b9fd71435b750bdd36d56a270e22ab9a79d9",
+    "https://deno.land/std@0.210.0/assert/assert_greater_or_equal.ts": "aea1c7dc868926ba55f1e59f8c3560bb44706b5e3b6b009453ee4064eecf6746",
+    "https://deno.land/std@0.210.0/assert/assert_instance_of.ts": "7c093d36b1a86666d5a60a8c290c91a51a627153b821a5a4dc40b24cab69f1e7",
+    "https://deno.land/std@0.210.0/assert/assert_is_error.ts": "a8a758581661edec514c453910bee2f9c91b1346a515c58404963b130d81cd80",
+    "https://deno.land/std@0.210.0/assert/assert_less.ts": "855aa58e49afa6a9e825f1abcd5947dc789c5878fc1b6f48b8a08115d48da32b",
+    "https://deno.land/std@0.210.0/assert/assert_less_or_equal.ts": "2ae5246bd0e83da26e5c8e2815d1493252f71f7dc02afb83dc2fc0e0fb0bd894",
+    "https://deno.land/std@0.210.0/assert/assert_match.ts": "e541a9769cf5726312ff9e15031e2faa2df3c59fbdc5573c8758b1f4668ccc62",
+    "https://deno.land/std@0.210.0/assert/assert_not_equals.ts": "6bce4b28f3316029c0aef107f8390796798835c382d31c1004160baef0b80db0",
+    "https://deno.land/std@0.210.0/assert/assert_not_instance_of.ts": "866243fd28bc6665e2ffcc027a9df1d2a69cb644aef1e9b8d1ce34377c6b8a84",
+    "https://deno.land/std@0.210.0/assert/assert_not_match.ts": "59707eceb0d2b16d6892fbf92ec86f92fd76fcfc55f8b61508299db7d2972cab",
+    "https://deno.land/std@0.210.0/assert/assert_not_strict_equals.ts": "c84b8e229450e8dfc44b9910d602788313ff7333d67d5bd8528371567b6a3632",
+    "https://deno.land/std@0.210.0/assert/assert_object_match.ts": "ebeff248d48e5810f787e8742ae4f6b39904f4640edc2f69796596ceb6dbcdf8",
+    "https://deno.land/std@0.210.0/assert/assert_rejects.ts": "f7e83272d816e1b39710012a0597ed950db2de6b193adcc5e50ddbcd9e177767",
+    "https://deno.land/std@0.210.0/assert/assert_strict_equals.ts": "4007dabef1c2e9d6f1bb0e948ba7ba99ec9b1bee97ba34d67f7c10e7e5d794f7",
+    "https://deno.land/std@0.210.0/assert/assert_string_includes.ts": "108a30d9348e5ff7a8b0b7cc836cf0a8cff27d5b33e861b8c56b52cc60b8219a",
+    "https://deno.land/std@0.210.0/assert/assert_throws.ts": "a8767e6a06e94bac42ca9eebdad5d4e2decbc0c48bc892da7e06aa1fe0b388ba",
+    "https://deno.land/std@0.210.0/assert/assertion_error.ts": "26ed1863d905005f00785c89750c001c3522c5417e4f58f95044b8143cfc1593",
+    "https://deno.land/std@0.210.0/assert/equal.ts": "6f81c8a3b12c08bdc3510c8a1293b4db1c083692219d7e3828d2234b448d3d3d",
+    "https://deno.land/std@0.210.0/assert/fail.ts": "f56fc64f9a141f98c1be5ff1005ddf158db888b7b206510e955bb3fedc69021c",
+    "https://deno.land/std@0.210.0/assert/mod.ts": "37c49a26aae2b254bbe25723434dc28cd7532e444cf0b481a97c045d110ec085",
+    "https://deno.land/std@0.210.0/assert/unimplemented.ts": "4e3e504792c87c485dbc5f4020489d8806ef697741403af2008dfa7b5a4711e8",
+    "https://deno.land/std@0.210.0/assert/unreachable.ts": "1af8c99421cc5fb7332454b2b9eca074a4e394895a180bc837750dedcca75338",
+    "https://deno.land/std@0.210.0/fmt/colors.ts": "2685c524bef9b16b3059a417daf6860c754eb755e19e812762ef5dff62f24481",
+    "https://deno.land/std@0.210.0/testing/asserts.ts": "605bbd2ef0695e2a4324d810c4ad22e56041d51afb9584fc0b4e81084b14b1d6"
+  },
+  "workspace": {
+    "dependencies": [
+      "npm:@faker-js/faker@^8.3.1",
+      "npm:@types/fhir@^0.0.41",
+      "npm:date-fns@^2.29.3",
+      "npm:graphql-tag@^2.12.0",
+      "npm:graphql@16",
+      "npm:lodash@^4.17.21",
+      "npm:node-fetch@3",
+      "npm:uuid@^9.0.1"
+    ]
+  }
+}

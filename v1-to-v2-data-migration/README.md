@@ -1,5 +1,18 @@
 # OpenCRVS Events v1.0 to v2.0 data migration
 
+## Steps to run
+
+- Start your environment locally for the country you want to migrate
+- Create your `.env` file from the `.env.example`
+- For production, a system admin will need to create an Import/Export client and save the client ID and secret and save them as github secrets
+- Set up your Address and StreetLevelDetails types in `./countryData/addressResolver.ts` to match your country config
+- Run `./get-field-diff.ipynb`
+- The output will tell you which fields you have not mapped or resolved:  
+- Once you get "Ok to proceed with migration" 
+  - Run `./migrate.ipynb`
+- If the migration is successful, it will print out a list of successful migrations
+
+
 ## Findings
 
 - "Duplicates" array Task fetching might have to be added to MongoDB query

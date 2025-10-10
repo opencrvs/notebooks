@@ -1,0 +1,12 @@
+# dependencies
+node_modules
+
+# test results
+test-results/
+
+.vscode
+**/tmp/*
+*/countryData/v1Forms.json
+*/countryData/v2EventFields.json
+*/countryData/v1FormFields.json
+.env
