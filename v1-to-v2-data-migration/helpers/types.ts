@@ -70,6 +70,7 @@ export interface StreetLevelDetails {
   street?: string
   residentialArea?: string
   zipCode?: string
+  fokontany?: string
 }
 
 export interface Address {

@@ -49,6 +49,7 @@ export const DEFAULT_FIELD_MAPPINGS = {
   'birth.father.occupation': 'father.occupation',
 
   'birth.documents.uploadDocForChildDOB': 'documents.proofOfBirth',
+  'birth.documents.uploadDocForRecognition': 'documents.proofOfRecognition',
   'birth.documents.uploadDocForMother': 'documents.proofOfMother',
   'birth.documents.uploadDocForFather': 'documents.proofOfFather',
   'birth.documents.uploadDocForInformant': 'documents.proofOfInformant',
