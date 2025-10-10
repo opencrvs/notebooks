@@ -27,7 +27,14 @@ export const getDocuments = (
 }
 
 export function getCustomField(data: any, id: string): any {
-  return data?.questionnaire?.find(
+  const field = data?.questionnaire?.find(
     ({ fieldId }: { fieldId: string }) => fieldId === id
-  )?.value
+  )
+
+  if (!field) return undefined
+
+  if (field.value === "true") return true
+  if (field.value === "false") return false
+
+  return field.value
 }

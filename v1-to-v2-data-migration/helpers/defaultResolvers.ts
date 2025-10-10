@@ -10,7 +10,7 @@ const informantResolver: ResolverMap = {
   'informant.dob': (data: EventRegistration) => data.informant?.birthDate, // type: 'DATE',
   /* @todo Addresses need to be properly handled */
   'informant.address': (data: EventRegistration) =>
-    resolveAddress(data, data.informant?.address?.[0]), // type: FieldType.ADDRESS,
+    resolveAddress(data, data.informant?.address?.[0], 'informant'), // type: FieldType.ADDRESS,
   // @question, is informant.telecom correct or this?
   'informant.phoneNo': (data: EventRegistration) =>
     data.registration.contactPhoneNumber?.replace(COUNTRY_PHONE_CODE, '0'), // @todo https://github.com/opencrvs/opencrvs-core/issues/9601
@@ -44,6 +44,8 @@ const documentsResolver: ResolverMap = {
     getDocuments(data, 'MOTHER'),
   'documents.proofOfFather': (data: EventRegistration) =>
     getDocuments(data, 'FATHER'),
+  'documents.proofOfRecognition': (data: EventRegistration) =>
+    getDocuments(data, 'OTHER'),
   'documents.proofOfInformant': (data: EventRegistration) =>
     getDocuments(data, 'INFORMANT_ID_PROOF'),
   'documents.proofOther': (data: EventRegistration) =>
@@ -168,13 +170,13 @@ export const birthResolver: ResolverMap = {
     data.eventLocation?.type === 'HEALTH_FACILITY'
       ? data.eventLocation.id
       : null,
-  'child.address.privateHome': (data: EventRegistration) =>
+  'child.birthLocation.privateHome': (data: EventRegistration) =>
     data.eventLocation?.type === 'PRIVATE_HOME'
-      ? resolveAddress(data, data.eventLocation?.address)
+      ? resolveAddress(data, data.eventLocation?.address, 'child')
       : null,
-  'child.address.other': (data: EventRegistration) =>
+  'child.birthLocation.other': (data: EventRegistration) =>
     data.eventLocation?.type === 'OTHER'
-      ? resolveAddress(data, data.eventLocation?.address)
+      ? resolveAddress(data, data.eventLocation?.address, 'child')
       : null,
   /*
    * MISSING FIELDS that are in GraphQL but not in the form
@@ -209,7 +211,7 @@ export const birthResolver: ResolverMap = {
   'mother.previousBirths': (data: EventRegistration) =>
     data.mother?.multipleBirth,
   'mother.address': (data: EventRegistration) =>
-    resolveAddress(data, data.mother?.address?.[0]),
+    resolveAddress(data, data.mother?.address?.[0], 'mother'),
   'father.detailsNotAvailable': (data: EventRegistration) =>
     !data.father?.detailsExist,
   // @question, is this the right field?
@@ -229,7 +231,7 @@ export const birthResolver: ResolverMap = {
     data.father?.educationalAttainment,
   'father.occupation': (data: EventRegistration) => data.father?.occupation,
   'father.address': (data: EventRegistration) =>
-    resolveAddress(data, data.father?.address?.[0]),
+    resolveAddress(data, data.father?.address?.[0], 'father'),
   // @todo this is a nasty one as it never was a field in the database
   // but instead a computed field that just copied mothers address data for father as
   'father.addressSameAs': (data: EventRegistration) =>
