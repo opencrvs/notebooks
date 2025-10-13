@@ -187,8 +187,8 @@ function legacyHistoryItemToV2ActionType(
         }
       case 'IN_PROGRESS':
         return {
-          type: 'READ' as ActionType,
-          declaration: {},
+          type: 'NOTIFY' as ActionType,
+          declaration: declaration,
         }
       case 'DECLARATION_UPDATED': //TODO - check if this is correct
         return {
@@ -248,8 +248,10 @@ function legacyHistoryItemToV2ActionType(
         declaration: {},
         content: {
           duplicates:
-            record.registration.duplicates?.map((x: any) => x.compositionId) ||
-            [],
+            record.registration.duplicates?.map((x: any) => ({
+              id: x.compositionId,
+              trackingId: x.trackingId,
+            })) || [],
         },
       }
 
@@ -259,7 +261,7 @@ function legacyHistoryItemToV2ActionType(
 
   const actionMap: Record<string, ActionType> = {
     MARKED_AS_DUPLICATE: 'MARK_AS_DUPLICATE',
-    MARKED_AS_NOT_DUPLICATE: 'MARK_NOT_DUPLICATE',
+    MARKED_AS_NOT_DUPLICATE: 'MARK_AS_NOT_DUPLICATE',
     DOWNLOADED: 'READ',
     UNASSIGNED: 'UNASSIGN',
     VIEWED: 'READ',
@@ -325,7 +327,9 @@ export function transform(
     } else if (historyItem.action === 'REQUESTED_CORRECTION') {
       historyItem.id = uuidv4()
       const req = corrections.pop()
-      req.requestId = historyItem?.id //TODO needs better error handling
+      if (req) {
+        req.requestId = historyItem?.id
+      }
     } else if (historyItem.action === 'REJECTED_CORRECTION') {
       corrections.push(historyItem)
     } else if (historyItem.action === 'APPROVED_CORRECTION') {

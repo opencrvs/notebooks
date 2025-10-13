@@ -213,13 +213,18 @@ export type ActionType =
   | 'UNASSIGN'
   | 'DUPLICATE_DETECTED'
   | 'MARK_AS_DUPLICATE'
-  | 'MARK_NOT_DUPLICATE'
+  | 'MARK_AS_NOT_DUPLICATE'
   | 'READ'
 
 export interface ActionContent {
   templateId?: string
   reason?: string
-  duplicates?: string[]
+  duplicates?: Duplicate[]
+}
+
+export interface Duplicate {
+  id: string
+  trackingId?: string
 }
 
 export interface ActionAnnotation {
