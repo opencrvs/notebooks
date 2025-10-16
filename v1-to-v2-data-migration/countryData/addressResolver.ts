@@ -47,13 +47,13 @@ export function resolveAddress(
       addressType: 'INTERNATIONAL',
       country: address.country,
       streetLevelDetails: {
-        state: address.state,
-        district2: address.district,
-        cityOrTown: address.city,
-        addressLine1: address.line.filter(Boolean)[0],
-        addressLine2: address.line.filter(Boolean)[1],
-        addressLine3: address.line.filter(Boolean).slice(2).join(', '),
-        postcodeOrZip: address.postalCode
+        state: address.state || '',
+        district2: address.district || '',
+        cityOrTown: address.city || '',
+        addressLine1: address.line.filter(Boolean)[0] || '',
+        addressLine2: address.line.filter(Boolean)[1] || '',
+        addressLine3: address.line.filter(Boolean).slice(2).join(', ') || '',
+        postcodeOrZip: address.postalCode || '',
         /* For potential custom field
         kebele: getCustomField(data, 'birth.child.address.kebele'),
          */
