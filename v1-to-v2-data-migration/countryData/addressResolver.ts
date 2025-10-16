@@ -36,11 +36,7 @@ export interface StreetLevelDetails {
 export function resolveAddress(
   data: EventRegistration,
   address: AddressLine | undefined,
-  subject?:
-    | 'child'
-    | 'mother'
-    | 'father'
-    | 'informant'
+  subject?: 'child' | 'mother' | 'father' | 'informant'
 ): Address | null {
   if (!address) {
     return null
@@ -70,7 +66,10 @@ export function resolveAddress(
     country: address.country,
     administrativeArea: address.district,
     streetLevelDetails: {
-      fokontany: getCustomField(data, `birth.${subject}.${subject}-view-group.fokontanyCustomAddress`)
+      fokontany: getCustomField(
+        data,
+        `birth.${subject}.${subject}-view-group.fokontanyCustomAddress`
+      ),
       /* town: address.city,
       number: address.line.filter(Boolean)[0],
       street: address.line.filter(Boolean)[1],

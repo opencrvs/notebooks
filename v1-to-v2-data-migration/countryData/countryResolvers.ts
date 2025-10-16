@@ -11,7 +11,10 @@ export const countryResolver = {
       'birth.child.child-view-group.legacyBirthRegistrationNumber'
     ),
   'child.legacyBirthRegistrationDate': (data: EventRegistration) =>
-    getCustomField(data, 'birth.child-view-group.legacyBirthRegistrationDate'),
+    getCustomField(
+      data,
+      'birth.child.child-view-group.legacyBirthRegistrationDate'
+    ),
   'child.legacyBirthRegistrationTime': (data: EventRegistration) =>
     getCustomField(
       data,
@@ -20,10 +23,10 @@ export const countryResolver = {
   'informant.customizedExactDateOfBirthUnknown': (data: EventRegistration) =>
     getCustomField(
       data,
-      'birth.informant-view-group.customizedExactDateOfBirthUnknown'
+      'birth.informant.informant-view-group.customizedExactDateOfBirthUnknown'
     ),
   'informant.yearOfBirth': (data: EventRegistration) =>
-    getCustomField(data, 'birth.informant-view-group.yearOfBirth'),
+    getCustomField(data, 'birth.informant.informant-view-group.yearOfBirth'),
   'informant.iD': (data: EventRegistration) =>
     Number(data.informant?.identifier?.[0]?.id),
   'informant.birthPlace': (data: EventRegistration) =>
@@ -31,15 +34,15 @@ export const countryResolver = {
   'informant.occupation': (data: EventRegistration) =>
     data.informant?.occupation,
   'mother.motherIsDeceased': (data: EventRegistration) =>
-    getCustomField(data, 'birth.mother-view-group.motherIsDeceased'),
+    getCustomField(data, 'birth.mother.mother-view-group.motherIsDeceased'),
   /* 'mother.address.streetLevelDetails.fokontanyCustomAddress': (data) => getCustomField(data,'birth.mother.mother-view-group.fokontanyCustomAddress'), */
   'mother.customizedExactDateOfBirthUnknown': (data: EventRegistration) =>
     getCustomField(
       data,
-      'birth.mother-view-group.customizedExactDateOfBirthUnknown'
+      'birth.mother.mother-view-group.customizedExactDateOfBirthUnknown'
     ),
   'mother.yearOfBirth': (data: EventRegistration) =>
-    getCustomField(data, 'birth.mother-view-group.yearOfBirth'),
+    getCustomField(data, 'birth.mother.mother-view-group.yearOfBirth'),
   'mother.iD': (data: EventRegistration) => data.mother?.identifier?.[0]?.id,
   'mother.birthPlace': (data: EventRegistration) =>
     getCustomField(data, 'birth.mother.mother-view-group.birthPlace'),
@@ -53,10 +56,10 @@ export const countryResolver = {
   'father.customizedExactDateOfBirthUnknown': (data: EventRegistration) =>
     getCustomField(
       data,
-      'birth.father-view-group.customizedExactDateOfBirthUnknown'
+      'birth.father.father-view-group.customizedExactDateOfBirthUnknown'
     ),
   'father.yearOfBirth': (data: EventRegistration) =>
-    getCustomField(data, 'birth.father-view-group.yearOfBirth'),
+    getCustomField(data, 'birth.father.father-view-group.yearOfBirth'),
   'father.iD': (data: EventRegistration) => data.father?.identifier?.[0]?.id,
   'father.birthPlace': (data: EventRegistration) =>
     getCustomField(data, 'birth.father.father-view-group.birthPlace'),
