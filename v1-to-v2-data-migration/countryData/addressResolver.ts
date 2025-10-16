@@ -38,7 +38,7 @@ export function resolveAddress(
       addressType: 'INTERNATIONAL',
       country: address.country,
       streetLevelDetails: {
-        internationalCity: address.city,
+        internationalCity: address.city || '',
       },
     }
   }
@@ -48,11 +48,11 @@ export function resolveAddress(
     country: address.country,
     administrativeArea: address.district,
     streetLevelDetails: {
-      city: address.city,
-      number: address.line.filter(Boolean)[0],
-      street: address.line.filter(Boolean)[1],
-      residentialArea: address.line.filter(Boolean)[2],
-      zipCode: address.postalCode,
+      city: address.city || '',
+      number: address.line.filter(Boolean)[0] || '',
+      street: address.line.filter(Boolean)[1] || '',
+      residentialArea: address.line.filter(Boolean)[2] || '',
+      zipCode: address.postalCode || '',
     },
   }
 }
