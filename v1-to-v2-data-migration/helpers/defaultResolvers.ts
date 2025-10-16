@@ -24,9 +24,8 @@ const informantResolver: ResolverMap = {
     resolveName(data, data.informant?.name?.[0]), // FieldType.TEXT
   'informant.dobUnknown': (data: EventRegistration) =>
     data.informant?.exactDateOfBirthUnknown, // FieldType.CHECKBOX
-  // @question, is this informant.age or informant.ageOfIndividualInYears?
   'informant.age': (data: EventRegistration) =>
-    data.informant?.ageOfIndividualInYears?.toString() /* @todo not a fan of this */,
+    data.informant?.ageOfIndividualInYears,
   'informant.nationality': (data: EventRegistration) =>
     data.informant?.nationality?.[0], // FieldType.COUNTRY
   'informant.brn': (data: EventRegistration) =>
