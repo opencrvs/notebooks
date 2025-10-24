@@ -170,7 +170,7 @@ function legacyHistoryItemToV2ActionType(
         }
       case 'REJECTED':
         return {
-          status: 'Rejected',
+          status: 'Accepted',
           type: 'REJECT' as ActionType,
           declaration: {},
           content: {
