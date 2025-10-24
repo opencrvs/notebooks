@@ -26,7 +26,11 @@ import {
   COUNTRY_CODE,
 } from '../countryData/addressResolver.ts'
 
-const mappings = { ...DEFAULT_FIELD_MAPPINGS, ...COUNTRY_FIELD_MAPPINGS }
+const mappings = {
+  ...DEFAULT_FIELD_MAPPINGS,
+  ...CUSTOM_FIELD_MAPPINGS,
+  ...COUNTRY_FIELD_MAPPINGS,
+}
 
 function patternMatch(
   correction: Record<string, any>,
@@ -83,12 +87,11 @@ function patternMatch(
       const parts = key.split('.')
       const prefix = parts.slice(0, 2).join('.')
       const suffix = parts.slice(2).join('.')
-      const mapKey = Object.keys(CUSTOM_FIELD_MAPPINGS).find(
+      const mapKey = Object.keys(mappings).find(
         (m) => m.startsWith(prefix) && m.endsWith(suffix)
       )
       if (mapKey) {
-        const valueKey =
-          CUSTOM_FIELD_MAPPINGS[mapKey as keyof typeof CUSTOM_FIELD_MAPPINGS]
+        const valueKey = mappings[mapKey as keyof typeof mappings]
         transformedData[valueKey] = value
       }
     }
@@ -179,7 +182,7 @@ function legacyHistoryItemToV2ActionType(
         }
       case 'REJECTED':
         return {
-          status: 'Rejected',
+          status: 'Accepted',
           type: 'REJECT' as ActionType,
           declaration: {},
           content: {
@@ -247,7 +250,7 @@ function legacyHistoryItemToV2ActionType(
       }
     case 'REJECTED_CORRECTION':
       return {
-        status: 'Rejected',
+        status: 'Accepted',
         type: 'REJECT_CORRECTION' as ActionType,
         requestId: historyItem.requestId,
         declaration: {},
