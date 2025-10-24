@@ -330,10 +330,13 @@ export function transform(
       if (req) {
         req.requestId = historyItem?.id
       }
+      processedHistory.push(historyItem)
     } else if (historyItem.action === 'REJECTED_CORRECTION') {
       corrections.push(historyItem)
+      processedHistory.push(historyItem)
     } else if (historyItem.action === 'APPROVED_CORRECTION') {
       corrections.push(historyItem)
+      processedHistory.push(historyItem)
     } else if (!historyItem.action && historyItem.regStatus === 'CERTIFIED') {
       const matchingIssue = issued.pop()
 
