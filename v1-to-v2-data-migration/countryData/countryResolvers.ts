@@ -1,4 +1,4 @@
-import { getCustomField } from '../helpers/resolverUtils.ts'
+import { getCustomField, getDocuments } from '../helpers/resolverUtils.ts'
 import { EventRegistration } from '../helpers/types.ts'
 
 export const countryResolver = {
@@ -63,6 +63,10 @@ export const countryResolver = {
   'father.iD': (data: EventRegistration) => data.father?.identifier?.[0]?.id,
   'father.birthPlace': (data: EventRegistration) =>
     getCustomField(data, 'birth.father.father-view-group.birthPlace'),
+  'documents.upload': (data: EventRegistration) =>
+    !!data?.registration?.attachments,
+  'documents.proofOther': (data: EventRegistration) =>
+    getDocuments(data, 'LEGAL_GUARDIAN_PROOF'),
 }
 
 /* 
