@@ -28,7 +28,7 @@ export const countryResolver = {
   'informant.yearOfBirth': (data: EventRegistration) =>
     getCustomField(data, 'birth.informant.informant-view-group.yearOfBirth'),
   'informant.iD': (data: EventRegistration) =>
-    Number(data.informant?.identifier?.[0]?.id),
+    data.informant?.identifier?.[0]?.id?.toString(),
   'informant.birthPlace': (data: EventRegistration) =>
     getCustomField(data, 'birth.informant.informant-view-group.birthPlace'),
   'informant.occupation': (data: EventRegistration) =>
