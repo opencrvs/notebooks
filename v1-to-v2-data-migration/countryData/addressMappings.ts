@@ -9,7 +9,7 @@ export const ADDRESS_MAPPINGS: Record<string, AddressConfigFunction> = {
   }),
   'birth.child.statePlaceofbirth': (data: string) => ({
     'child.birthLocation.privateHome': {
-      /* ignore */
+      /* Ignore: Only map leaf level */
     },
   }),
   'birth.child.districtPlaceofbirth': (data: string) => ({
