@@ -102,13 +102,22 @@ export function transformCorrection(
   event: 'birth' | 'death',
   declaration: Record<string, any>
 ): Record<string, any> {
-  const v1Declaration =
+  const v1InputDeclaration =
+    historyItem.input?.reduce((acc: Record<string, any>, curr: any) => {
+      acc[`${event}.${curr.valueCode}.${curr.valueId}`] = curr.value
+      return acc
+    }, {}) || {}
+
+  const v1OutputDeclaration =
     historyItem.output?.reduce((acc: Record<string, any>, curr: any) => {
       acc[`${event}.${curr.valueCode}.${curr.valueId}`] = curr.value
       return acc
     }, {}) || {}
 
-  return patternMatch(v1Declaration, declaration)
+  return {
+    input: patternMatch(v1InputDeclaration, declaration),
+    output: patternMatch(v1OutputDeclaration, declaration),
+  }
 }
 
 function legacyHistoryItemToV2ActionType(
@@ -202,20 +211,24 @@ function legacyHistoryItemToV2ActionType(
 
   switch (historyItem.action) {
     case 'REQUESTED_CORRECTION':
+      const correction = transformCorrection(
+        historyItem,
+        record.child ? 'birth' : 'death',
+        declaration
+      )
+
+      const annotation = Object.fromEntries(
+        Object.entries(correctionResolver).map(([key, resolver]) => [
+          key,
+          resolver(historyItem),
+        ])
+      )
+
       return {
         status: 'Accepted',
         type: 'REQUEST_CORRECTION' as ActionType,
-        declaration: transformCorrection(
-          historyItem,
-          record.child ? 'birth' : 'death',
-          declaration
-        ),
-        annotation: Object.fromEntries(
-          Object.entries(correctionResolver).map(([key, resolver]) => [
-            key,
-            resolver(historyItem),
-          ])
-        ),
+        declaration: correction.output,
+        annotation: { ...declaration, ...annotation, ...correction.input },
         requestId: historyItem.id,
       }
     case 'APPROVED_CORRECTION':
@@ -284,19 +297,7 @@ function nonNullObjectKeys(obj: Record<string, any>) {
   )
 }
 
-export function transform(
-  eventRegistration: EventRegistration,
-  resolver: ResolverMap
-): TransformedDocument {
-  const result = Object.entries(resolver).map(([fieldId, r]) => {
-    return [fieldId, r(eventRegistration)]
-  })
-
-  const withOutNulls = result.filter(
-    ([_, value]) => value !== null && value !== undefined
-  )
-  const declaration = Object.fromEntries(withOutNulls)
-
+const preProcessHistory = (eventRegistration: EventRegistration) => {
   // Handle CORRECTED items by duplicating them
   const processedHistory: any[] = []
   const issued: any[] = []
@@ -364,6 +365,23 @@ export function transform(
       processedHistory.push(historyItem)
     }
   }
+  return processedHistory
+}
+
+export function transform(
+  eventRegistration: EventRegistration,
+  resolver: ResolverMap
+): TransformedDocument {
+  const result = Object.entries(resolver).map(([fieldId, r]) => {
+    return [fieldId, r(eventRegistration)]
+  })
+
+  const withOutNulls = result.filter(
+    ([_, value]) => value !== null && value !== undefined
+  )
+  const declaration = Object.fromEntries(withOutNulls)
+
+  const processedHistory = preProcessHistory(eventRegistration)
 
   const historyAsc = processedHistory
     .sort((a, b) => new Date(a.date).valueOf() - new Date(b.date).valueOf())
@@ -414,6 +432,39 @@ export function transform(
         } as Action
       }),
     ],
+  }
+
+  return postProcess(documents)
+}
+
+function postProcess(documents: TransformedDocument): TransformedDocument {
+  const correctionResolverKeys = Object.keys(correctionResolver)
+
+  for (let i = 0; i < documents.actions.length; i++) {
+    const action = documents.actions[i]
+
+    if (action.type === 'REQUEST_CORRECTION' && action.annotation) {
+      // Filter out correctionResolver fields from the annotation
+      const filteredAnnotation = Object.fromEntries(
+        Object.entries(action.annotation).filter(
+          ([key]) => !correctionResolverKeys.includes(key)
+        )
+      )
+
+      // Find the first action before this one with a non-empty declaration
+      for (let j = i - 1; j >= 0; j--) {
+        const previousAction = documents.actions[j]
+
+        if (
+          previousAction.declaration &&
+          typeof previousAction.declaration === 'object' &&
+          Object.keys(previousAction.declaration).length > 0
+        ) {
+          previousAction.declaration = filteredAnnotation
+          break
+        }
+      }
+    }
   }
 
   return documents

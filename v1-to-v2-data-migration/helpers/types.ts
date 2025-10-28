@@ -145,6 +145,11 @@ export interface HistoryItem {
   user?: User
   office?: Office
   system?: SystemInfo
+  input?: Array<{
+    valueCode: string
+    valueId: string
+    value: any
+  }>
   output?: Array<{
     valueCode: string
     valueId: string
