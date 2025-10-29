@@ -70,4 +70,6 @@ export const countryResolver = {
     data.informant?.relationship,
   'eventDetails.date': (data: EventRegistration) =>
     data.deceased?.deceased?.deathDate,
+  'deceased.brn': (data: EventRegistration) =>
+    getCustomField(data, 'death.deceased.deceased-view-group.birthRegNo'),
 }
