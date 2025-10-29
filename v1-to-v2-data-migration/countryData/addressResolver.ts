@@ -19,6 +19,7 @@ export interface Address {
 
 export interface StreetLevelDetails {
   fokontany?: string
+  otherPlaceOfBirth?: string
   state?: string
   district2?: string
   cityOrTown?: string
@@ -66,10 +67,8 @@ export function resolveAddress(
     country: address.country,
     administrativeArea: address.district,
     streetLevelDetails: {
-      fokontany: getCustomField(
-        data,
-        `birth.${subject}.${subject}-view-group.fokontanyCustomAddress`
-      ),
+      fokontany: getCustomField(data, `birth.${subject}.${subject}-view-group.fokontanyCustomAddress`),
+      otherPlaceOfBirth: getCustomField(data, `birth.${subject}.${subject}-view-group.otherPlaceOfBirthAddress`)
       /* town: address.city,
       number: address.line.filter(Boolean)[0],
       street: address.line.filter(Boolean)[1],
