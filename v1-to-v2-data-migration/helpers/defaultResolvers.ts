@@ -61,7 +61,7 @@ const documentsResolver: ResolverMap = {
   'documents.proofOfDeceased': (data: EventRegistration) =>
     getDocuments(data, 'DECEASED_ID_PROOF'),
   'documents.proofOfDeath': (data: EventRegistration) =>
-    getDocuments(data, 'INFORMANT_ID_PROOF'), // TODO not this
+    getDocuments(data, 'DECEASED_DEATH_PROOF'),
   'documents.proofOfCauseOfDeath': (data: EventRegistration) =>
     getDocuments(data, 'DECEASED_DEATH_PROOF'),
 }
