@@ -6,6 +6,17 @@ import {
 import { EventRegistration, ResolverMap } from './types.ts'
 import { resolveName } from '../countryData/nameResolver.ts'
 
+function mapMannerOfDeath(mannerOfDeath: string | undefined): any {
+  const mannerMap = {
+    NATURAL_CAUSES: 'MANNER_NATURAL',
+    ACCIDENT: 'MANNER_ACCIDENT',
+    HOMICIDE: 'MANNER_HOMICIDE',
+    SUICIDE: 'MANNER_SUICIDE',
+    MANNER_UNDETERMINED: 'MANNER_UNDETERMINED',
+  }
+  return mannerMap[mannerOfDeath as keyof typeof mannerMap]
+}
+
 const informantResolver: ResolverMap = {
   'informant.dob': (data: EventRegistration) => data.informant?.birthDate, // type: 'DATE',
   /* @todo Addresses need to be properly handled */
@@ -98,7 +109,8 @@ export const deathResolver: ResolverMap = {
     Boolean(data.causeOfDeathEstablished),
   'eventDetails.sourceCauseDeath': (data: EventRegistration) =>
     data.causeOfDeathMethod,
-  'eventDetails.mannerOfDeath': (data: EventRegistration) => data.mannerOfDeath,
+  'eventDetails.mannerOfDeath': (data: EventRegistration) =>
+    mapMannerOfDeath(data.mannerOfDeath),
   'eventDetails.placeOfDeath': (data: EventRegistration) =>
     data.eventLocation?.type,
   'eventDetails.deathLocation': (data: EventRegistration) =>
