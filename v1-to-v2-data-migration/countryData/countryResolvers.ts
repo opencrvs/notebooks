@@ -1,8 +1,8 @@
 import { getCustomField, getIdentifier } from '../helpers/resolverUtils.ts'
 import { EventRegistration } from '../helpers/types.ts'
-import { COUNTRY_CODE, resolveAddress } from './addressResolver.ts'
+import { Address, COUNTRY_CODE, resolveAddress } from './addressResolver.ts'
 
-const convertChildAddress = (data: EventRegistration) => {
+const convertChildAddress = (data: EventRegistration): Address => {
   const country = getCustomField(
     data,
     'birth.child.child-view-group.countryPrimaryChild'
@@ -13,29 +13,32 @@ const convertChildAddress = (data: EventRegistration) => {
     country: country,
     administrativeArea: getCustomField(
       data,
-      'birth.child-view-group.districtPrimaryChild'
+      'birth.child.child-view-group.districtPrimaryChild'
     ),
     streetLevelDetails: {
-      town: getCustomField(data, 'birth.child-view-group.cityPrimaryChild'),
+      city: getCustomField(
+        data,
+        'birth.child.child-view-group.cityPrimaryChild'
+      ),
       number: getCustomField(
         data,
-        'birth.child-view-group.addressLine1PrimaryChild'
+        'birth.child.child-view-group.addressLine1PrimaryChild'
       ),
       street: getCustomField(
         data,
-        'birth.child-view-group.addressLine2PrimaryChild'
+        'birth.child.child-view-group.addressLine2PrimaryChild'
       ),
       residentialArea: getCustomField(
         data,
-        'birth.child-view-group.addressLine3PrimaryChild'
+        'birth.child.child-view-group.addressLine3PrimaryChild'
       ),
       zipCode: getCustomField(
         data,
-        'birth.child-view-group.postalCodePrimaryChild'
+        'birth.child.child-view-group.postalCodePrimaryChild'
       ),
       internationalCity: getCustomField(
         data,
-        'birth.child-view-group.internationalCityPrimaryChild'
+        'birth.child.child-view-group.internationalCityPrimaryChild'
       ),
     },
   }
