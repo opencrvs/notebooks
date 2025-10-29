@@ -278,6 +278,16 @@ export const birthResolver: ResolverMap = {
 
   'father.idType': (data: EventRegistration) =>
     getCustomField(data, 'birth.father.father-view-group.fatherIdType'),
+
+  // MOSIP verified fields
+  'mother.verified': (data: EventRegistration) =>
+    getCustomField(data, 'birth.mother.mother-view-group.verified'),
+
+  'father.verified': (data: EventRegistration) =>
+    getCustomField(data, 'birth.father.father-view-group.verified'),
+
+  'child.nid': (data: EventRegistration) =>
+    getIdentifier(data.child, 'NATIONAL_ID')
 }
 
 const defaultResolvers: ResolverMap = {
