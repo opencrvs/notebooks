@@ -1,7 +1,7 @@
 import { Certificate, HistoryItem } from './types.ts'
 
 export const collectorResolver = {
-  'collector.requesterId': (data: Certificate) => data.collector?.relationship,
+  'collector.requesterId': (data: Certificate) => other(data) ? 'SOMEONE_ELSE' : data.collector?.relationship,
   'collector.OTHER.name': (data: Certificate) =>
     other(data) && {
       surname: data.collector?.name[0].familyName, // TODO - I think I need to use the name resolver
