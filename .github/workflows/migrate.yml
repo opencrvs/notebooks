@@ -13,11 +13,11 @@ on:
         type: string
         default: 'farajaland-qa.opencrvs.org'
       client_id:
-        description: 'OAuth Client ID (optional for localhost)'
+        description: 'System Client ID'
         required: false
         type: string
       client_secret:
-        description: 'OAuth Client Secret (optional for localhost)'
+        description: 'System Client Secret'
         required: false
         type: string
 
@@ -30,6 +30,8 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+        with:
+          ref: ${{ github.ref }}
 
       - name: Install dependencies
         run: |
