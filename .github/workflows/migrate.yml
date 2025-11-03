@@ -53,6 +53,7 @@ jobs:
           OPENCRVS_CLIENT_ID: ${{ github.event.inputs.client_id }}
           OPENCRVS_CLIENT_SECRET: ${{ github.event.inputs.client_secret }}
         run: |
+          set -o pipefail
           echo "script_output<<EOF" >> $GITHUB_OUTPUT
           deno run --allow-net --allow-env ./tmp/migrate.ts | tee /dev/stderr >> $GITHUB_OUTPUT
           echo "EOF" >> $GITHUB_OUTPUT
