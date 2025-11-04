@@ -149,9 +149,12 @@ function legacyHistoryItemToV2ActionType(
         }
       case 'WAITING_VALIDATION':
         return {
-          type: 'REGISTER' as ActionType,
-          declaration: {},
-          status: 'Requested',
+          status: 'Rejected',
+          type: 'REJECT' as ActionType,
+          declaration: declaration,
+          content: {
+            reason: 'Rejected WAITING_VALIDATION records during migration',
+          },
         }
       case 'VALIDATED':
         return {
