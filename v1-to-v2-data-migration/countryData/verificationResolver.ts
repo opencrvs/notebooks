@@ -1,4 +1,4 @@
-import { getCustomField } from "../helpers/resolverUtils"
+import { getCustomField } from "../helpers/resolverUtils.ts"
 
 export const V1_TO_V2_VERIFICATION_STATUS: Record<string, string> = {
   "authenticated": "authenticated",
