@@ -1,5 +1,5 @@
 export const v1IgnoreList = [
-  // I think this is all MOSIP stuff
+  // these MOSIP fields/translations are not relevant for the form data in V2
   'birth.informant.informant-view-group.idReader',
   'birth.informant.esignetCallback',
   'birth.informant.esignetLoader',
@@ -46,6 +46,7 @@ export const v1IgnoreList = [
   'death.spouse.idFailed.',
   'death.spouse.idAuthenticated.',
   'death.spouse.idFailedFetchIdDetails.',
+
   // not supporting rural/urban
   'birth.child.ruralOrUrbanPlaceofbirth',
   'birth.informant.ruralOrUrbanPrimaryInformant',
