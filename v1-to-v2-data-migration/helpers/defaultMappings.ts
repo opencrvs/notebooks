@@ -119,4 +119,10 @@ export const CUSTOM_FIELD_MAPPINGS = {
     'eventDetails.reasonForLateRegistration',
   'death.informant.informant-view-group.informantIdType': 'informant.idType',
   'death.spouse.spouse-view-group.spouseIdType': 'spouse.idType',
+  'birth.mother.mother-view-group.verified': 'mother.verified',
+  'birth.father.father-view-group.verified': 'father.verified',
+  'birth.informant.informant-view-group.verified': 'informant.verified',
+  'death.deceased.deceased-view-group.verified': 'deceased.verified',
+  'death.informant.informant-view-group.verified': 'informant.verified',
+  'death.spouse.spouse-view-group.verified': 'spouse.verified'
 }
