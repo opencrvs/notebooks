@@ -5,6 +5,7 @@ import {
 } from '../countryData/addressResolver.ts'
 import { EventRegistration, ResolverMap } from './types.ts'
 import { resolveName } from '../countryData/nameResolver.ts'
+import { getCustomFieldVerificationStatus } from '../countryData/verificationResolver.ts'
 
 const informantResolver: ResolverMap = {
   'informant.dob': (data: EventRegistration) => data.informant?.birthDate, // type: 'DATE',
@@ -147,6 +148,14 @@ export const deathResolver: ResolverMap = {
     JSON.stringify(data.spouse?.address?.[0])
       ? 'YES'
       : 'NO',
+
+   // MOSIP E-Signet / ID Auth verification fields
+  'deceased.verified': (data: EventRegistration) =>
+    getCustomFieldVerificationStatus(data, 'death.deceased.deceased-view-group.verified'),
+  'informant.verified': (data: EventRegistration) =>
+    getCustomFieldVerificationStatus(data, 'death.informant.informant-view-group.verified'),
+  'spouse.verified': (data: EventRegistration) =>
+    getCustomFieldVerificationStatus(data, 'death.spouse.spouse-view-group.verified'),
 }
 
 export const birthResolver: ResolverMap = {
@@ -279,13 +288,13 @@ export const birthResolver: ResolverMap = {
   'father.idType': (data: EventRegistration) =>
     getCustomField(data, 'birth.father.father-view-group.fatherIdType'),
 
-  // MOSIP verified fields
+  // MOSIP E-Signet / ID Auth verification fields
   'mother.verified': (data: EventRegistration) =>
-    getCustomField(data, 'birth.mother.mother-view-group.verified'),
-
+    getCustomFieldVerificationStatus(data, 'birth.mother.mother-view-group.verified'),
   'father.verified': (data: EventRegistration) =>
-    getCustomField(data, 'birth.father.father-view-group.verified'),
-
+    getCustomFieldVerificationStatus(data, 'birth.father.father-view-group.verified'),
+  'informant.verified': (data: EventRegistration) =>
+    getCustomFieldVerificationStatus(data, 'birth.informant.informant-view-group.verified'),
   'child.nid': (data: EventRegistration) =>
     getIdentifier(data.child, 'NATIONAL_ID')
 }
