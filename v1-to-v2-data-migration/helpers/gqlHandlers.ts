@@ -1132,3 +1132,17 @@ export const syncLocations = async (token: string) => {
   }
   return response.statusText
 }
+
+export const reindex = async (token: string) => {
+  const response = await fetch(`${API}/events/events/reindex`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${token}`,
+    },
+  })
+  if (!response.ok) {
+    throw new Error(`Reindex failed: ${response.statusText}`)
+  }
+  return response.statusText
+}

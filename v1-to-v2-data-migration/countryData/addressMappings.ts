@@ -8,8 +8,8 @@ export const ADDRESS_MAPPINGS: Record<string, AddressConfigFunction> = {
     'child.birthLocation.privateHome': { country: data },
   }),
   'birth.child.statePlaceofbirth': (data: string) => ({
-    'child.birthLocation.privateHome': { 
-      /* Ignore: Only map leaf level */ 
+    'child.birthLocation.privateHome': {
+      /* Ignore: Only map leaf level */
     },
   }),
   'birth.child.districtPlaceofbirth': (data: string) => ({
@@ -30,7 +30,9 @@ export const ADDRESS_MAPPINGS: Record<string, AddressConfigFunction> = {
     'child.birthLocation.privateHome': { streetLevelDetails: { number: data } },
   }),
   'birth.child.postalCodePlaceofbirth': (data: string) => ({
-    'child.birthLocation.privateHome': { streetLevelDetails: { zipCode: data } },
+    'child.birthLocation.privateHome': {
+      streetLevelDetails: { zipCode: data },
+    },
   }),
   'birth.child.internationalStatePlaceofbirth': (data: string) => ({
     'child.birthLocation.privateHome': {
@@ -38,19 +40,29 @@ export const ADDRESS_MAPPINGS: Record<string, AddressConfigFunction> = {
     },
   }),
   'birth.child.internationalDistrictPlaceofbirth': (data: string) => ({
-    'child.birthLocation.privateHome': { streetLevelDetails: { district2: data } },
+    'child.birthLocation.privateHome': {
+      streetLevelDetails: { district2: data },
+    },
   }),
   'birth.child.internationalCityPlaceofbirth': (data: string) => ({
-    'child.birthLocation.privateHome': { streetLevelDetails: { cityOrTown: data } },
+    'child.birthLocation.privateHome': {
+      streetLevelDetails: { cityOrTown: data },
+    },
   }),
   'birth.child.internationalAddressLine1Placeofbirth': (data: string) => ({
-    'child.birthLocation.privateHome': { streetLevelDetails: { addressLine1: data } },
+    'child.birthLocation.privateHome': {
+      streetLevelDetails: { addressLine1: data },
+    },
   }),
   'birth.child.internationalAddressLine2Placeofbirth': (data: string) => ({
-    'child.birthLocation.privateHome': { streetLevelDetails: { addressLine2: data } },
+    'child.birthLocation.privateHome': {
+      streetLevelDetails: { addressLine2: data },
+    },
   }),
   'birth.child.internationalAddressLine3Placeofbirth': (data: string) => ({
-    'child.birthLocation.privateHome': { streetLevelDetails: { addressLine3: data } },
+    'child.birthLocation.privateHome': {
+      streetLevelDetails: { addressLine3: data },
+    },
   }),
   'birth.child.internationalPostalCodePlaceofbirth': (data: string) => ({
     'child.birthLocation.privateHome': {

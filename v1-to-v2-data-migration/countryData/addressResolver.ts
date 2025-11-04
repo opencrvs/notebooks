@@ -5,8 +5,8 @@ export const COUNTRY_CODE = 'MDG' //Replace with actual country code
 export const COUNTRY_PHONE_CODE = '+26' //Replace with actual country phone code
 
 // Required to handle 2:1 mapping of birth location fields in corrections
-export const BIRTH_LOCATION_PRIVATE_HOME_KEY = 'birth.address.privateHome'
-export const BIRTH_LOCATION_OTHER_HOME_KEY = 'birth.address.otherHome'
+export const BIRTH_LOCATION_PRIVATE_HOME_KEY = 'birth.birthLocation.privateHome'
+export const BIRTH_LOCATION_OTHER_HOME_KEY = 'birth.birthLocation.otherHome'
 
 // Set up street level details as they are in your country config
 // src/form/street-address-configuration.ts
