@@ -17,7 +17,6 @@ export const v1IgnoreList = [
   'birth.father.father-view-group.idReader',
   'birth.father.esignetCallback',
   'birth.father.esignetLoader',
-  'birth.father.father-view-group.verified',
   'birth.father.idVerified.',
   'birth.father.idFailed.',
   'birth.father.idAuthenticated.',
