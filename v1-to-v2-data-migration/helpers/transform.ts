@@ -126,7 +126,8 @@ export function transformCorrection(
 function legacyHistoryItemToV2ActionType(
   record: EventRegistration,
   declaration: Record<string, any>,
-  historyItem: HistoryItem
+  historyItem: HistoryItem,
+  rejectItem: boolean
 ): Partial<Action> {
   if (!historyItem.action) {
     switch (historyItem.regStatus) {
@@ -148,13 +149,20 @@ function legacyHistoryItemToV2ActionType(
           registrationNumber: record.registration.registrationNumber,
         }
       case 'WAITING_VALIDATION':
+        if (rejectItem) {
+          return {
+            status: 'Rejected',
+            type: 'REJECT' as ActionType,
+            declaration: declaration,
+            content: {
+              reason: 'Rejected WAITING_VALIDATION records during migration',
+            },
+          }
+        }
         return {
-          status: 'Rejected',
-          type: 'REJECT' as ActionType,
-          declaration: declaration,
-          content: {
-            reason: 'Rejected WAITING_VALIDATION records during migration',
-          },
+          type: 'REGISTER' as ActionType,
+          declaration: {},
+          status: 'Requested',
         }
       case 'VALIDATED':
         return {
@@ -433,7 +441,8 @@ export function transform(
           ...legacyHistoryItemToV2ActionType(
             eventRegistration,
             declaration,
-            history
+            history,
+            newest.regStatus === 'WAITING_VALIDATION'
           ),
         } as Action
       }),
