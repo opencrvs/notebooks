@@ -21,6 +21,6 @@ export const COUNTRY_FIELD_MAPPINGS = {
   'death.deathEvent.death-event-details.timeOfDeath':
     'eventDetails.timeOfDeath',
   'death.informant.informantID': 'informant.nid',
-  'death.informant.informantType': 'informant.informantType',
+  'death.informant.informantType': 'informant.relation',
   'death.documents.uploadDocForInformant': 'documents.proofOfInformant',
 }

@@ -66,7 +66,7 @@ export const countryResolver = {
     getCustomField(data, 'death.deceased.deceased-view-group.occupation'),
   'eventDetails.timeOfDeath': (data: EventRegistration) =>
     getCustomField(data, 'death.deathEvent.death-event-details.timeOfDeath'),
-  'informant.informantType': (data: EventRegistration) =>
+  'informant.relation': (data: EventRegistration) =>
     data.informant?.relationship,
   'eventDetails.date': (data: EventRegistration) =>
     data.deceased?.deceased?.deathDate,
