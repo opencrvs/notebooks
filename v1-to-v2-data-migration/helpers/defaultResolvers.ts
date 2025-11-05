@@ -35,8 +35,10 @@ const informantResolver: ResolverMap = {
     resolveName(data, data.informant?.name?.[0]), // FieldType.TEXT
   'informant.dobUnknown': (data: EventRegistration) =>
     data.informant?.exactDateOfBirthUnknown, // FieldType.CHECKBOX
-  'informant.age': (data: EventRegistration) =>
-    data.informant?.ageOfIndividualInYears,
+  'informant.age': (data: EventRegistration) => ({
+    age: data.informant?.ageOfIndividualInYears,
+    asOfDateRef: data.child ? 'child.dob' : 'eventDetails.date',
+  }),
   'informant.nationality': (data: EventRegistration) =>
     data.informant?.nationality?.[0], // FieldType.COUNTRY
   'informant.brn': (data: EventRegistration) =>
@@ -73,8 +75,10 @@ export const deathResolver: ResolverMap = {
   'deceased.dob': (data: EventRegistration) => data.deceased?.birthDate,
   'deceased.dobUnknown': (data: EventRegistration) =>
     data.deceased?.exactDateOfBirthUnknown,
-  'deceased.age': (data: EventRegistration) =>
-    data.deceased?.ageOfIndividualInYears?.toString(),
+  'deceased.age': (data: EventRegistration) => ({
+    age: data.deceased?.ageOfIndividualInYears,
+    asOfDateRef: 'eventDetails.date',
+  }),
   'deceased.nationality': (data: EventRegistration) =>
     data.deceased?.nationality?.[0],
   'deceased.idType': (data: EventRegistration) =>
@@ -139,8 +143,10 @@ export const deathResolver: ResolverMap = {
   'spouse.dob': (data: EventRegistration) => data.spouse?.birthDate,
   'spouse.dobUnknown': (data: EventRegistration) =>
     data.spouse?.exactDateOfBirthUnknown,
-  'spouse.age': (data: EventRegistration) =>
-    data.spouse?.ageOfIndividualInYears,
+  'spouse.age': (data: EventRegistration) => ({
+    age: data.spouse?.ageOfIndividualInYears,
+    asOfDateRef: 'eventDetails.date',
+  }),
   'spouse.nationality': (data: EventRegistration) =>
     data.spouse?.nationality?.[0],
   'spouse.idType': (data: EventRegistration) =>
@@ -208,8 +214,10 @@ export const birthResolver: ResolverMap = {
   'mother.dob': (data: EventRegistration) => data.mother?.birthDate,
   'mother.dobUnknown': (data: EventRegistration) =>
     data.mother?.exactDateOfBirthUnknown,
-  'mother.age': (data: EventRegistration) =>
-    data.mother?.ageOfIndividualInYears?.toString() /* @todo not a fan of this */,
+  'mother.age': (data: EventRegistration) => ({
+    age: data.mother?.ageOfIndividualInYears,
+    asOfDateRef: 'child.dob',
+  }),
   'mother.nationality': (data: EventRegistration) =>
     data.mother?.nationality?.[0],
   'mother.maritalStatus': (data: EventRegistration) =>
@@ -230,8 +238,10 @@ export const birthResolver: ResolverMap = {
   'father.dob': (data: EventRegistration) => data.father?.birthDate,
   'father.dobUnknown': (data: EventRegistration) =>
     data.father?.exactDateOfBirthUnknown,
-  'father.age': (data: EventRegistration) =>
-    data.father?.ageOfIndividualInYears?.toString() /* @todo not a fan of this */,
+  'father.age': (data: EventRegistration) => ({
+    age: data.father?.ageOfIndividualInYears,
+    asOfDateRef: 'child.dob',
+  }),
   'father.nationality': (data: EventRegistration) =>
     data.father?.nationality?.[0],
   'father.maritalStatus': (data: EventRegistration) =>
