@@ -1,0 +1,219 @@
+[
+  {
+    "id": "520ab2df-8d59-499e-a58f-760faa919186",
+    "type": "death",
+    "createdAt": "2025-11-07T13:28:44.028Z",
+    "updatedAt": "2025-11-07T13:34:42.808Z",
+    "updatedAtLocation": "e777e82d-e79f-4554-8447-3d1a58cfffdf",
+    "trackingId": "DDR9LCN",
+    "actions": [
+      {
+        "type": "CREATE",
+        "createdAt": "2025-11-07T13:28:44.028Z",
+        "createdBy": "690df29d3176dd310d68e54b",
+        "createdByUserType": "user",
+        "createdByRole": "LOCAL_REGISTRAR",
+        "createdAtLocation": "e777e82d-e79f-4554-8447-3d1a58cfffdf",
+        "updatedAtLocation": "e777e82d-e79f-4554-8447-3d1a58cfffdf",
+        "status": "Accepted",
+        "declaration": {},
+        "id": "7a126503-62e1-4d6a-a8e4-7695a28a54ef",
+        "transactionId": "22efed18-27d9-4b4e-8fdb-ab69e4cdde49"
+      },
+      {
+        "id": "73794da2-edf3-41a0-903d-4acd2844f41c",
+        "transactionId": "c92047e1-389d-4894-b23b-5cb09a516d3a",
+        "createdAt": "2025-11-07T13:28:44.028Z",
+        "createdBy": "690df29d3176dd310d68e54b",
+        "createdByUserType": "user",
+        "createdByRole": "LOCAL_REGISTRAR",
+        "createdAtLocation": "e777e82d-e79f-4554-8447-3d1a58cfffdf",
+        "updatedAtLocation": "e777e82d-e79f-4554-8447-3d1a58cfffdf",
+        "status": "Accepted",
+        "type": "DECLARE",
+        "declaration": {
+          "deceased.name": {
+            "firstname": "Jenny",
+            "middleName": "",
+            "surname": "Doe"
+          },
+          "deceased.gender": "female",
+          "deceased.dob": "2002-02-01",
+          "deceased.nationality": "FAR",
+          "deceased.address": {
+            "addressType": "DOMESTIC",
+            "country": "FAR",
+            "administrativeArea": "800bc1e7-2812-4d49-aafd-35be94a90b60",
+            "streetLevelDetails": {
+              "town": null,
+              "number": "URBAN",
+              "zipCode": null
+            }
+          },
+          "eventDetails.causeOfDeathEstablished": true,
+          "eventDetails.placeOfDeath": "HEALTH_FACILITY",
+          "eventDetails.deathLocation": "d2300272-56ad-48cb-9d25-88fda46f6891",
+          "informant.addressSameAs": "YES",
+          "spouse.detailsNotAvailable": false,
+          "spouse.name": {
+            "firstname": "Suresh",
+            "middleName": "",
+            "surname": "Silva"
+          },
+          "spouse.dob": "1992-03-31",
+          "spouse.nationality": "FAR",
+          "spouse.idType": "NATIONAL_ID",
+          "spouse.nid": "1234567905",
+          "spouse.address": {
+            "addressType": "DOMESTIC",
+            "country": "FAR",
+            "administrativeArea": "800bc1e7-2812-4d49-aafd-35be94a90b60",
+            "streetLevelDetails": {
+              "town": null,
+              "number": "URBAN",
+              "zipCode": null
+            }
+          },
+          "spouse.addressSameAs": "YES",
+          "deceased.verified": "authenticated",
+          "spouse.verified": "verified",
+          "informant.dob": "1992-03-31",
+          "informant.address": {
+            "addressType": "DOMESTIC",
+            "country": "FAR",
+            "administrativeArea": "800bc1e7-2812-4d49-aafd-35be94a90b60",
+            "streetLevelDetails": {
+              "town": null,
+              "number": "URBAN",
+              "zipCode": null
+            }
+          },
+          "informant.email": "pyry@opencrvs.org",
+          "informant.relation": "SPOUSE",
+          "informant.name": {
+            "firstname": "Suresh",
+            "middleName": "",
+            "surname": "Silva"
+          },
+          "informant.nationality": "FAR",
+          "informant.nid": "1234567905"
+        },
+        "annotation": {
+          "review.signature": {
+            "path": "/ocrvs/9f4ed653-1250-4710-b343-34dff40dbf90.png",
+            "originalFilename": "9f4ed653-1250-4710-b343-34dff40dbf90.png",
+            "type": "image/png"
+          },
+          "review.comment": ""
+        }
+      },
+      {
+        "id": "55fd0838-428f-44fd-a3a1-edc49cd48f19",
+        "transactionId": "a3d45c72-ceea-4258-8a79-7085aa60f991",
+        "createdAt": "2025-11-07T13:28:44.122Z",
+        "createdBy": "690df29d3176dd310d68e54b",
+        "createdByUserType": "user",
+        "createdByRole": "LOCAL_REGISTRAR",
+        "createdAtLocation": "e777e82d-e79f-4554-8447-3d1a58cfffdf",
+        "updatedAtLocation": "e777e82d-e79f-4554-8447-3d1a58cfffdf",
+        "status": "Requested",
+        "type": "REGISTER",
+        "declaration": {}
+      },
+      {
+        "id": "0a044fb2-79b6-442d-87b9-162b75741b9b",
+        "transactionId": "8f851cc7-5b7a-4a6a-8d18-b67feda54034",
+        "createdAt": "2025-11-07T13:28:45.421Z",
+        "createdBy": "690df29d3176dd310d68e54b",
+        "createdByUserType": "user",
+        "createdByRole": "LOCAL_REGISTRAR",
+        "createdAtLocation": "e777e82d-e79f-4554-8447-3d1a58cfffdf",
+        "updatedAtLocation": "e777e82d-e79f-4554-8447-3d1a58cfffdf",
+        "status": "Accepted",
+        "type": "REGISTER",
+        "declaration": {
+          "deceased.name": {
+            "firstname": "Jenny",
+            "middleName": "",
+            "surname": "Doe"
+          },
+          "deceased.gender": "female",
+          "deceased.dob": "2002-02-01",
+          "deceased.nationality": "FAR",
+          "deceased.address": {
+            "addressType": "DOMESTIC",
+            "country": "FAR",
+            "administrativeArea": "800bc1e7-2812-4d49-aafd-35be94a90b60",
+            "streetLevelDetails": {
+              "town": null,
+              "number": "URBAN",
+              "zipCode": null
+            }
+          },
+          "eventDetails.causeOfDeathEstablished": true,
+          "eventDetails.placeOfDeath": "HEALTH_FACILITY",
+          "eventDetails.deathLocation": "d2300272-56ad-48cb-9d25-88fda46f6891",
+          "informant.addressSameAs": "YES",
+          "spouse.detailsNotAvailable": false,
+          "spouse.name": {
+            "firstname": "Suresh",
+            "middleName": "",
+            "surname": "Silva"
+          },
+          "spouse.dob": "1992-03-31",
+          "spouse.nationality": "FAR",
+          "spouse.idType": "NATIONAL_ID",
+          "spouse.nid": "1234567905",
+          "spouse.address": {
+            "addressType": "DOMESTIC",
+            "country": "FAR",
+            "administrativeArea": "800bc1e7-2812-4d49-aafd-35be94a90b60",
+            "streetLevelDetails": {
+              "town": null,
+              "number": "URBAN",
+              "zipCode": null
+            }
+          },
+          "spouse.addressSameAs": "YES",
+          "deceased.verified": "authenticated",
+          "spouse.verified": "verified",
+          "informant.dob": "1992-03-31",
+          "informant.address": {
+            "addressType": "DOMESTIC",
+            "country": "FAR",
+            "administrativeArea": "800bc1e7-2812-4d49-aafd-35be94a90b60",
+            "streetLevelDetails": {
+              "town": null,
+              "number": "URBAN",
+              "zipCode": null
+            }
+          },
+          "informant.email": "pyry@opencrvs.org",
+          "informant.relation": "SPOUSE",
+          "informant.name": {
+            "firstname": "Suresh",
+            "middleName": "",
+            "surname": "Silva"
+          },
+          "informant.nationality": "FAR",
+          "informant.nid": "1234567905"
+        },
+        "registrationNumber": "2025DDR9LCN"
+      },
+      {
+        "id": "ed058008-42b2-45ee-a92f-2da24920e600",
+        "transactionId": "7e14a040-7062-482e-8b82-bcd21986187b",
+        "createdAt": "2025-11-07T13:34:42.808Z",
+        "createdBy": "690df29d3176dd310d68e54b",
+        "createdByUserType": "user",
+        "createdByRole": "LOCAL_REGISTRAR",
+        "createdAtLocation": "e777e82d-e79f-4554-8447-3d1a58cfffdf",
+        "updatedAtLocation": "e777e82d-e79f-4554-8447-3d1a58cfffdf",
+        "status": "Accepted",
+        "type": "ASSIGN",
+        "assignedTo": "690df29d3176dd310d68e54b",
+        "declaration": {}
+      }
+    ]
+  }
+]

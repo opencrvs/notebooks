@@ -1,0 +1,418 @@
+[
+  {
+    "id": "b25b211a-f5c5-4e5a-86a6-9ff8cacf1d19",
+    "type": "birth",
+    "createdAt": "2025-11-07T13:26:56.397Z",
+    "updatedAt": "2025-11-07T13:30:52.211Z",
+    "updatedAtLocation": "e777e82d-e79f-4554-8447-3d1a58cfffdf",
+    "trackingId": "B9AMKJL",
+    "actions": [
+      {
+        "type": "CREATE",
+        "createdAt": "2025-11-07T13:26:56.397Z",
+        "createdBy": "690df29d3176dd310d68e54b",
+        "createdByUserType": "user",
+        "createdByRole": "LOCAL_REGISTRAR",
+        "createdAtLocation": "e777e82d-e79f-4554-8447-3d1a58cfffdf",
+        "updatedAtLocation": "e777e82d-e79f-4554-8447-3d1a58cfffdf",
+        "status": "Accepted",
+        "declaration": {},
+        "id": "bd381d1f-7975-4d1c-b834-9d5514077343",
+        "transactionId": "1248d638-41b5-4857-9579-8524727f05f7"
+      },
+      {
+        "id": "4631e4d7-9f67-4950-8a49-2ada2d69dd51",
+        "transactionId": "8f65eb7c-e6e7-4e43-bf3b-124d2c6e4956",
+        "createdAt": "2025-11-07T13:26:56.397Z",
+        "createdBy": "690df29d3176dd310d68e54b",
+        "createdByUserType": "user",
+        "createdByRole": "LOCAL_REGISTRAR",
+        "createdAtLocation": "e777e82d-e79f-4554-8447-3d1a58cfffdf",
+        "updatedAtLocation": "e777e82d-e79f-4554-8447-3d1a58cfffdf",
+        "status": "Accepted",
+        "type": "DECLARE",
+        "declaration": {
+          "child.name": {
+            "firstname": "Tom",
+            "middleName": "",
+            "surname": "Scott"
+          },
+          "child.gender": "male",
+          "child.dob": "2025-05-05",
+          "child.placeOfBirth": "HEALTH_FACILITY",
+          "child.birthLocation": "d2300272-56ad-48cb-9d25-88fda46f6891",
+          "mother.detailsNotAvailable": false,
+          "mother.name": {
+            "firstname": "Jane",
+            "middleName": "",
+            "surname": "Scott"
+          },
+          "mother.dob": "2000-01-01",
+          "mother.nationality": "FAR",
+          "mother.address": {
+            "addressType": "DOMESTIC",
+            "country": "FAR",
+            "administrativeArea": "800bc1e7-2812-4d49-aafd-35be94a90b60",
+            "streetLevelDetails": {
+              "town": null,
+              "number": "URBAN",
+              "zipCode": null
+            }
+          },
+          "father.detailsNotAvailable": true,
+          "father.reason": "asdf",
+          "father.addressSameAs": "NO",
+          "mother.nid": "1234565555",
+          "mother.idType": "NATIONAL_ID",
+          "mother.verified": "failed",
+          "informant.dob": "2000-01-01",
+          "informant.address": {
+            "addressType": "DOMESTIC",
+            "country": "FAR",
+            "administrativeArea": "800bc1e7-2812-4d49-aafd-35be94a90b60",
+            "streetLevelDetails": {
+              "town": null,
+              "number": "URBAN",
+              "zipCode": null
+            }
+          },
+          "informant.email": "pyry@opencrvs.org",
+          "informant.relation": "MOTHER",
+          "informant.name": {
+            "firstname": "Jane",
+            "middleName": "",
+            "surname": "Scott"
+          },
+          "informant.nationality": "FAR",
+          "informant.nid": "1234565555"
+        },
+        "annotation": {
+          "review.signature": {
+            "path": "/ocrvs/6e4081c0-2542-4fc5-a10e-388d0f109bad.png",
+            "originalFilename": "6e4081c0-2542-4fc5-a10e-388d0f109bad.png",
+            "type": "image/png"
+          },
+          "review.comment": "abc"
+        }
+      },
+      {
+        "id": "b4af44fd-6961-4dfe-a72f-e96ab0a6ac67",
+        "transactionId": "a96574e5-8c2a-4eec-8c28-3f2e63c5f5ed",
+        "createdAt": "2025-11-07T13:26:56.501Z",
+        "createdBy": "690df29d3176dd310d68e54b",
+        "createdByUserType": "user",
+        "createdByRole": "LOCAL_REGISTRAR",
+        "createdAtLocation": "e777e82d-e79f-4554-8447-3d1a58cfffdf",
+        "updatedAtLocation": "e777e82d-e79f-4554-8447-3d1a58cfffdf",
+        "status": "Requested",
+        "type": "REGISTER",
+        "declaration": {}
+      },
+      {
+        "id": "a66c1fb7-d2ee-498c-97db-fa3442f02a9e",
+        "transactionId": "d8d1d0e7-8851-4a9e-92a8-10097d56795e",
+        "createdAt": "2025-11-07T13:26:57.425Z",
+        "createdBy": "690df29d3176dd310d68e54b",
+        "createdByUserType": "user",
+        "createdByRole": "LOCAL_REGISTRAR",
+        "createdAtLocation": "e777e82d-e79f-4554-8447-3d1a58cfffdf",
+        "updatedAtLocation": "e777e82d-e79f-4554-8447-3d1a58cfffdf",
+        "status": "Accepted",
+        "type": "REGISTER",
+        "declaration": {
+          "child.name": {
+            "firstname": "Tom",
+            "middleName": "",
+            "surname": "Scott"
+          },
+          "child.gender": "male",
+          "child.dob": "2025-05-05",
+          "child.placeOfBirth": "HEALTH_FACILITY",
+          "child.birthLocation": "d2300272-56ad-48cb-9d25-88fda46f6891",
+          "mother.detailsNotAvailable": false,
+          "mother.name": {
+            "firstname": "Jane",
+            "middleName": "",
+            "surname": "Scott"
+          },
+          "mother.dob": "2000-01-01",
+          "mother.nationality": "FAR",
+          "mother.address": {
+            "addressType": "DOMESTIC",
+            "country": "FAR",
+            "administrativeArea": "800bc1e7-2812-4d49-aafd-35be94a90b60",
+            "streetLevelDetails": {
+              "town": null,
+              "number": "URBAN",
+              "zipCode": null
+            }
+          },
+          "father.detailsNotAvailable": true,
+          "father.reason": "asdf",
+          "father.addressSameAs": "NO",
+          "mother.nid": "1234565555",
+          "mother.idType": "NATIONAL_ID",
+          "mother.verified": "failed",
+          "informant.dob": "2000-01-01",
+          "informant.address": {
+            "addressType": "DOMESTIC",
+            "country": "FAR",
+            "administrativeArea": "800bc1e7-2812-4d49-aafd-35be94a90b60",
+            "streetLevelDetails": {
+              "town": null,
+              "number": "URBAN",
+              "zipCode": null
+            }
+          },
+          "informant.email": "pyry@opencrvs.org",
+          "informant.relation": "MOTHER",
+          "informant.name": {
+            "firstname": "Jane",
+            "middleName": "",
+            "surname": "Scott"
+          },
+          "informant.nationality": "FAR",
+          "informant.nid": "1234565555"
+        },
+        "registrationNumber": "2025B9AMKJL"
+      },
+      {
+        "id": "c8a37d1a-c5b0-4176-97e5-fcb7fab53593",
+        "transactionId": "7a6d245f-0690-4b7e-892c-21c5e800aa59",
+        "createdAt": "2025-11-07T13:30:52.211Z",
+        "createdBy": "690df29d3176dd310d68e54b",
+        "createdByUserType": "user",
+        "createdByRole": "LOCAL_REGISTRAR",
+        "createdAtLocation": "e777e82d-e79f-4554-8447-3d1a58cfffdf",
+        "updatedAtLocation": "e777e82d-e79f-4554-8447-3d1a58cfffdf",
+        "status": "Accepted",
+        "type": "ASSIGN",
+        "assignedTo": "690df29d3176dd310d68e54b",
+        "declaration": {}
+      }
+    ]
+  },
+  {
+    "id": "1921c212-1527-42b0-a783-2337723ba5c4",
+    "type": "birth",
+    "createdAt": "2025-11-07T13:25:51.426Z",
+    "updatedAt": "2025-11-07T13:30:52.354Z",
+    "updatedAtLocation": "e777e82d-e79f-4554-8447-3d1a58cfffdf",
+    "trackingId": "BMUERWA",
+    "actions": [
+      {
+        "type": "CREATE",
+        "createdAt": "2025-11-07T13:25:51.426Z",
+        "createdBy": "690df29d3176dd310d68e54b",
+        "createdByUserType": "user",
+        "createdByRole": "LOCAL_REGISTRAR",
+        "createdAtLocation": "e777e82d-e79f-4554-8447-3d1a58cfffdf",
+        "updatedAtLocation": "e777e82d-e79f-4554-8447-3d1a58cfffdf",
+        "status": "Accepted",
+        "declaration": {},
+        "id": "69340209-04df-4ee5-bbd7-d209e75b5ce7",
+        "transactionId": "a2c39d12-8e78-4ac3-bf06-0d042f3f4ba6"
+      },
+      {
+        "id": "076eb98a-2c5b-426c-8b79-66e6c74043cd",
+        "transactionId": "47be66cb-e64b-4dac-8fe7-15d807af861f",
+        "createdAt": "2025-11-07T13:25:51.426Z",
+        "createdBy": "690df29d3176dd310d68e54b",
+        "createdByUserType": "user",
+        "createdByRole": "LOCAL_REGISTRAR",
+        "createdAtLocation": "e777e82d-e79f-4554-8447-3d1a58cfffdf",
+        "updatedAtLocation": "e777e82d-e79f-4554-8447-3d1a58cfffdf",
+        "status": "Accepted",
+        "type": "DECLARE",
+        "declaration": {
+          "child.name": {
+            "firstname": "Pyry",
+            "middleName": "",
+            "surname": "Rouvila"
+          },
+          "child.gender": "male",
+          "child.dob": "2025-02-02",
+          "child.placeOfBirth": "HEALTH_FACILITY",
+          "child.birthLocation": "d2300272-56ad-48cb-9d25-88fda46f6891",
+          "mother.detailsNotAvailable": false,
+          "mother.name": {
+            "firstname": "Monica",
+            "middleName": "",
+            "surname": "Geller"
+          },
+          "mother.dob": "2005-02-25",
+          "mother.nationality": "FAR",
+          "mother.address": {
+            "addressType": "DOMESTIC",
+            "country": "FAR",
+            "administrativeArea": "800bc1e7-2812-4d49-aafd-35be94a90b60",
+            "streetLevelDetails": {
+              "town": null,
+              "number": "URBAN",
+              "zipCode": null
+            }
+          },
+          "father.detailsNotAvailable": false,
+          "father.name": {
+            "firstname": "Chandler",
+            "middleName": "",
+            "surname": "Bing"
+          },
+          "father.dob": "2006-12-02",
+          "father.nationality": "FAR",
+          "father.address": {
+            "addressType": "DOMESTIC",
+            "country": "FAR",
+            "administrativeArea": "800bc1e7-2812-4d49-aafd-35be94a90b60",
+            "streetLevelDetails": {
+              "town": null,
+              "number": "URBAN",
+              "zipCode": null
+            }
+          },
+          "father.addressSameAs": "YES",
+          "mother.verified": "authenticated",
+          "father.verified": "authenticated",
+          "child.nid": "5154392546",
+          "informant.dob": "2005-02-25",
+          "informant.address": {
+            "addressType": "DOMESTIC",
+            "country": "FAR",
+            "administrativeArea": "800bc1e7-2812-4d49-aafd-35be94a90b60",
+            "streetLevelDetails": {
+              "town": null,
+              "number": "URBAN",
+              "zipCode": null
+            }
+          },
+          "informant.email": "pyry@opencrvs.org",
+          "informant.relation": "MOTHER",
+          "informant.name": {
+            "firstname": "Monica",
+            "middleName": "",
+            "surname": "Geller"
+          },
+          "informant.nationality": "FAR"
+        },
+        "annotation": {
+          "review.signature": {
+            "path": "/ocrvs/9aa857f4-0546-4a50-b43b-23a46c1492e7.png",
+            "originalFilename": "9aa857f4-0546-4a50-b43b-23a46c1492e7.png",
+            "type": "image/png"
+          },
+          "review.comment": "Hello"
+        }
+      },
+      {
+        "id": "b24ba28c-ae9d-48e4-8945-b30cfd695d94",
+        "transactionId": "6803a3c5-ce0d-4500-bbd7-14733a2ae7dd",
+        "createdAt": "2025-11-07T13:25:51.636Z",
+        "createdBy": "690df29d3176dd310d68e54b",
+        "createdByUserType": "user",
+        "createdByRole": "LOCAL_REGISTRAR",
+        "createdAtLocation": "e777e82d-e79f-4554-8447-3d1a58cfffdf",
+        "updatedAtLocation": "e777e82d-e79f-4554-8447-3d1a58cfffdf",
+        "status": "Requested",
+        "type": "REGISTER",
+        "declaration": {}
+      },
+      {
+        "id": "d5ede9fb-2daf-4527-ad76-f0ee85d44a88",
+        "transactionId": "4d77944a-c908-49fb-a979-d45f37b9c676",
+        "createdAt": "2025-11-07T13:26:02.442Z",
+        "createdBy": "690df29d3176dd310d68e54b",
+        "createdByUserType": "user",
+        "createdByRole": "LOCAL_REGISTRAR",
+        "createdAtLocation": "e777e82d-e79f-4554-8447-3d1a58cfffdf",
+        "updatedAtLocation": "e777e82d-e79f-4554-8447-3d1a58cfffdf",
+        "status": "Accepted",
+        "type": "REGISTER",
+        "declaration": {
+          "child.name": {
+            "firstname": "Pyry",
+            "middleName": "",
+            "surname": "Rouvila"
+          },
+          "child.gender": "male",
+          "child.dob": "2025-02-02",
+          "child.placeOfBirth": "HEALTH_FACILITY",
+          "child.birthLocation": "d2300272-56ad-48cb-9d25-88fda46f6891",
+          "mother.detailsNotAvailable": false,
+          "mother.name": {
+            "firstname": "Monica",
+            "middleName": "",
+            "surname": "Geller"
+          },
+          "mother.dob": "2005-02-25",
+          "mother.nationality": "FAR",
+          "mother.address": {
+            "addressType": "DOMESTIC",
+            "country": "FAR",
+            "administrativeArea": "800bc1e7-2812-4d49-aafd-35be94a90b60",
+            "streetLevelDetails": {
+              "town": null,
+              "number": "URBAN",
+              "zipCode": null
+            }
+          },
+          "father.detailsNotAvailable": false,
+          "father.name": {
+            "firstname": "Chandler",
+            "middleName": "",
+            "surname": "Bing"
+          },
+          "father.dob": "2006-12-02",
+          "father.nationality": "FAR",
+          "father.address": {
+            "addressType": "DOMESTIC",
+            "country": "FAR",
+            "administrativeArea": "800bc1e7-2812-4d49-aafd-35be94a90b60",
+            "streetLevelDetails": {
+              "town": null,
+              "number": "URBAN",
+              "zipCode": null
+            }
+          },
+          "father.addressSameAs": "YES",
+          "mother.verified": "authenticated",
+          "father.verified": "authenticated",
+          "child.nid": "5154392546",
+          "informant.dob": "2005-02-25",
+          "informant.address": {
+            "addressType": "DOMESTIC",
+            "country": "FAR",
+            "administrativeArea": "800bc1e7-2812-4d49-aafd-35be94a90b60",
+            "streetLevelDetails": {
+              "town": null,
+              "number": "URBAN",
+              "zipCode": null
+            }
+          },
+          "informant.email": "pyry@opencrvs.org",
+          "informant.relation": "MOTHER",
+          "informant.name": {
+            "firstname": "Monica",
+            "middleName": "",
+            "surname": "Geller"
+          },
+          "informant.nationality": "FAR"
+        },
+        "registrationNumber": "2025BMUERWA"
+      },
+      {
+        "id": "f05e91e2-ccdf-45aa-9790-2a169df7e8aa",
+        "transactionId": "5ae86450-c2cb-4c24-b43d-011b62a3da64",
+        "createdAt": "2025-11-07T13:30:52.354Z",
+        "createdBy": "690df29d3176dd310d68e54b",
+        "createdByUserType": "user",
+        "createdByRole": "LOCAL_REGISTRAR",
+        "createdAtLocation": "e777e82d-e79f-4554-8447-3d1a58cfffdf",
+        "updatedAtLocation": "e777e82d-e79f-4554-8447-3d1a58cfffdf",
+        "status": "Accepted",
+        "type": "ASSIGN",
+        "assignedTo": "690df29d3176dd310d68e54b",
+        "declaration": {}
+      }
+    ]
+  }
+]
