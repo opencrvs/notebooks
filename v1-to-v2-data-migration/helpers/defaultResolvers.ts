@@ -1,4 +1,4 @@
-import { getCustomField, getDocuments, getIdentifier } from './resolverUtils.ts'
+import { getCustomField, getDocuments, getIdentifier, isSpecialInformant } from './resolverUtils.ts'
 import {
   COUNTRY_PHONE_CODE,
   resolveAddress,
@@ -7,11 +7,14 @@ import { EventRegistration, ResolverMap } from './types.ts'
 import { resolveName } from '../countryData/nameResolver.ts'
 import { getCustomFieldVerificationStatus } from '../countryData/verificationResolver.ts'
 
+
+
+
 const informantResolver: ResolverMap = {
-  'informant.dob': (data: EventRegistration) => data.informant?.birthDate, // type: 'DATE',
+  'informant.dob': (data: EventRegistration) => !isSpecialInformant(data.informant) && data.informant?.birthDate, // type: 'DATE',
   /* @todo Addresses need to be properly handled */
   'informant.address': (data: EventRegistration) =>
-    resolveAddress(data, data.informant?.address?.[0]), // type: FieldType.ADDRESS,
+    !isSpecialInformant(data.informant) && resolveAddress(data, data.informant?.address?.[0]), // type: FieldType.ADDRESS,
   // @question, is informant.telecom correct or this?
   'informant.phoneNo': (data: EventRegistration) =>
     data.registration.contactPhoneNumber?.replace(COUNTRY_PHONE_CODE, '0'), // @todo https://github.com/opencrvs/opencrvs-core/issues/9601
@@ -22,20 +25,20 @@ const informantResolver: ResolverMap = {
   'informant.other.relation': (data: EventRegistration) =>
     data.informant?.otherRelationship, // FieldType.TEXT
   'informant.name': (data: EventRegistration) =>
-    resolveName(data, data.informant?.name?.[0]), // FieldType.TEXT
+    !isSpecialInformant(data.informant) && resolveName(data, data.informant?.name?.[0]), // FieldType.TEXT
   'informant.dobUnknown': (data: EventRegistration) =>
-    data.informant?.exactDateOfBirthUnknown, // FieldType.CHECKBOX
+    !isSpecialInformant(data.informant) && data.informant?.exactDateOfBirthUnknown, // FieldType.CHECKBOX
   // @question, is this informant.age or informant.ageOfIndividualInYears?
   'informant.age': (data: EventRegistration) =>
-    data.informant?.ageOfIndividualInYears?.toString() /* @todo not a fan of this */,
+    !isSpecialInformant(data.informant) && data.informant?.ageOfIndividualInYears?.toString() /* @todo not a fan of this */,
   'informant.nationality': (data: EventRegistration) =>
-    data.informant?.nationality?.[0], // FieldType.COUNTRY
+    !isSpecialInformant(data.informant) && data.informant?.nationality?.[0], // FieldType.COUNTRY
   'informant.brn': (data: EventRegistration) =>
-    getIdentifier(data.informant, 'BIRTH_REGISTRATION_NUMBER'),
+    !isSpecialInformant(data.informant) && getIdentifier(data.informant, 'BIRTH_REGISTRATION_NUMBER'),
   'informant.nid': (data: EventRegistration) =>
-    getIdentifier(data.informant, 'NATIONAL_ID'),
+    !isSpecialInformant(data.informant) && getIdentifier(data.informant, 'NATIONAL_ID'),
   'informant.passport': (data: EventRegistration) =>
-    getIdentifier(data.informant, 'PASSPORT'),
+    !isSpecialInformant(data.informant) && getIdentifier(data.informant, 'PASSPORT'),
 }
 
 const documentsResolver: ResolverMap = {
@@ -113,7 +116,7 @@ export const deathResolver: ResolverMap = {
       : null,
   'informant.addressSameAs': (data: EventRegistration) =>
     JSON.stringify(data.informant?.address?.[0]) ===
-    JSON.stringify(data.deceased?.address?.[0])
+      JSON.stringify(data.deceased?.address?.[0])
       ? 'YES'
       : 'NO',
   'informant.idType': (data: EventRegistration) =>
@@ -145,11 +148,11 @@ export const deathResolver: ResolverMap = {
     resolveAddress(data, data.spouse?.address?.[0]),
   'spouse.addressSameAs': (data: EventRegistration) =>
     JSON.stringify(data.deceased?.address?.[0]) ===
-    JSON.stringify(data.spouse?.address?.[0])
+      JSON.stringify(data.spouse?.address?.[0])
       ? 'YES'
       : 'NO',
 
-   // MOSIP E-Signet / ID Auth verification fields
+  // MOSIP E-Signet / ID Auth verification fields
   'deceased.verified': (data: EventRegistration) =>
     getCustomFieldVerificationStatus(data, 'death.deceased.deceased-view-group.verified'),
   'informant.verified': (data: EventRegistration) =>
@@ -243,7 +246,7 @@ export const birthResolver: ResolverMap = {
   // but instead a computed field that just copied mothers address data for father as
   'father.addressSameAs': (data: EventRegistration) =>
     JSON.stringify(data.father?.address?.[0]) ===
-    JSON.stringify(data.mother?.address?.[0])
+      JSON.stringify(data.mother?.address?.[0])
       ? 'YES'
       : 'NO',
 

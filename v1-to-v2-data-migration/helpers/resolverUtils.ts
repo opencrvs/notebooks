@@ -1,4 +1,4 @@
-import { Identifier, Document, ProcessedDocument } from './types.ts'
+import { Identifier, Document, ProcessedDocument, PersonWithIdentifiers } from './types.ts'
 
 export const getIdentifier = (
   data: { identifier?: Identifier[] } | undefined,
@@ -30,4 +30,16 @@ export function getCustomField(data: any, id: string): any {
   return data?.questionnaire?.find(
     ({ fieldId }: { fieldId: string }) => fieldId === id
   )?.value
+}
+
+
+/**
+ * Special informants have their own special sections like `mother.`, `father.` or `spouse.`.
+ */
+export const isSpecialInformant = (informant?: PersonWithIdentifiers) => {
+  if (!informant) return false
+
+  return informant.relationship === 'SPOUSE'
+    || informant.relationship === 'MOTHER'
+    || informant.relationship === 'FATHER'
 }
