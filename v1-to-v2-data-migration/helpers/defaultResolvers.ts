@@ -11,10 +11,10 @@ import { getCustomFieldVerificationStatus } from '../countryData/verificationRes
 
 
 const informantResolver: ResolverMap = {
-  'informant.dob': (data: EventRegistration) => !isSpecialInformant(data.informant) && data.informant?.birthDate, // type: 'DATE',
+  'informant.dob': (data: EventRegistration) => !isSpecialInformant(data.informant) ? data.informant?.birthDate : undefined, // type: 'DATE',
   /* @todo Addresses need to be properly handled */
   'informant.address': (data: EventRegistration) =>
-    !isSpecialInformant(data.informant) && resolveAddress(data, data.informant?.address?.[0]), // type: FieldType.ADDRESS,
+    !isSpecialInformant(data.informant) ? resolveAddress(data, data.informant?.address?.[0]) : undefined, // type: FieldType.ADDRESS,
   // @question, is informant.telecom correct or this?
   'informant.phoneNo': (data: EventRegistration) =>
     data.registration.contactPhoneNumber?.replace(COUNTRY_PHONE_CODE, '0'), // @todo https://github.com/opencrvs/opencrvs-core/issues/9601
@@ -25,20 +25,20 @@ const informantResolver: ResolverMap = {
   'informant.other.relation': (data: EventRegistration) =>
     data.informant?.otherRelationship, // FieldType.TEXT
   'informant.name': (data: EventRegistration) =>
-    !isSpecialInformant(data.informant) && resolveName(data, data.informant?.name?.[0]), // FieldType.TEXT
+    !isSpecialInformant(data.informant) ? resolveName(data, data.informant?.name?.[0]) : undefined, // FieldType.TEXT
   'informant.dobUnknown': (data: EventRegistration) =>
-    !isSpecialInformant(data.informant) && data.informant?.exactDateOfBirthUnknown, // FieldType.CHECKBOX
+    !isSpecialInformant(data.informant) ? data.informant?.exactDateOfBirthUnknown : undefined, // FieldType.CHECKBOX
   // @question, is this informant.age or informant.ageOfIndividualInYears?
   'informant.age': (data: EventRegistration) =>
-    !isSpecialInformant(data.informant) && data.informant?.ageOfIndividualInYears?.toString() /* @todo not a fan of this */,
+    !isSpecialInformant(data.informant) ? data.informant?.ageOfIndividualInYears?.toString() : undefined /* @todo not a fan of this */,
   'informant.nationality': (data: EventRegistration) =>
-    !isSpecialInformant(data.informant) && data.informant?.nationality?.[0], // FieldType.COUNTRY
+    !isSpecialInformant(data.informant) ? data.informant?.nationality?.[0] : undefined, // FieldType.COUNTRY
   'informant.brn': (data: EventRegistration) =>
-    !isSpecialInformant(data.informant) && getIdentifier(data.informant, 'BIRTH_REGISTRATION_NUMBER'),
+    !isSpecialInformant(data.informant) ? getIdentifier(data.informant, 'BIRTH_REGISTRATION_NUMBER') : undefined,
   'informant.nid': (data: EventRegistration) =>
-    !isSpecialInformant(data.informant) && getIdentifier(data.informant, 'NATIONAL_ID'),
+    !isSpecialInformant(data.informant) ? getIdentifier(data.informant, 'NATIONAL_ID') : undefined,
   'informant.passport': (data: EventRegistration) =>
-    !isSpecialInformant(data.informant) && getIdentifier(data.informant, 'PASSPORT'),
+    !isSpecialInformant(data.informant) ? getIdentifier(data.informant, 'PASSPORT') : undefined,
 }
 
 const documentsResolver: ResolverMap = {
