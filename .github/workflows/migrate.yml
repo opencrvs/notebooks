@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
     inputs:
       event:
-        description: 'The event ID to process'
+        description: 'The event to process (birth or death)'
         required: true
         type: string
       domain:
