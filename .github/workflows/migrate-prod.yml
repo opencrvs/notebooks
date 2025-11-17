@@ -51,14 +51,59 @@ jobs:
 
       - name: Connect to VPN
         run: |
-          echo "${{ secrets.VPN_PWD }}" | sudo openconnect --syslog -u ${{ secrets.VPN_USER }} --passwd-on-stdin --protocol=${{ secrets.VPN_PROTOCOL }} ${{ secrets.VPN_HOST }}:${{ secrets.VPN_PORT }} --servercert ${{ secrets.VPN_SERVERCERT }} --background -v --no-dtls -s 'vpn-slice/bin/vpn-slice 10.17.0.0/24'
-          sleep 3
-          ip_addr=$(ip -f inet addr show tun0 |sed -En -e 's/.*inet ([0-9.]+).*/\1/p')
-          sudo ip route add 10.17.30.0/24 via $ip_addr dev tun0
+          # Store original resolv.conf
+          sudo cp /etc/resolv.conf /etc/resolv.conf.backup
 
-      - name: Test VPN connection
+          # Connect to VPN - redirect stderr to capture DNS info
+          echo "${{ secrets.VPN_PWD }}" | sudo openconnect --syslog -u ${{ secrets.VPN_USER }} --passwd-on-stdin --protocol=${{ secrets.VPN_PROTOCOL }} ${{ secrets.VPN_HOST }}:${{ secrets.VPN_PORT }} --servercert ${{ secrets.VPN_SERVERCERT }} --background -v --no-dtls 2>&1 | tee /tmp/vpn-connect.log &
+
+          # Wait for VPN to establish
+          sleep 10
+
+          # Extract DNS servers from VPN connection logs
+          VPN_DNS=$(grep -oP '(?<=DNS: )[\d.]+' /tmp/vpn-connect.log | head -1)
+
+          # If VPN DNS found, configure it
+          if [ ! -z "$VPN_DNS" ]; then
+            echo "Found VPN DNS: $VPN_DNS"
+            echo "nameserver $VPN_DNS" | sudo tee /etc/resolv.conf > /dev/null
+            cat /etc/resolv.conf.backup | grep -v nameserver | sudo tee -a /etc/resolv.conf > /dev/null
+          fi
+
+          # Setup routes
+          ip_addr=$(ip -f inet addr show tun0 |sed -En -e 's/.*inet ([0-9.]+).*/\1/p')
+          if [ ! -z "$ip_addr" ]; then
+            # Add route only if it doesn't exist
+            if ! ip route show | grep -q "10.17.30.0/24"; then
+              echo "Adding route for 10.17.30.0/24..."
+              sudo ip route add 10.17.30.0/24 via $ip_addr dev tun0
+            else
+              echo "Route for 10.17.30.0/24 already exists"
+            fi
+          fi
+
+      - name: Configure DNS and test VPN connection
         run: |
-          ping -c4 ${{ vars.SSH_HOST || secrets.SSH_HOST }}
+          SSH_HOST="${{ vars.SSH_HOST || secrets.SSH_HOST }}"
+
+          echo "Testing IP connectivity to $SSH_HOST..."
+          ping -c4 $SSH_HOST
+
+          # Configure /etc/hosts with SSH_HOST IP
+          # All OpenCRVS subdomains (gateway, config, countryconfig) point to the same IP as SSH_HOST
+          echo "Configuring /etc/hosts with OpenCRVS domain mappings..."
+          echo "$SSH_HOST gateway.${{ github.event.inputs.domain }}" | sudo tee -a /etc/hosts
+          echo "$SSH_HOST config.${{ github.event.inputs.domain }}" | sudo tee -a /etc/hosts
+          echo "$SSH_HOST countryconfig.${{ github.event.inputs.domain }}" | sudo tee -a /etc/hosts
+
+          echo "Final /etc/hosts entries for OpenCRVS:"
+          grep "${{ github.event.inputs.domain }}" /etc/hosts
+
+          echo "Testing DNS resolution..."
+          nslookup gateway.${{ github.event.inputs.domain }} || echo "DNS lookup via /etc/hosts"
+
+          echo "Testing HTTP connectivity to gateway..."
+          curl -v --max-time 10 http://gateway.${{ github.event.inputs.domain }}/ping || echo "HTTP connection test completed"
 
       - name: Install dependencies
         run: |
