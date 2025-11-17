@@ -1,4 +1,4 @@
-name: Migrate all records of an event from v1 to v2 (Production)
+name: Migrate v1 to v2 (Production)
 
 on:
   workflow_dispatch:
@@ -90,11 +90,12 @@ jobs:
           ping -c4 $SSH_HOST
 
           # Configure /etc/hosts with SSH_HOST IP
-          # All OpenCRVS subdomains (gateway, config, countryconfig) point to the same IP as SSH_HOST
+          # All OpenCRVS subdomains (gateway, config, countryconfig, auth) point to the same IP as SSH_HOST
           echo "Configuring /etc/hosts with OpenCRVS domain mappings..."
           echo "$SSH_HOST gateway.${{ github.event.inputs.domain }}" | sudo tee -a /etc/hosts
           echo "$SSH_HOST config.${{ github.event.inputs.domain }}" | sudo tee -a /etc/hosts
           echo "$SSH_HOST countryconfig.${{ github.event.inputs.domain }}" | sudo tee -a /etc/hosts
+          echo "$SSH_HOST auth.${{ github.event.inputs.domain }}" | sudo tee -a /etc/hosts
 
           echo "Final /etc/hosts entries for OpenCRVS:"
           grep "${{ github.event.inputs.domain }}" /etc/hosts
