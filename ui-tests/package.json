@@ -15,6 +15,6 @@
     "@types/node": "^18.19.1",
     "@types/lodash": "^4.14.117",
     "@types/node-fetch": "^2.6.2",
-    "@types/jest": "^24.0.13"
+    "@types/jest": "^30.0.0"
   }
 }
