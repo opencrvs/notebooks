@@ -4,6 +4,7 @@ export const V1_TO_V2_VERIFICATION_STATUS: Record<string, string> = {
   "authenticated": "authenticated",
   "verified": "verified",
   "failed": "failed",
+  "pending": "pending",
   // V1 could have a state where the E-Signet call failed in client. Now we show a generic failed state until the flow is improved further.
   "failedFetchIdDetails": "failed"
 }
