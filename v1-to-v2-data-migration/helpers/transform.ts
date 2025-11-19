@@ -132,7 +132,8 @@ export function transformCorrection(
 function legacyHistoryItemToV2ActionType(
   record: EventRegistration,
   declaration: Record<string, any>,
-  historyItem: HistoryItem
+  historyItem: HistoryItem,
+  eventType: 'birth' | 'death'
 ): Partial<Action> {
   if (!historyItem.action) {
     switch (historyItem.regStatus) {
@@ -222,7 +223,7 @@ function legacyHistoryItemToV2ActionType(
     case 'REQUESTED_CORRECTION':
       const correction = transformCorrection(
         historyItem,
-        record.child ? 'birth' : 'death',
+        eventType,
         declaration
       )
 
@@ -379,7 +380,8 @@ const preProcessHistory = (eventRegistration: EventRegistration) => {
 
 export function transform(
   eventRegistration: EventRegistration,
-  resolver: ResolverMap
+  resolver: ResolverMap,
+  eventType: 'birth' | 'death'
 ): TransformedDocument {
   const result = Object.entries(resolver).map(([fieldId, r]) => {
     return [fieldId, r(eventRegistration)]
@@ -401,7 +403,7 @@ export function transform(
 
   const documents: TransformedDocument = {
     id: eventRegistration.id,
-    type: eventRegistration.child ? 'birth' : 'death',
+    type: eventType,
     createdAt: new Date(historyAsc[0].date).toISOString(),
     updatedAt: new Date(newest.date).toISOString(),
     updatedAtLocation: newest.office?.id || '',
@@ -436,7 +438,8 @@ export function transform(
           ...legacyHistoryItemToV2ActionType(
             eventRegistration,
             declaration,
-            history
+            history,
+            eventType
           ),
         } as Action
       }),
