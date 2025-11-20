@@ -60,7 +60,7 @@ const documentsResolver: ResolverMap = {
     getDocuments(data, 'DECEASED_DEATH_PROOF'),
 }
 
-export const deathResolver: ResolverMap = {
+export const defaultDeathResolver: ResolverMap = {
   'deceased.name': (data: EventRegistration) =>
     resolveName(data, data.deceased?.name?.[0]),
   'deceased.gender': (data: EventRegistration) => data.deceased?.gender,
@@ -161,7 +161,7 @@ export const deathResolver: ResolverMap = {
     getCustomFieldVerificationStatus(data, 'death.spouse.spouse-view-group.verified'),
 }
 
-export const birthResolver: ResolverMap = {
+export const defaultBirthResolver: ResolverMap = {
   'child.name': (data: EventRegistration) =>
     resolveName(data, data.child?.name?.[0]),
 
@@ -303,8 +303,6 @@ export const birthResolver: ResolverMap = {
 }
 
 const defaultResolvers: ResolverMap = {
-  ...birthResolver,
-  ...deathResolver,
   ...informantResolver,
   ...documentsResolver,
 }
