@@ -3,6 +3,7 @@ import { v4 as uuidv4 } from 'npm:uuid'
 import {
   DEFAULT_FIELD_MAPPINGS,
   CUSTOM_FIELD_MAPPINGS,
+  AGE_MAPPINGS,
 } from './defaultMappings.ts'
 import { COUNTRY_FIELD_MAPPINGS } from '../countryData/countryMappings.ts'
 import { NAME_MAPPINGS } from '../countryData/nameMappings.ts'
@@ -47,6 +48,11 @@ function patternMatch(
       const nameKey = Object.keys(nameMapping)[0]
       const existing = transformedData[nameKey] || {}
       transformedData[nameKey] = { ...existing, ...nameMapping[nameKey] }
+    } else if (AGE_MAPPINGS[key]) {
+      const ageMapping = AGE_MAPPINGS[key](value as string)
+      const ageKey = Object.keys(ageMapping)[0]
+      const existing = transformedData[ageKey] || {}
+      transformedData[ageKey] = { ...existing, ...ageMapping[ageKey] }
     } else if (ADDRESS_MAPPINGS[key]) {
       const addressMapping = ADDRESS_MAPPINGS[key](value as string)
       let addressKey = Object.keys(addressMapping)[0]

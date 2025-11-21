@@ -18,7 +18,6 @@ export const DEFAULT_FIELD_MAPPINGS = {
   'birth.informant.informantType': 'informant.relation',
   'birth.informant.otherInformantType': 'informant.other.relation',
   'birth.informant.exactDateOfBirthUnknown': 'informant.dobUnknown',
-  'birth.informant.ageOfIndividualInYears': 'informant.age',
   'birth.informant.nationality': 'informant.nationality',
 
   'birth.mother.motherNationalId': 'mother.nid',
@@ -28,7 +27,6 @@ export const DEFAULT_FIELD_MAPPINGS = {
   'birth.mother.reasonNotApplying': 'mother.reason',
   'birth.mother.motherBirthDate': 'mother.dob',
   'birth.mother.exactDateOfBirthUnknown': 'mother.dobUnknown',
-  'birth.mother.ageOfIndividualInYears': 'mother.age',
   'birth.mother.nationality': 'mother.nationality',
   'birth.mother.maritalStatus': 'mother.maritalStatus',
   'birth.mother.educationalAttainment': 'mother.educationalAttainment',
@@ -42,7 +40,6 @@ export const DEFAULT_FIELD_MAPPINGS = {
   'birth.father.reasonNotApplying': 'father.reason',
   'birth.father.fatherBirthDate': 'father.dob',
   'birth.father.exactDateOfBirthUnknown': 'father.dobUnknown',
-  'birth.father.ageOfIndividualInYears': 'father.age',
   'birth.father.nationality': 'father.nationality',
   'birth.father.maritalStatus': 'father.maritalStatus',
   'birth.father.educationalAttainment': 'father.educationalAttainment',
@@ -60,7 +57,6 @@ export const DEFAULT_FIELD_MAPPINGS = {
   'death.deceased.gender': 'deceased.gender',
   'death.deceased.deceasedBirthDate': 'deceased.dob',
   'death.deceased.exactDateOfBirthUnknown': 'deceased.dobUnknown',
-  'death.deceased.ageOfIndividualInYears': 'deceased.age',
   'death.deceased.nationality': 'deceased.nationality',
   'death.deceased.deceasedNationalId': 'deceased.nid',
   'death.deceased.deceasedPassport': 'deceased.passport',
@@ -80,7 +76,6 @@ export const DEFAULT_FIELD_MAPPINGS = {
   'death.informant.otherInformantType': 'informant.other.relation',
   'death.informant.informantBirthDate': 'informant.dob',
   'death.informant.exactDateOfBirthUnknown': 'informant.dobUnknown',
-  'death.informant.ageOfIndividualInYears': 'informant.age',
   'death.informant.nationality': 'informant.nationality',
   'death.informant.informantNationalId': 'informant.nid',
   'death.informant.informantPassport': 'informant.passport',
@@ -125,4 +120,46 @@ export const CUSTOM_FIELD_MAPPINGS = {
   'death.deceased.deceased-view-group.verified': 'deceased.verified',
   'death.informant.informant-view-group.verified': 'informant.verified',
   'death.spouse.spouse-view-group.verified': 'spouse.verified'
+}
+
+export const AGE_MAPPINGS: Record<
+  string,
+  (data: string) => Record<string, any>
+> = {
+  'birth.mother.ageOfIndividualInYears': (data: string) => ({
+    'mother.age': {
+      age: data,
+      asOfDateRef: 'child.dob',
+    },
+  }),
+  'birth.father.ageOfIndividualInYears': (data: string) => ({
+    'father.age': {
+      age: data,
+      asOfDateRef: 'child.dob',
+    },
+  }),
+  'birth.informant.ageOfIndividualInYears': (data: string) => ({
+    'informant.age': {
+      age: data,
+      asOfDateRef: 'child.dob',
+    },
+  }),
+  'death.deceased.ageOfIndividualInYears': (data: string) => ({
+    'deceased.age': {
+      age: data,
+      asOfDateRef: 'eventDetails.date',
+    },
+  }),
+  'death.informant.ageOfIndividualInYears': (data: string) => ({
+    'informant.age': {
+      age: data,
+      asOfDateRef: 'eventDetails.date',
+    },
+  }),
+  'death.spouse.ageOfIndividualInYears': (data: string) => ({
+    'spouse.age': {
+      age: data,
+      asOfDateRef: 'eventDetails.date',
+    },
+  }),
 }
