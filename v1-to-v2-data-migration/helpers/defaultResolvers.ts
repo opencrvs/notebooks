@@ -31,7 +31,7 @@ const informantResolver: ResolverMap = {
   // @question, is this informant.age or informant.ageOfIndividualInYears?
   'informant.age': (data: EventRegistration) =>
     data.informant?.ageOfIndividualInYears && {
-      age: !isSpecialInformant(data.informant) ? data.informant?.ageOfIndividualInYears?.toString() : undefined,
+      age: !isSpecialInformant(data.informant) ? parseInt(data.informant?.ageOfIndividualInYears?.toString(), 10) : undefined,
       asOfDateRef: data.child ? 'child.dob' : 'eventDetails.date',
     },
   'informant.nationality': (data: EventRegistration) =>
