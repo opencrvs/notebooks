@@ -86,7 +86,9 @@ export interface PersonWithIdentifiers {
   multipleBirth?: number
   relationship?: string
   otherRelationship?: string
-  deathDate?: string
+  deceased?: {
+    deathDate?: string
+  }
 }
 
 // Event location types
@@ -197,7 +199,7 @@ export interface EventRegistration {
   weightAtBirth?: number
   deathDate?: string
   deathDescription?: string
-  causeOfDeathEstablished?: boolean
+  causeOfDeathEstablished?: "true" | "false"
   causeOfDeathMethod?: string
   mannerOfDeath?: string
 }

@@ -96,7 +96,7 @@ export const defaultDeathResolver: ResolverMap = {
   'deceased.address': (data: EventRegistration) =>
     resolveAddress(data, data.deceased?.address?.[0]),
   'eventDetails.date': (data: EventRegistration) =>
-    data.deceased?.deathDate || data.deathDate,
+    data.deceased?.deceased?.deathDate || data.deathDate,
   'eventDetails.description': (data: EventRegistration) =>
     data.deathDescription,
   'eventDetails.reasonForLateRegistration': (data: EventRegistration) =>
@@ -105,7 +105,7 @@ export const defaultDeathResolver: ResolverMap = {
       'death.deathEvent.death-event-details.reasonForLateRegistration'
     ),
   'eventDetails.causeOfDeathEstablished': (data: EventRegistration) =>
-    Boolean(data.causeOfDeathEstablished),
+    data.causeOfDeathEstablished === "true",
   'eventDetails.sourceCauseDeath': (data: EventRegistration) =>
     data.causeOfDeathMethod,
   'eventDetails.mannerOfDeath': (data: EventRegistration) => data.mannerOfDeath,
