@@ -1,7 +1,7 @@
 import { AddressLine, EventRegistration } from '../helpers/types.ts'
 
 export const COUNTRY_CODE = 'FAR' //Replace with actual country code
-export const COUNTRY_PHONE_CODE = '+26' //Replace with actual country phone code
+export const COUNTRY_PHONE_CODE = '+260' //Replace with actual country phone code
 
 // Required to handle 2:1 mapping of birth location fields in corrections
 export const BIRTH_LOCATION_PRIVATE_HOME_KEY = 'birth.birthLocation.privateHome'
