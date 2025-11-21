@@ -11,37 +11,37 @@ import { getCustomFieldVerificationStatus } from '../countryData/verificationRes
 
 
 const informantResolver: ResolverMap = {
-  'informant.dob': (data: EventRegistration) => !isSpecialInformant(data.informant) ? data.informant?.birthDate : undefined, // type: 'DATE',
+  'informant.dob': (data: EventRegistration, eventType: 'birth' | 'death') => !isSpecialInformant(data.informant, eventType) ? data.informant?.birthDate : undefined, // type: 'DATE',
   /* @todo Addresses need to be properly handled */
-  'informant.address': (data: EventRegistration) =>
-    !isSpecialInformant(data.informant) ? resolveAddress(data, data.informant?.address?.[0]) : undefined, // type: FieldType.ADDRESS,
+  'informant.address': (data: EventRegistration, eventType: 'birth' | 'death') =>
+    !isSpecialInformant(data.informant, eventType) ? resolveAddress(data, data.informant?.address?.[0]) : undefined, // type: FieldType.ADDRESS,
   // @question, is informant.telecom correct or this?
-  'informant.phoneNo': (data: EventRegistration) =>
+  'informant.phoneNo': (data: EventRegistration, eventType: 'birth' | 'death') =>
     data.registration.contactPhoneNumber?.replace(COUNTRY_PHONE_CODE, '0'), // @todo https://github.com/opencrvs/opencrvs-core/issues/9601
-  'informant.email': (data: EventRegistration) =>
+  'informant.email': (data: EventRegistration, eventType: 'birth' | 'death') =>
     data.registration.contactEmail, // type: FieldType.EMAIL,
-  'informant.relation': (data: EventRegistration) =>
+  'informant.relation': (data: EventRegistration, eventType: 'birth' | 'death') =>
     data.informant?.relationship, // FieldType.SELECT
-  'informant.other.relation': (data: EventRegistration) =>
+  'informant.other.relation': (data: EventRegistration, eventType: 'birth' | 'death') =>
     data.informant?.otherRelationship, // FieldType.TEXT
-  'informant.name': (data: EventRegistration) =>
-    !isSpecialInformant(data.informant) ? resolveName(data, data.informant?.name?.[0]) : undefined, // FieldType.TEXT
-  'informant.dobUnknown': (data: EventRegistration) =>
-    !isSpecialInformant(data.informant) ? data.informant?.exactDateOfBirthUnknown : undefined, // FieldType.CHECKBOX
+  'informant.name': (data: EventRegistration, eventType: 'birth' | 'death') =>
+    !isSpecialInformant(data.informant, eventType) ? resolveName(data, data.informant?.name?.[0]) : undefined, // FieldType.TEXT
+  'informant.dobUnknown': (data: EventRegistration, eventType: 'birth' | 'death') =>
+    !isSpecialInformant(data.informant, eventType) ? data.informant?.exactDateOfBirthUnknown : undefined, // FieldType.CHECKBOX
   // @question, is this informant.age or informant.ageOfIndividualInYears?
-  'informant.age': (data: EventRegistration) =>
+  'informant.age': (data: EventRegistration, eventType: 'birth' | 'death') =>
     data.informant?.ageOfIndividualInYears && {
-      age: !isSpecialInformant(data.informant) ? parseInt(data.informant?.ageOfIndividualInYears?.toString(), 10) : undefined,
+      age: !isSpecialInformant(data.informant, eventType) ? parseInt(data.informant?.ageOfIndividualInYears?.toString(), 10) : undefined,
       asOfDateRef: data.child ? 'child.dob' : 'eventDetails.date',
     },
-  'informant.nationality': (data: EventRegistration) =>
-    !isSpecialInformant(data.informant) ? data.informant?.nationality?.[0] : undefined, // FieldType.COUNTRY
-  'informant.brn': (data: EventRegistration) =>
-    !isSpecialInformant(data.informant) ? getIdentifier(data.informant, 'BIRTH_REGISTRATION_NUMBER') : undefined,
-  'informant.nid': (data: EventRegistration) =>
-    !isSpecialInformant(data.informant) ? getIdentifier(data.informant, 'NATIONAL_ID') : undefined,
-  'informant.passport': (data: EventRegistration) =>
-    !isSpecialInformant(data.informant) ? getIdentifier(data.informant, 'PASSPORT') : undefined,
+  'informant.nationality': (data: EventRegistration, eventType: 'birth' | 'death') =>
+    !isSpecialInformant(data.informant, eventType) ? data.informant?.nationality?.[0] : undefined, // FieldType.COUNTRY
+  'informant.brn': (data: EventRegistration, eventType: 'birth' | 'death') =>
+    !isSpecialInformant(data.informant, eventType) ? getIdentifier(data.informant, 'BIRTH_REGISTRATION_NUMBER') : undefined,
+  'informant.nid': (data: EventRegistration, eventType: 'birth' | 'death') =>
+    !isSpecialInformant(data.informant, eventType) ? getIdentifier(data.informant, 'NATIONAL_ID') : undefined,
+  'informant.passport': (data: EventRegistration, eventType: 'birth' | 'death') =>
+    !isSpecialInformant(data.informant, eventType) ? getIdentifier(data.informant, 'PASSPORT') : undefined,
 }
 
 const documentsResolver: ResolverMap = {

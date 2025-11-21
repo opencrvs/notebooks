@@ -36,10 +36,16 @@ export function getCustomField(data: any, id: string): any {
 /**
  * Special informants have their own special sections like `mother.`, `father.` or `spouse.`.
  */
-export const isSpecialInformant = (informant?: PersonWithIdentifiers) => {
+export const isSpecialInformant = (informant: PersonWithIdentifiers | undefined, eventType: 'birth' | 'death') => {
   if (!informant) return false
 
-  return informant.relationship === 'SPOUSE'
-    || informant.relationship === 'MOTHER'
+  if(eventType === 'birth') {
+    return informant.relationship === 'MOTHER'
     || informant.relationship === 'FATHER'
+  }
+
+  if(eventType === 'death') {
+    return informant.relationship === 'SPOUSE'
+  }
+  return false
 }

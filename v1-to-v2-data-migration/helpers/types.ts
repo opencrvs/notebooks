@@ -170,7 +170,7 @@ export interface HistoryItem {
 }
 
 // Resolver types
-export type ResolverFunction<T = any> = (data: T) => any
+export type ResolverFunction<T = any> = (data: T, eventType: 'birth' | 'death') => any
 
 export interface ResolverMap {
   [fieldId: string]: ResolverFunction

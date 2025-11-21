@@ -384,7 +384,7 @@ export function transform(
   eventType: 'birth' | 'death'
 ): TransformedDocument {
   const result = Object.entries(resolver).map(([fieldId, r]) => {
-    return [fieldId, r(eventRegistration)]
+    return [fieldId, r(eventRegistration, eventType)]
   })
 
   const withOutNulls = result.filter(
