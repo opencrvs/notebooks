@@ -63,6 +63,14 @@ const documentsResolver: ResolverMap = {
     getDocuments(data, 'DECEASED_DEATH_CAUSE_PROOF'),
 }
 
+const mannerDeathMapping = {
+  'NATURAL_CAUSES': 'MANNER_NATURAL',
+  'ACCIDENT': 'MANNER_ACCIDENT',
+  'SUICIDE': 'MANNER_SUICIDE',
+  'HOMICIDE': 'MANNER_HOMICIDE',
+  'MANNER_UNDETERMINED': 'MANNER_UNDETERMINED'
+}
+
 export const defaultDeathResolver: ResolverMap = {
   'deceased.name': (data: EventRegistration) =>
     resolveName(data, data.deceased?.name?.[0]),
@@ -108,7 +116,7 @@ export const defaultDeathResolver: ResolverMap = {
     data.causeOfDeathEstablished === "true",
   'eventDetails.sourceCauseDeath': (data: EventRegistration) =>
     data.causeOfDeathMethod,
-  'eventDetails.mannerOfDeath': (data: EventRegistration) => data.mannerOfDeath,
+  'eventDetails.mannerOfDeath': (data: EventRegistration) => data.mannerOfDeath && mannerDeathMapping[data.mannerOfDeath],
   'eventDetails.placeOfDeath': (data: EventRegistration) =>
     data.eventLocation?.type,
   'eventDetails.deathLocation': (data: EventRegistration) =>
