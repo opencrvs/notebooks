@@ -1,4 +1,4 @@
-import { Identifier, Document, ProcessedDocument, PersonWithIdentifiers } from './types.ts'
+import { Identifier, Document, ProcessedDocumentWithOptionType, PersonWithIdentifiers, ProcessedDocument } from './types.ts'
 
 export const getIdentifier = (
   data: { identifier?: Identifier[] } | undefined,
@@ -6,13 +6,31 @@ export const getIdentifier = (
 ): string | undefined =>
   data?.identifier?.find(({ type }) => type === identifier)?.id
 
-export const getDocuments = (
+export const getDocument = (
   data: any,
   type: string
 ): ProcessedDocument[] | null => {
-  const documents = data?.registration?.attachments
+  const document = data?.registration?.attachments
     ?.filter(({ subject }: { subject: string }) => subject === type)
     ?.map((doc: Document): ProcessedDocument => {
+      return {
+        path: doc.uri,
+        originalFilename: doc.uri.replace('/ocrvs/', ''),
+        type: doc.contentType
+      }
+    })[0]
+  if (!document) {
+    return null
+  }
+  return document
+}
+export const getDocuments = (
+  data: any,
+  type: string
+): ProcessedDocumentWithOptionType[] | null => {
+  const documents = data?.registration?.attachments
+    ?.filter(({ subject }: { subject: string }) => subject === type)
+    ?.map((doc: Document): ProcessedDocumentWithOptionType => {
       return {
         path: doc.uri,
         originalFilename: doc.uri.replace('/ocrvs/', ''),

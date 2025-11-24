@@ -1,4 +1,4 @@
-import { getCustomField, getDocuments, getIdentifier, isSpecialInformant } from './resolverUtils.ts'
+import { getCustomField, getDocument, getDocuments, getIdentifier, isSpecialInformant } from './resolverUtils.ts'
 import {
   COUNTRY_PHONE_CODE,
   resolveAddress,
@@ -46,7 +46,7 @@ const informantResolver: ResolverMap = {
 
 const documentsResolver: ResolverMap = {
   'documents.proofOfBirth': (data: EventRegistration) =>
-    getDocuments(data, 'CHILD'),
+    getDocument(data, 'CHILD'),
   'documents.proofOfMother': (data: EventRegistration) =>
     getDocuments(data, 'MOTHER'),
   'documents.proofOfFather': (data: EventRegistration) =>
@@ -54,13 +54,13 @@ const documentsResolver: ResolverMap = {
   'documents.proofOfInformant': (data: EventRegistration) =>
     getDocuments(data, 'INFORMANT_ID_PROOF'),
   'documents.proofOther': (data: EventRegistration) =>
-    getDocuments(data, 'OTHER'),
+     (getDocuments(data, 'OTHER') || []).concat(getDocuments(data, 'LEGAL_GUARDIAN_PROOF') || []),
   'documents.proofOfDeceased': (data: EventRegistration) =>
     getDocuments(data, 'DECEASED_ID_PROOF'),
   'documents.proofOfDeath': (data: EventRegistration) =>
-    getDocuments(data, 'INFORMANT_ID_PROOF'), // TODO not this
-  'documents.proofOfCauseOfDeath': (data: EventRegistration) =>
     getDocuments(data, 'DECEASED_DEATH_PROOF'),
+  'documents.proofOfCauseOfDeath': (data: EventRegistration) =>
+    getDocuments(data, 'DECEASED_DEATH_CAUSE_PROOF'),
 }
 
 export const defaultDeathResolver: ResolverMap = {

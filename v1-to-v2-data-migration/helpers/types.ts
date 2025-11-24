@@ -42,11 +42,16 @@ export interface Document {
   type: string
 }
 
-export interface ProcessedDocument {
+export interface ProcessedDocumentWithOptionType {
   path: string
   originalFilename: string
   type: string
   option: string
+}
+export interface ProcessedDocument {
+  path: string
+  originalFilename: string
+  type: string
 }
 
 // Address types
