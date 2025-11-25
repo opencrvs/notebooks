@@ -1,7 +1,8 @@
 import { getCustomField, getDocuments } from '../helpers/resolverUtils.ts'
 import { EventRegistration } from '../helpers/types.ts'
+import pairs from './unResolvedBirthFields.json' with { type: 'json' };
 
-export const countryResolver = {
+const initialCountryResolver = {
   'child.birthTime': (data: EventRegistration) =>
     getCustomField(data, 'birth.child.child-view-group.birthTime'),
   'child.iD': (data: EventRegistration) => data.child?.identifier?.[0]?.id,
@@ -67,6 +68,19 @@ export const countryResolver = {
     !!data?.registration?.attachments,
   'documents.proofOther': (data: EventRegistration) =>
     getDocuments(data, 'LEGAL_GUARDIAN_PROOF'),
+}
+
+const unResolvedBirthFieldsResolverObject = Object.fromEntries(
+  (pairs as [string, string][]).map(([v1, v2]) => [
+    v2,
+    (data: EventRegistration) => getCustomField(data, v1)
+  ])
+);
+
+
+export const countryResolver = {
+  ...initialCountryResolver,
+  ...unResolvedBirthFieldsResolverObject
 }
 
 /* 

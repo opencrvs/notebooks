@@ -105,6 +105,16 @@ export function transformCorrection(
   event: 'birth' | 'death',
   declaration: Record<string, any>
 ): Record<string, any> {
+
+  const normalizeValue = (v: any) => {
+    if (typeof v === 'string') {
+      const s = v.trim().toLowerCase()
+      if (s === 'true') return true
+      if (s === 'false') return false
+    }
+    return v
+  }
+
   const v1InputDeclaration =
     historyItem.input?.reduce((acc: Record<string, any>, curr: any) => {
       acc[`${event}.${curr.valueCode}.${curr.valueId}`] = curr.value
@@ -113,7 +123,7 @@ export function transformCorrection(
 
   const v1OutputDeclaration =
     historyItem.output?.reduce((acc: Record<string, any>, curr: any) => {
-      acc[`${event}.${curr.valueCode}.${curr.valueId}`] = curr.value
+      acc[`${event}.${curr.valueCode}.${curr.valueId}`] = normalizeValue(curr.value)
       return acc
     }, {}) || {}
 

@@ -6,7 +6,7 @@
     {v1Field.customQuestionMappingId}: {v2Field.id}
 */
 
-export const COUNTRY_FIELD_MAPPINGS = {
+const INITIAL_COUNTRY_FIELD_MAPPINGS = {
 'birth.child.child-view-group.birthTime' : 'child.birthTime',
 'birth.child.child-view-group.fokontanyCustomAddress' : 'child.birthLocation.privateHome',
 'birth.child.child-view-group.otherPlaceOfBirthAddress' : 'child.birthLocation.other',
@@ -37,4 +37,78 @@ export const COUNTRY_FIELD_MAPPINGS = {
 'birth.father.iD' : 'father.iD',
 'birth.father.father-view-group.birthPlace' : 'father.birthPlace',
 'birth.father.father-view-group.fokontanyCustomAddress' : 'father.address'
+}
+
+// Mention fields
+const mentionKeyBase = "birth.mention.mention-view-group";
+
+const mentionKeys = [
+  "detailsMentionExist",
+  "typeOfMention", 
+  "recognitionActNumber",
+  "recognitionDate",
+  "recognitionPlace",
+  "childFamilyName", 
+  "childFirstName", 
+  "mentionChildNID", 
+  "simpleAdoptionActNumber",
+  "simpleAdoptionDate",
+  "simpleAdoptionParent1FamilyName",
+  "simpleAdoptionParent1FirstName",
+  "simpleAdoptionParent1NID",
+  "simpleAdoptionParent2FamilyName",
+  "simpleAdoptionParent2FirstName",
+  "simpleAdoptionParent2NID",
+  "judicialAdoptionActNumber",
+  "judicialAdoptionDate",
+  "judicialAdoptionJudgementDecisionNumber",
+  "judicialAdoptionJudgementDecisionDate",
+  "judicialAdoptionTribunalOfFirstInstanceAct",
+  "judicialAdoptionParent1FamilyName",
+  "judicialAdoptionParent1FirstName",
+  "judicialAdoptionParent1NID",
+  "judicialAdoptionParent2FamilyName",
+  "judicialAdoptionParent2FirstName",
+  "judicialAdoptionParent2NID",
+  "nameChangeActNumber",
+  "nameChangeDate",
+  "nameChangeJudgementDecisionNumber",
+  "nameChangeJudgementDecisionDate",
+  "nameChangeTribunalOfFirstInstanceAct",
+  "modification", 
+  "marriageActNumber",
+  "marriageDate",
+  "marriageJudgementDecisionNumber",
+  "marriageJudgementDecisionDate",
+  "marriageTribunalOfFirstInstanceAct",
+  "brideOrGroomFamilyName",
+  "brideOrGroomFirstName",
+  "brideOrGroomNID",
+  "divorceActNumber",
+  "divorceDate",
+  "divorcePlace",
+  "wifeOrHusbandFamilyName",
+  "wifeOrHusbandFirstName",
+  "wifeOrHusbandNID",
+  "deathActNumber",
+  "deathDate",
+  "deathPlace",
+  "deathdateOfDeath",
+  "deathDeathPlace",
+  "notes", 
+];
+
+const MENTION_FIELD_MAPPINGS: Record<string, string> = {};
+
+for (let i = 0; i < 10; i++) {
+  for (const key of mentionKeys) {
+    const fullKey = `${mentionKeyBase}.${key}__${i}`;
+    const value = `${key}-${i}`;
+    MENTION_FIELD_MAPPINGS[fullKey] = value;
+  }
+}
+
+export const COUNTRY_FIELD_MAPPINGS = {
+  ...INITIAL_COUNTRY_FIELD_MAPPINGS,
+  ...MENTION_FIELD_MAPPINGS
 }
