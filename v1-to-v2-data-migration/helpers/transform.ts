@@ -27,7 +27,11 @@ import {
   COUNTRY_CODE,
 } from '../countryData/addressResolver.ts'
 
-const mappings = { ...DEFAULT_FIELD_MAPPINGS, ...COUNTRY_FIELD_MAPPINGS }
+const mappings = {
+  ...DEFAULT_FIELD_MAPPINGS,
+  ...CUSTOM_FIELD_MAPPINGS,
+  ...COUNTRY_FIELD_MAPPINGS,
+}
 
 function patternMatch(
   correction: Record<string, any>,
@@ -89,12 +93,11 @@ function patternMatch(
       const parts = key.split('.')
       const prefix = parts.slice(0, 2).join('.')
       const suffix = parts.slice(2).join('.')
-      const mapKey = Object.keys(CUSTOM_FIELD_MAPPINGS).find(
+      const mapKey = Object.keys(mappings).find(
         (m) => m.startsWith(prefix) && m.endsWith(suffix)
       )
       if (mapKey) {
-        const valueKey =
-          CUSTOM_FIELD_MAPPINGS[mapKey as keyof typeof CUSTOM_FIELD_MAPPINGS]
+        const valueKey = mappings[mapKey as keyof typeof mappings]
         transformedData[valueKey] = value
       }
     }
@@ -108,19 +111,29 @@ export function transformCorrection(
   event: 'birth' | 'death',
   declaration: Record<string, any>
 ): Record<string, any> {
-  const v1Declaration =
+  const v1InputDeclaration =
+    historyItem.input?.reduce((acc: Record<string, any>, curr: any) => {
+      acc[`${event}.${curr.valueCode}.${curr.valueId}`] = curr.value
+      return acc
+    }, {}) || {}
+
+  const v1OutputDeclaration =
     historyItem.output?.reduce((acc: Record<string, any>, curr: any) => {
       acc[`${event}.${curr.valueCode}.${curr.valueId}`] = curr.value
       return acc
     }, {}) || {}
 
-  return patternMatch(v1Declaration, declaration)
+  return {
+    input: patternMatch(v1InputDeclaration, declaration),
+    output: patternMatch(v1OutputDeclaration, declaration),
+  }
 }
 
 function legacyHistoryItemToV2ActionType(
   record: EventRegistration,
   declaration: Record<string, any>,
-  historyItem: HistoryItem
+  historyItem: HistoryItem,
+  eventType: 'birth' | 'death'
 ): Partial<Action> {
   if (!historyItem.action) {
     switch (historyItem.regStatus) {
@@ -176,7 +189,7 @@ function legacyHistoryItemToV2ActionType(
         }
       case 'REJECTED':
         return {
-          status: 'Rejected',
+          status: 'Accepted',
           type: 'REJECT' as ActionType,
           declaration: {},
           content: {
@@ -193,8 +206,8 @@ function legacyHistoryItemToV2ActionType(
         }
       case 'IN_PROGRESS':
         return {
-          type: 'READ' as ActionType,
-          declaration: {},
+          type: 'NOTIFY' as ActionType,
+          declaration: declaration,
         }
       case 'DECLARATION_UPDATED': //TODO - check if this is correct
         return {
@@ -208,20 +221,24 @@ function legacyHistoryItemToV2ActionType(
 
   switch (historyItem.action) {
     case 'REQUESTED_CORRECTION':
+      const correction = transformCorrection(
+        historyItem,
+        eventType,
+        declaration
+      )
+
+      const annotation = Object.fromEntries(
+        Object.entries(correctionResolver).map(([key, resolver]) => [
+          key,
+          resolver(historyItem),
+        ])
+      )
+
       return {
         status: 'Accepted',
         type: 'REQUEST_CORRECTION' as ActionType,
-        declaration: transformCorrection(
-          historyItem,
-          record.child ? 'birth' : 'death',
-          declaration
-        ),
-        annotation: Object.fromEntries(
-          Object.entries(correctionResolver).map(([key, resolver]) => [
-            key,
-            resolver(historyItem),
-          ])
-        ),
+        declaration: correction.output,
+        annotation: { ...declaration, ...annotation, ...correction.input },
         requestId: historyItem.id,
       }
     case 'APPROVED_CORRECTION':
@@ -240,7 +257,7 @@ function legacyHistoryItemToV2ActionType(
       }
     case 'REJECTED_CORRECTION':
       return {
-        status: 'Rejected',
+        status: 'Accepted',
         type: 'REJECT_CORRECTION' as ActionType,
         requestId: historyItem.requestId,
         declaration: {},
@@ -254,8 +271,10 @@ function legacyHistoryItemToV2ActionType(
         declaration: {},
         content: {
           duplicates:
-            record.registration.duplicates?.map((x: any) => x.compositionId) ||
-            [],
+            record.registration.duplicates?.map((x: any) => ({
+              id: x.compositionId,
+              trackingId: x.trackingId,
+            })) || [],
         },
       }
 
@@ -265,7 +284,7 @@ function legacyHistoryItemToV2ActionType(
 
   const actionMap: Record<string, ActionType> = {
     MARKED_AS_DUPLICATE: 'MARK_AS_DUPLICATE',
-    MARKED_AS_NOT_DUPLICATE: 'MARK_NOT_DUPLICATE',
+    MARKED_AS_NOT_DUPLICATE: 'MARK_AS_NOT_DUPLICATE',
     DOWNLOADED: 'READ',
     UNASSIGNED: 'UNASSIGN',
     VIEWED: 'READ',
@@ -288,19 +307,7 @@ function nonNullObjectKeys(obj: Record<string, any>) {
   )
 }
 
-export function transform(
-  eventRegistration: EventRegistration,
-  resolver: ResolverMap
-): TransformedDocument {
-  const result = Object.entries(resolver).map(([fieldId, r]) => {
-    return [fieldId, r(eventRegistration)]
-  })
-
-  const withOutNulls = result.filter(
-    ([_, value]) => value !== null && value !== undefined
-  )
-  const declaration = Object.fromEntries(withOutNulls)
-
+const preProcessHistory = (eventRegistration: EventRegistration) => {
   // Handle CORRECTED items by duplicating them
   const processedHistory: any[] = []
   const issued: any[] = []
@@ -331,11 +338,16 @@ export function transform(
     } else if (historyItem.action === 'REQUESTED_CORRECTION') {
       historyItem.id = uuidv4()
       const req = corrections.pop()
-      req.requestId = historyItem?.id //TODO needs better error handling
+      if (req) {
+        req.requestId = historyItem?.id
+      }
+      processedHistory.push(historyItem)
     } else if (historyItem.action === 'REJECTED_CORRECTION') {
       corrections.push(historyItem)
+      processedHistory.push(historyItem)
     } else if (historyItem.action === 'APPROVED_CORRECTION') {
       corrections.push(historyItem)
+      processedHistory.push(historyItem)
     } else if (!historyItem.action && historyItem.regStatus === 'CERTIFIED') {
       const matchingIssue = issued.pop()
 
@@ -363,6 +375,24 @@ export function transform(
       processedHistory.push(historyItem)
     }
   }
+  return processedHistory
+}
+
+export function transform(
+  eventRegistration: EventRegistration,
+  resolver: ResolverMap,
+  eventType: 'birth' | 'death'
+): TransformedDocument {
+  const result = Object.entries(resolver).map(([fieldId, r]) => {
+    return [fieldId, r(eventRegistration)]
+  })
+
+  const withOutNulls = result.filter(
+    ([_, value]) => value !== null && value !== undefined
+  )
+  const declaration = Object.fromEntries(withOutNulls)
+
+  const processedHistory = preProcessHistory(eventRegistration)
 
   const historyAsc = processedHistory
     .sort((a, b) => new Date(a.date).valueOf() - new Date(b.date).valueOf())
@@ -373,7 +403,7 @@ export function transform(
 
   const documents: TransformedDocument = {
     id: eventRegistration.id,
-    type: eventRegistration.child ? 'birth' : 'death',
+    type: eventType,
     createdAt: new Date(historyAsc[0].date).toISOString(),
     updatedAt: new Date(newest.date).toISOString(),
     updatedAtLocation: newest.office?.id || '',
@@ -408,11 +438,45 @@ export function transform(
           ...legacyHistoryItemToV2ActionType(
             eventRegistration,
             declaration,
-            history
+            history,
+            eventType
           ),
         } as Action
       }),
     ],
+  }
+
+  return postProcess(documents)
+}
+
+function postProcess(documents: TransformedDocument): TransformedDocument {
+  const correctionResolverKeys = Object.keys(correctionResolver)
+
+  for (let i = 0; i < documents.actions.length; i++) {
+    const action = documents.actions[i]
+
+    if (action.type === 'REQUEST_CORRECTION' && action.annotation) {
+      // Filter out correctionResolver fields from the annotation
+      const filteredAnnotation = Object.fromEntries(
+        Object.entries(action.annotation).filter(
+          ([key]) => !correctionResolverKeys.includes(key)
+        )
+      )
+
+      // Find the first action before this one with a non-empty declaration
+      for (let j = i - 1; j >= 0; j--) {
+        const previousAction = documents.actions[j]
+
+        if (
+          previousAction.declaration &&
+          typeof previousAction.declaration === 'object' &&
+          Object.keys(previousAction.declaration).length > 0
+        ) {
+          previousAction.declaration = filteredAnnotation
+          break
+        }
+      }
+    }
   }
 
   return documents

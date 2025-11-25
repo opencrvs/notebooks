@@ -175,11 +175,11 @@ export const birthResolver: ResolverMap = {
     data.eventLocation?.type === 'HEALTH_FACILITY'
       ? data.eventLocation.id
       : null,
-  'child.address.privateHome': (data: EventRegistration) =>
+  'child.birthLocation.privateHome': (data: EventRegistration) =>
     data.eventLocation?.type === 'PRIVATE_HOME'
       ? resolveAddress(data, data.eventLocation?.address)
       : null,
-  'child.address.other': (data: EventRegistration) =>
+  'child.birthLocation.other': (data: EventRegistration) =>
     data.eventLocation?.type === 'OTHER'
       ? resolveAddress(data, data.eventLocation?.address)
       : null,

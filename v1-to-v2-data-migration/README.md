@@ -13,27 +13,26 @@
 - If the migration is successful, it will print out a list of successful migrations
 
 
-## Findings
+## How to set up migrations for countries
 
-- "Duplicates" array Task fetching might have to be added to MongoDB query
-https://github.com/opencrvs/opencrvs-core/blob/4ae4da9d7a00ffb85a15012fcdcc2d3ec473ec4f/packages/gateway/src/features/registration/type-resolvers.ts#L1142-L1151
-- getTimeLogged
-- Users need to be handled
-  - primaryOffice location should be lifted in the bundle
-  - Might be needed to migrate Practitioner primary offices into Practitioner objects before the actual migration
+Most country migrations will start with a branch in the notebooks repo, but in order to do production migrations, we need sensitive data so that needs to be kept within the country organisation.
+There are 2 github actions: `migrate.yml` and `migrate-prod.yml` 
+`migrate-prod` uses github secrets while `migrate` takes user input.
+In the case where your production does not use a VPN, just ignore those steps
 
-
-  practitioner Role history bug also affects this
-
-
-- Questionnaire wasn't part of the legacy data (no custom questions?)
-
-- OK I'm missing history
-
-
-# Step
-1. Read country's current form, gather a list of fields with
-  - Custom: true
-  - Field: type
-2. Make an analysis of possible misalignment
-3. Migrate locations from FHIR Location to Postgres
+- Fork the notebooks repository into the country organisation.
+	- If you've already created a branch for the country, be sure to fork all branches, not just main
+	- Merge country branch into main
+- Add VPN details to github actions 
+	- Get VPN github action details from existing country config actions e.g. `/opencrvs-{countryName}/github/workflows/deploy-prod.yml`
+	- Modify `/github/workflows/migrate-prod.yml`  and replace `# ADD VPN SETUP STEPS HERE` with the above VPN steps 
+	- Take note of all secrets required by the VPN steps, e.g. `secrets.VPN_USER`
+- Create environments
+	- In github settings, create 2 environments `staging` and `production`
+	- Add all secrets for the VPN details, these should be the same as the secrets in the country config, to each environment
+	- Add `OPENCRVS_CLIENT_ID` and `OPENCRVS_CLIENT_SECRET` to both environment secrets, we'd add the value next
+- Create migration client for each environment
+	- Login as an admin user
+	- Go to `Configuration -> Integrations -> Create client`
+	- Create client with name 'Migrations' and type 'Import/Export'
+	- Copy the Client ID and Client secret and save them in the github secrets for each environment
