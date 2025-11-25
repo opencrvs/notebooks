@@ -1,45 +1,92 @@
-import { getCustomField, getDocuments, getIdentifier } from './resolverUtils.ts'
+import {
+  getCustomField,
+  getDocument,
+  getDocuments,
+  getIdentifier,
+  isSpecialInformant,
+} from './resolverUtils.ts'
 import {
   COUNTRY_PHONE_CODE,
   resolveAddress,
 } from '../countryData/addressResolver.ts'
 import { EventRegistration, ResolverMap } from './types.ts'
 import { resolveName } from '../countryData/nameResolver.ts'
+import { getCustomFieldVerificationStatus } from '../countryData/verificationResolver.ts'
 
 const informantResolver: ResolverMap = {
-  'informant.dob': (data: EventRegistration) => data.informant?.birthDate, // type: 'DATE',
+  'informant.dob': (data: EventRegistration, eventType: 'birth' | 'death') =>
+    !isSpecialInformant(data.informant, eventType)
+      ? data.informant?.birthDate
+      : undefined, // type: 'DATE',
   /* @todo Addresses need to be properly handled */
-  'informant.address': (data: EventRegistration) =>
-    resolveAddress(data, data.informant?.address?.[0]), // type: FieldType.ADDRESS,
+  'informant.address': (
+    data: EventRegistration,
+    eventType: 'birth' | 'death'
+  ) =>
+    !isSpecialInformant(data.informant, eventType)
+      ? resolveAddress(data, data.informant?.address?.[0])
+      : undefined, // type: FieldType.ADDRESS,
   // @question, is informant.telecom correct or this?
-  'informant.phoneNo': (data: EventRegistration) =>
-    data.registration.contactPhoneNumber?.replace(COUNTRY_PHONE_CODE, '0'), // @todo https://github.com/opencrvs/opencrvs-core/issues/9601
-  'informant.email': (data: EventRegistration) =>
+  'informant.phoneNo': (
+    data: EventRegistration,
+    eventType: 'birth' | 'death'
+  ) => data.registration.contactPhoneNumber?.replace(COUNTRY_PHONE_CODE, '0'), // @todo https://github.com/opencrvs/opencrvs-core/issues/9601
+  'informant.email': (data: EventRegistration, eventType: 'birth' | 'death') =>
     data.registration.contactEmail, // type: FieldType.EMAIL,
-  'informant.relation': (data: EventRegistration) =>
-    data.informant?.relationship, // FieldType.SELECT
-  'informant.other.relation': (data: EventRegistration) =>
-    data.informant?.otherRelationship, // FieldType.TEXT
-  'informant.name': (data: EventRegistration) =>
-    resolveName(data, data.informant?.name?.[0]), // FieldType.TEXT
-  'informant.dobUnknown': (data: EventRegistration) =>
-    data.informant?.exactDateOfBirthUnknown, // FieldType.CHECKBOX
+  'informant.relation': (
+    data: EventRegistration,
+    eventType: 'birth' | 'death'
+  ) => data.informant?.relationship, // FieldType.SELECT
+  'informant.other.relation': (
+    data: EventRegistration,
+    eventType: 'birth' | 'death'
+  ) => data.informant?.otherRelationship, // FieldType.TEXT
+  'informant.name': (data: EventRegistration, eventType: 'birth' | 'death') =>
+    !isSpecialInformant(data.informant, eventType)
+      ? resolveName(data, data.informant?.name?.[0])
+      : undefined, // FieldType.TEXT
+  'informant.dobUnknown': (
+    data: EventRegistration,
+    eventType: 'birth' | 'death'
+  ) =>
+    !isSpecialInformant(data.informant, eventType)
+      ? data.informant?.exactDateOfBirthUnknown
+      : undefined, // FieldType.CHECKBOX
   // @question, is this informant.age or informant.ageOfIndividualInYears?
-  'informant.age': (data: EventRegistration) =>
-    data.informant?.ageOfIndividualInYears?.toString() /* @todo not a fan of this */,
-  'informant.nationality': (data: EventRegistration) =>
-    data.informant?.nationality?.[0], // FieldType.COUNTRY
-  'informant.brn': (data: EventRegistration) =>
-    getIdentifier(data.informant, 'BIRTH_REGISTRATION_NUMBER'),
-  'informant.nid': (data: EventRegistration) =>
-    getIdentifier(data.informant, 'NATIONAL_ID'),
-  'informant.passport': (data: EventRegistration) =>
-    getIdentifier(data.informant, 'PASSPORT'),
+  'informant.age': (data: EventRegistration, eventType: 'birth' | 'death') =>
+    data.informant?.ageOfIndividualInYears && {
+      age: !isSpecialInformant(data.informant, eventType)
+        ? parseInt(data.informant?.ageOfIndividualInYears?.toString(), 10)
+        : undefined,
+      asOfDateRef: eventType == 'birth' ? 'child.dob' : 'eventDetails.date',
+    },
+  'informant.nationality': (
+    data: EventRegistration,
+    eventType: 'birth' | 'death'
+  ) =>
+    !isSpecialInformant(data.informant, eventType)
+      ? data.informant?.nationality?.[0]
+      : undefined, // FieldType.COUNTRY
+  'informant.brn': (data: EventRegistration, eventType: 'birth' | 'death') =>
+    !isSpecialInformant(data.informant, eventType)
+      ? getIdentifier(data.informant, 'BIRTH_REGISTRATION_NUMBER')
+      : undefined,
+  'informant.nid': (data: EventRegistration, eventType: 'birth' | 'death') =>
+    !isSpecialInformant(data.informant, eventType)
+      ? getIdentifier(data.informant, 'NATIONAL_ID')
+      : undefined,
+  'informant.passport': (
+    data: EventRegistration,
+    eventType: 'birth' | 'death'
+  ) =>
+    !isSpecialInformant(data.informant, eventType)
+      ? getIdentifier(data.informant, 'PASSPORT')
+      : undefined,
 }
 
 const documentsResolver: ResolverMap = {
   'documents.proofOfBirth': (data: EventRegistration) =>
-    getDocuments(data, 'CHILD'),
+    getDocument(data, 'CHILD'),
   'documents.proofOfMother': (data: EventRegistration) =>
     getDocuments(data, 'MOTHER'),
   'documents.proofOfFather': (data: EventRegistration) =>
@@ -47,24 +94,39 @@ const documentsResolver: ResolverMap = {
   'documents.proofOfInformant': (data: EventRegistration) =>
     getDocuments(data, 'INFORMANT_ID_PROOF'),
   'documents.proofOther': (data: EventRegistration) =>
-    getDocuments(data, 'OTHER'),
+    (getDocuments(data, 'OTHER') || []).concat(
+      getDocuments(data, 'LEGAL_GUARDIAN_PROOF') || []
+    ),
   'documents.proofOfDeceased': (data: EventRegistration) =>
     getDocuments(data, 'DECEASED_ID_PROOF'),
   'documents.proofOfDeath': (data: EventRegistration) =>
-    getDocuments(data, 'INFORMANT_ID_PROOF'), // TODO not this
-  'documents.proofOfCauseOfDeath': (data: EventRegistration) =>
     getDocuments(data, 'DECEASED_DEATH_PROOF'),
+  'documents.proofOfCauseOfDeath': (data: EventRegistration) =>
+    getDocuments(data, 'DECEASED_DEATH_CAUSE_PROOF'),
 }
 
-export const deathResolver: ResolverMap = {
+function mapMannerOfDeath(mannerOfDeath: string | undefined): any {
+  const mannerMap = {
+    NATURAL_CAUSES: 'MANNER_NATURAL',
+    ACCIDENT: 'MANNER_ACCIDENT',
+    HOMICIDE: 'MANNER_HOMICIDE',
+    SUICIDE: 'MANNER_SUICIDE',
+    MANNER_UNDETERMINED: 'MANNER_UNDETERMINED',
+  }
+  return mannerMap[mannerOfDeath as keyof typeof mannerMap]
+}
+
+export const defaultDeathResolver: ResolverMap = {
   'deceased.name': (data: EventRegistration) =>
     resolveName(data, data.deceased?.name?.[0]),
   'deceased.gender': (data: EventRegistration) => data.deceased?.gender,
   'deceased.dob': (data: EventRegistration) => data.deceased?.birthDate,
   'deceased.dobUnknown': (data: EventRegistration) =>
     data.deceased?.exactDateOfBirthUnknown,
-  'deceased.age': (data: EventRegistration) =>
-    data.deceased?.ageOfIndividualInYears?.toString(),
+  'deceased.age': (data: EventRegistration) => ({
+    age: data.deceased?.ageOfIndividualInYears,
+    asOfDateRef: 'eventDetails.date',
+  }),
   'deceased.nationality': (data: EventRegistration) =>
     data.deceased?.nationality?.[0],
   'deceased.idType': (data: EventRegistration) =>
@@ -87,7 +149,7 @@ export const deathResolver: ResolverMap = {
   'deceased.address': (data: EventRegistration) =>
     resolveAddress(data, data.deceased?.address?.[0]),
   'eventDetails.date': (data: EventRegistration) =>
-    data.deceased?.deathDate || data.deathDate,
+    data.deceased?.deceased?.deathDate || data.deathDate,
   'eventDetails.description': (data: EventRegistration) =>
     data.deathDescription,
   'eventDetails.reasonForLateRegistration': (data: EventRegistration) =>
@@ -96,10 +158,11 @@ export const deathResolver: ResolverMap = {
       'death.deathEvent.death-event-details.reasonForLateRegistration'
     ),
   'eventDetails.causeOfDeathEstablished': (data: EventRegistration) =>
-    Boolean(data.causeOfDeathEstablished),
+    data.causeOfDeathEstablished === 'true',
   'eventDetails.sourceCauseDeath': (data: EventRegistration) =>
     data.causeOfDeathMethod,
-  'eventDetails.mannerOfDeath': (data: EventRegistration) => data.mannerOfDeath,
+  'eventDetails.mannerOfDeath': (data: EventRegistration) =>
+    mapMannerOfDeath(data.mannerOfDeath),
   'eventDetails.placeOfDeath': (data: EventRegistration) =>
     data.eventLocation?.type,
   'eventDetails.deathLocation': (data: EventRegistration) =>
@@ -128,8 +191,10 @@ export const deathResolver: ResolverMap = {
   'spouse.dob': (data: EventRegistration) => data.spouse?.birthDate,
   'spouse.dobUnknown': (data: EventRegistration) =>
     data.spouse?.exactDateOfBirthUnknown,
-  'spouse.age': (data: EventRegistration) =>
-    data.spouse?.ageOfIndividualInYears,
+  'spouse.age': (data: EventRegistration) => ({
+    age: data.spouse?.ageOfIndividualInYears,
+    asOfDateRef: 'eventDetails.date',
+  }),
   'spouse.nationality': (data: EventRegistration) =>
     data.spouse?.nationality?.[0],
   'spouse.idType': (data: EventRegistration) =>
@@ -147,9 +212,26 @@ export const deathResolver: ResolverMap = {
     JSON.stringify(data.spouse?.address?.[0])
       ? 'YES'
       : 'NO',
+
+  // MOSIP E-Signet / ID Auth verification fields
+  'deceased.verified': (data: EventRegistration) =>
+    getCustomFieldVerificationStatus(
+      data,
+      'death.deceased.deceased-view-group.verified'
+    ),
+  'informant.verified': (data: EventRegistration) =>
+    getCustomFieldVerificationStatus(
+      data,
+      'death.informant.informant-view-group.verified'
+    ),
+  'spouse.verified': (data: EventRegistration) =>
+    getCustomFieldVerificationStatus(
+      data,
+      'death.spouse.spouse-view-group.verified'
+    ),
 }
 
-export const birthResolver: ResolverMap = {
+export const defaultBirthResolver: ResolverMap = {
   'child.name': (data: EventRegistration) =>
     resolveName(data, data.child?.name?.[0]),
 
@@ -198,7 +280,10 @@ export const birthResolver: ResolverMap = {
   'mother.dobUnknown': (data: EventRegistration) =>
     data.mother?.exactDateOfBirthUnknown,
   'mother.age': (data: EventRegistration) =>
-    data.mother?.ageOfIndividualInYears?.toString() /* @todo not a fan of this */,
+    data.mother?.ageOfIndividualInYears && {
+      age: data.mother?.ageOfIndividualInYears,
+      asOfDateRef: 'child.dob',
+    },
   'mother.nationality': (data: EventRegistration) =>
     data.mother?.nationality?.[0],
   'mother.maritalStatus': (data: EventRegistration) =>
@@ -220,7 +305,10 @@ export const birthResolver: ResolverMap = {
   'father.dobUnknown': (data: EventRegistration) =>
     data.father?.exactDateOfBirthUnknown,
   'father.age': (data: EventRegistration) =>
-    data.father?.ageOfIndividualInYears?.toString() /* @todo not a fan of this */,
+    data.father?.ageOfIndividualInYears && {
+      age: data.father?.ageOfIndividualInYears,
+      asOfDateRef: 'child.dob',
+    },
   'father.nationality': (data: EventRegistration) =>
     data.father?.nationality?.[0],
   'father.maritalStatus': (data: EventRegistration) =>
@@ -278,11 +366,28 @@ export const birthResolver: ResolverMap = {
 
   'father.idType': (data: EventRegistration) =>
     getCustomField(data, 'birth.father.father-view-group.fatherIdType'),
+
+  // MOSIP E-Signet / ID Auth verification fields
+  'mother.verified': (data: EventRegistration) =>
+    getCustomFieldVerificationStatus(
+      data,
+      'birth.mother.mother-view-group.verified'
+    ),
+  'father.verified': (data: EventRegistration) =>
+    getCustomFieldVerificationStatus(
+      data,
+      'birth.father.father-view-group.verified'
+    ),
+  'informant.verified': (data: EventRegistration) =>
+    getCustomFieldVerificationStatus(
+      data,
+      'birth.informant.informant-view-group.verified'
+    ),
+  'child.nid': (data: EventRegistration) =>
+    getIdentifier(data.child, 'NATIONAL_ID'),
 }
 
 const defaultResolvers: ResolverMap = {
-  ...birthResolver,
-  ...deathResolver,
   ...informantResolver,
   ...documentsResolver,
 }

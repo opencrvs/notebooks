@@ -1,9 +1,8 @@
 export const v1IgnoreList = [
-  // I think this is all MOSIP stuff
+  // these MOSIP fields/translations are not relevant for the form data in V2
   'birth.informant.informant-view-group.idReader',
   'birth.informant.esignetCallback',
   'birth.informant.esignetLoader',
-  'birth.informant.informant-view-group.verified',
   'birth.informant.idVerified.',
   'birth.informant.idFailed.',
   'birth.informant.idAuthenticated.',
@@ -11,7 +10,6 @@ export const v1IgnoreList = [
   'birth.mother.mother-view-group.idReader',
   'birth.mother.esignetCallback',
   'birth.mother.esignetLoader',
-  'birth.mother.mother-view-group.verified',
   'birth.mother.idVerified.',
   'birth.mother.idFailed.',
   'birth.mother.idAuthenticated.',
@@ -19,7 +17,6 @@ export const v1IgnoreList = [
   'birth.father.father-view-group.idReader',
   'birth.father.esignetCallback',
   'birth.father.esignetLoader',
-  'birth.father.father-view-group.verified',
   'birth.father.idVerified.',
   'birth.father.idFailed.',
   'birth.father.idAuthenticated.',
@@ -28,7 +25,6 @@ export const v1IgnoreList = [
   'death.deceased.deceased-view-group.idReader',
   'death.deceased.esignetCallback',
   'death.deceased.esignetLoader',
-  'death.deceased.deceased-view-group.verified',
   'death.deceased.idVerified.',
   'death.deceased.idFailed.',
   'death.deceased.idAuthenticated.',
@@ -37,7 +33,6 @@ export const v1IgnoreList = [
   'death.informant.informant-view-group.idReader',
   'death.informant.esignetCallback',
   'death.informant.esignetLoader',
-  'death.informant.informant-view-group.verified',
   'death.informant.idVerified.',
   'death.informant.idFailed.',
   'death.informant.idAuthenticated.',
@@ -46,11 +41,11 @@ export const v1IgnoreList = [
   'death.spouse.spouse-view-group.idReader',
   'death.spouse.esignetCallback',
   'death.spouse.esignetLoader',
-  'death.spouse.spouse-view-group.verified',
   'death.spouse.idVerified.',
   'death.spouse.idFailed.',
   'death.spouse.idAuthenticated.',
   'death.spouse.idFailedFetchIdDetails.',
+
   // not supporting rural/urban
   'birth.child.ruralOrUrbanPlaceofbirth',
   'birth.informant.ruralOrUrbanPrimaryInformant',

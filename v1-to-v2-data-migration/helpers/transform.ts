@@ -3,6 +3,7 @@ import { v4 as uuidv4 } from 'npm:uuid'
 import {
   DEFAULT_FIELD_MAPPINGS,
   CUSTOM_FIELD_MAPPINGS,
+  AGE_MAPPINGS,
 } from './defaultMappings.ts'
 import { COUNTRY_FIELD_MAPPINGS } from '../countryData/countryMappings.ts'
 import { NAME_MAPPINGS } from '../countryData/nameMappings.ts'
@@ -47,6 +48,11 @@ function patternMatch(
       const nameKey = Object.keys(nameMapping)[0]
       const existing = transformedData[nameKey] || {}
       transformedData[nameKey] = { ...existing, ...nameMapping[nameKey] }
+    } else if (AGE_MAPPINGS[key]) {
+      const ageMapping = AGE_MAPPINGS[key](value as string)
+      const ageKey = Object.keys(ageMapping)[0]
+      const existing = transformedData[ageKey] || {}
+      transformedData[ageKey] = { ...existing, ...ageMapping[ageKey] }
     } else if (ADDRESS_MAPPINGS[key]) {
       const addressMapping = ADDRESS_MAPPINGS[key](value as string)
       let addressKey = Object.keys(addressMapping)[0]
@@ -130,10 +136,10 @@ function legacyHistoryItemToV2ActionType(
   eventType: 'birth' | 'death'
 ): Partial<Action> {
   if (!historyItem.action) {
+    const signed = record.registration.informantsSignature
+    const uri = signed && new URL(signed)
     switch (historyItem.regStatus) {
       case 'DECLARED':
-        const signed = record.registration.informantsSignature
-        const uri = signed && new URL(signed)
         return {
           type: 'DECLARE' as ActionType,
           declaration: declaration,
@@ -147,6 +153,10 @@ function legacyHistoryItemToV2ActionType(
           type: 'REGISTER' as ActionType,
           declaration: declaration,
           registrationNumber: record.registration.registrationNumber,
+          annotation: {
+            'review.signature': declareResolver['review.signature'](uri),
+            'review.comment': declareResolver['review.comment'](historyItem),
+          },
         }
       case 'WAITING_VALIDATION':
         return {
@@ -158,6 +168,10 @@ function legacyHistoryItemToV2ActionType(
         return {
           type: 'VALIDATE' as ActionType,
           declaration,
+          annotation: {
+            'review.signature': declareResolver['review.signature'](uri),
+            'review.comment': declareResolver['review.comment'](historyItem),
+          },
         }
       case 'ISSUED':
         const annotation = {}
@@ -378,7 +392,7 @@ export function transform(
   eventType: 'birth' | 'death'
 ): TransformedDocument {
   const result = Object.entries(resolver).map(([fieldId, r]) => {
-    return [fieldId, r(eventRegistration)]
+    return [fieldId, r(eventRegistration, eventType)]
   })
 
   const withOutNulls = result.filter(
