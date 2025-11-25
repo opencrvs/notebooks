@@ -136,10 +136,10 @@ function legacyHistoryItemToV2ActionType(
   eventType: 'birth' | 'death'
 ): Partial<Action> {
   if (!historyItem.action) {
+    const signed = record.registration.informantsSignature
+    const uri = signed && new URL(signed)
     switch (historyItem.regStatus) {
       case 'DECLARED':
-        const signed = record.registration.informantsSignature
-        const uri = signed && new URL(signed)
         return {
           type: 'DECLARE' as ActionType,
           declaration: declaration,
@@ -153,6 +153,10 @@ function legacyHistoryItemToV2ActionType(
           type: 'REGISTER' as ActionType,
           declaration: declaration,
           registrationNumber: record.registration.registrationNumber,
+          annotation: {
+            'review.signature': declareResolver['review.signature'](uri),
+            'review.comment': declareResolver['review.comment'](historyItem),
+          },
         }
       case 'WAITING_VALIDATION':
         return {
@@ -164,6 +168,10 @@ function legacyHistoryItemToV2ActionType(
         return {
           type: 'VALIDATE' as ActionType,
           declaration,
+          annotation: {
+            'review.signature': declareResolver['review.signature'](uri),
+            'review.comment': declareResolver['review.comment'](historyItem),
+          },
         }
       case 'ISSUED':
         const annotation = {}
@@ -384,7 +392,7 @@ export function transform(
   eventType: 'birth' | 'death'
 ): TransformedDocument {
   const result = Object.entries(resolver).map(([fieldId, r]) => {
-    return [fieldId, r(eventRegistration)]
+    return [fieldId, r(eventRegistration, eventType)]
   })
 
   const withOutNulls = result.filter(
