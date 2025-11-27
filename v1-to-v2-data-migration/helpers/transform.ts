@@ -4,6 +4,7 @@ import {
   DEFAULT_FIELD_MAPPINGS,
   CUSTOM_FIELD_MAPPINGS,
   AGE_MAPPINGS,
+  VERIFIED_MAPPINGS,
 } from './defaultMappings.ts'
 import { COUNTRY_FIELD_MAPPINGS } from '../countryData/countryMappings.ts'
 import { NAME_MAPPINGS } from '../countryData/nameMappings.ts'
@@ -48,6 +49,10 @@ function patternMatch(
       const nameKey = Object.keys(nameMapping)[0]
       const existing = transformedData[nameKey] || {}
       transformedData[nameKey] = { ...existing, ...nameMapping[nameKey] }
+    } else if (VERIFIED_MAPPINGS[key]) {
+      const verifiedMapping = VERIFIED_MAPPINGS[key](value as string)
+      const verifiedKey = Object.keys(verifiedMapping)[0]
+      transformedData[verifiedKey] = verifiedMapping[verifiedKey]
     } else if (AGE_MAPPINGS[key]) {
       const ageMapping = AGE_MAPPINGS[key](value as string)
       const ageKey = Object.keys(ageMapping)[0]
