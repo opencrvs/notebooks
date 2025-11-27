@@ -122,44 +122,26 @@ export const CUSTOM_FIELD_MAPPINGS = {
   'death.spouse.spouse-view-group.verified': 'spouse.verified',
 }
 
-export const AGE_MAPPINGS: Record<
+export const VERIFIED_MAPPINGS : Record<
   string,
   (data: string) => Record<string, any>
 > = {
-  'birth.mother.ageOfIndividualInYears': (data: string) => ({
-    'mother.age': {
-      age: data,
-      asOfDateRef: 'child.dob',
-    },
+  'birth.informant.verified': (data: string) => ({
+    'informant.verified': data === '' ? undefined : data,
   }),
-  'birth.father.ageOfIndividualInYears': (data: string) => ({
-    'father.age': {
-      age: data,
-      asOfDateRef: 'child.dob',
-    },
+  'birth.mother.verified': (data: string) => ({
+    'mother.verified': data === '' ? undefined : data,
   }),
-  'birth.informant.ageOfIndividualInYears': (data: string) => ({
-    'informant.age': {
-      age: data,
-      asOfDateRef: 'child.dob',
-    },
+  'birth.father.verified': (data: string) => ({
+    'father.verified': data === '' ? undefined : data,
   }),
-  'death.deceased.ageOfIndividualInYears': (data: string) => ({
-    'deceased.age': {
-      age: data,
-      asOfDateRef: 'eventDetails.date',
-    },
+  'death.informant.verified': (data: string) => ({
+    'informant.verified': data === '' ? undefined : data,
   }),
-  'death.informant.ageOfIndividualInYears': (data: string) => ({
-    'informant.age': {
-      age: data,
-      asOfDateRef: 'eventDetails.date',
-    },
+  'death.deceased.verified': (data: string) => ({
+    'deceased.verified': data === '' ? undefined : data,
   }),
-  'death.spouse.ageOfIndividualInYears': (data: string) => ({
-    'spouse.age': {
-      age: data,
-      asOfDateRef: 'eventDetails.date',
-    },
+  'death.spouse.verified': (data: string) => ({
+    'spouse.verified': data === '' ? undefined : data,
   }),
 }
