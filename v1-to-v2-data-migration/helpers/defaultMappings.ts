@@ -145,3 +145,46 @@ export const VERIFIED_MAPPINGS : Record<
     'spouse.verified': data === '' ? undefined : data,
   }),
 }
+
+export const AGE_MAPPINGS: Record<
+  string,
+  (data: string) => Record<string, any>
+> = {
+  'birth.mother.ageOfIndividualInYears': (data: string) => ({
+    'mother.age': {
+      age: data,
+      asOfDateRef: 'child.dob',
+    },
+  }),
+  'birth.father.ageOfIndividualInYears': (data: string) => ({
+    'father.age': {
+      age: data,
+      asOfDateRef: 'child.dob',
+    },
+  }),
+  'birth.informant.ageOfIndividualInYears': (data: string) => ({
+    'informant.age': {
+      age: data,
+      asOfDateRef: 'child.dob',
+    },
+  }),
+  'death.deceased.ageOfIndividualInYears': (data: string) => ({
+    'deceased.age': {
+      age: data,
+      asOfDateRef: 'eventDetails.date',
+    },
+  }),
+  'death.informant.ageOfIndividualInYears': (data: string) => ({
+    'informant.age': {
+      age: data,
+      asOfDateRef: 'eventDetails.date',
+    },
+  }),
+  'death.spouse.ageOfIndividualInYears': (data: string) => ({
+    'spouse.age': {
+      age: data,
+      asOfDateRef: 'eventDetails.date',
+    },
+  }),
+}
+
