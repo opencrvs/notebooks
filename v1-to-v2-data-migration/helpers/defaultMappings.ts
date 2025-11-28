@@ -114,6 +114,12 @@ export const CUSTOM_FIELD_MAPPINGS = {
     'eventDetails.reasonForLateRegistration',
   'death.informant.informant-view-group.informantIdType': 'informant.idType',
   'death.spouse.spouse-view-group.spouseIdType': 'spouse.idType',
+  'birth.mother.mother-view-group.verified': 'mother.verified',
+  'birth.father.father-view-group.verified': 'father.verified',
+  'birth.informant.informant-view-group.verified': 'informant.verified',
+  'death.deceased.deceased-view-group.verified': 'deceased.verified',
+  'death.informant.informant-view-group.verified': 'informant.verified',
+  'death.spouse.spouse-view-group.verified': 'spouse.verified',
 }
 
 export const AGE_MAPPINGS: Record<
@@ -155,5 +161,29 @@ export const AGE_MAPPINGS: Record<
       age: data,
       asOfDateRef: 'eventDetails.date',
     },
+  }),
+}
+
+export const VERIFIED_MAPPINGS : Record<
+  string,
+  (data: string) => Record<string, any>
+> = {
+  'birth.informant.verified': (data: string) => ({
+    'informant.verified': data === '' ? undefined : data,
+  }),
+  'birth.mother.verified': (data: string) => ({
+    'mother.verified': data === '' ? undefined : data,
+  }),
+  'birth.father.verified': (data: string) => ({
+    'father.verified': data === '' ? undefined : data,
+  }),
+  'death.informant.verified': (data: string) => ({
+    'informant.verified': data === '' ? undefined : data,
+  }),
+  'death.deceased.verified': (data: string) => ({
+    'deceased.verified': data === '' ? undefined : data,
+  }),
+  'death.spouse.verified': (data: string) => ({
+    'spouse.verified': data === '' ? undefined : data,
   }),
 }
