@@ -21,4 +21,4 @@ jq -r '.cells[] | select(.cell_type == "code") | .source[]' "$FILE" > "$OUTPUT" 
 }
 
 # Copy all potential TypeScript files to the output directory
-rsync -av --include='*.ts' --include='*/'  --exclude='*' "$FILE_DIR"/ "$OUTPUT_DIR"/
+rsync -av --include='*.ts' --include='*/' --include='/countryData/unResolvedBirthFields.json' --exclude='*' "$FILE_DIR"/ "$OUTPUT_DIR"/
