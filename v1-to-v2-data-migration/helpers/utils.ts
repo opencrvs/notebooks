@@ -48,3 +48,24 @@ export function batch<T>(items: T[], batchSize: number): T[][] {
   }
   return batches
 }
+
+type IndexResult = {
+  result: {
+    data: {
+      json: {
+        errors: any
+        items: any[]
+      }
+    }
+  }
+}
+
+export const getIndexErrors = (
+  indexResult: IndexResult
+): string[] | undefined => {
+  if (indexResult.result?.data?.json?.errors) {
+    return indexResult.result.data.json.items
+      ?.filter((x: { index: { error: any } }) => x.index?.error)
+      .map((x: { index: { error: { reason: any } } }) => x.index.error.reason)
+  }
+}
