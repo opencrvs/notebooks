@@ -111,7 +111,7 @@ export interface Registration {
   contactEmail?: string
   informantsSignature?: string
   attachments?: Document[]
-  duplicates?: Array<{ compositionId: string }>
+  duplicates?: Array<{ compositionId: string; trackingId?: string }>
 }
 
 // History item types
