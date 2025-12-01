@@ -1,7 +1,7 @@
 import { AddressLine, EventRegistration } from '../helpers/types.ts'
 
 export const COUNTRY_CODE = 'FAR' //Replace with actual country code
-export const COUNTRY_PHONE_CODE = '+26' //Replace with actual country phone code
+export const COUNTRY_PHONE_CODE = '+260' //Replace with actual country phone code
 
 // Required to handle 2:1 mapping of birth location fields in corrections
 export const BIRTH_LOCATION_PRIVATE_HOME_KEY = 'birth.birthLocation.privateHome'
@@ -38,6 +38,7 @@ export function resolveAddress(
   if (!address) {
     return null
   }
+  const lines = address.line.filter(Boolean).filter((line) => !['URBAN', 'RURAL'].includes(line))
   const international = address.country !== COUNTRY_CODE
   if (international) {
     return {
@@ -47,9 +48,9 @@ export function resolveAddress(
         state: address.state,
         district2: address.district,
         cityOrTown: address.city,
-        addressLine1: address.line.filter(Boolean)[0],
-        addressLine2: address.line.filter(Boolean)[1],
-        addressLine3: address.line.filter(Boolean).slice(2).join(', '),
+        addressLine1: lines[0],
+        addressLine2: lines[1],
+        addressLine3: lines.slice(2).join(', '),
         postcodeOrZip: address.postalCode,
         /* For potential custom field
         kebele: getCustomField(data, 'birth.child.address.kebele'),
@@ -64,9 +65,9 @@ export function resolveAddress(
     administrativeArea: address.district,
     streetLevelDetails: {
       town: address.city,
-      number: address.line.filter(Boolean)[0],
-      street: address.line.filter(Boolean)[1],
-      residentialArea: address.line.filter(Boolean)[2],
+      number: lines[0],
+      street: lines[1],
+      residentialArea: lines[2],
       zipCode: address.postalCode,
     },
   }
