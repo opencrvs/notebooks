@@ -1,10 +1,10 @@
-import { expect } from 'jsr:@std/expect'
-import { transformCorrection } from '../helpers/transform.ts'
+import { transformCorrection } from '../../helpers/transform.ts'
 import { assertEquals } from 'https://deno.land/std@0.210.0/assert/mod.ts'
 
 Deno.test('transformCorrection', async (t) => {
   await t.step('should transform scalar values', () => {
     const historyItem = {
+      date: '2023-10-01T12:00:00Z',
       output: [
         {
           valueCode: 'informant',
@@ -29,11 +29,12 @@ Deno.test('transformCorrection', async (t) => {
       'informant.phoneNo': '0788787290',
       'mother.nationality': 'JPN',
     }
-    assertEquals(result, expected)
+    assertEquals(result.output, expected)
   })
 
   await t.step('should transform custom fields', () => {
     const historyItem = {
+      date: '2023-10-01T12:00:00Z',
       output: [
         {
           valueCode: 'informant',
@@ -62,11 +63,12 @@ Deno.test('transformCorrection', async (t) => {
       'informant.nid': '0011002211',
       'informant.phoneNo': '0715773955',
     }
-    assertEquals(result, expected)
+    assertEquals(result.output, expected)
   })
 
   await t.step('should transform name values', () => {
     const historyItem = {
+      date: '2023-10-01T12:00:00Z',
       output: [
         {
           valueCode: 'child',
@@ -91,11 +93,12 @@ Deno.test('transformCorrection', async (t) => {
       'child.name': { firstname: 'Tarzan' },
       'mother.name': { surname: 'Susan' },
     }
-    assertEquals(result, expected)
+    assertEquals(result.output, expected)
   })
 
   await t.step('should transform address values', () => {
     const historyItem = {
+      date: '2023-10-01T12:00:00Z',
       output: [
         {
           valueCode: 'mother',
@@ -162,6 +165,6 @@ Deno.test('transformCorrection', async (t) => {
       },
     }
 
-    assertEquals(result, expected)
+    assertEquals(result.output, expected)
   })
 })

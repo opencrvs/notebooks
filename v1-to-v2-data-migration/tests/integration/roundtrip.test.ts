@@ -1,8 +1,8 @@
 import { expect } from 'jsr:@std/expect'
-import { generateBirthRegistration } from './data-generators.ts'
-import { authenticate } from '../helpers/authentication.ts'
-import { GATEWAY } from '../helpers/routes.ts'
-import { createDeclaration, getEvent, runMigration } from './utils.ts'
+import { generateBirthRegistration } from '../utils/data-generators.ts'
+import { authenticate } from '../../helpers/authentication.ts'
+import { GATEWAY } from '../../helpers/routes.ts'
+import { createDeclaration, getEvent, runMigration } from '../utils.ts'
 
 Deno.test('Create some data to test with', async (t) => {
   const token = await authenticate('k.mweene', 'test')
