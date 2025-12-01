@@ -40,6 +40,7 @@ export interface Document {
   uri: string
   contentType: string
   type: string
+  subject?: string
 }
 
 export interface ProcessedDocumentWithOptionType {
@@ -56,6 +57,7 @@ export interface ProcessedDocument {
 
 // Address types
 export interface AddressLine {
+  type?: string
   line: string[]
   city?: string
   district?: string
