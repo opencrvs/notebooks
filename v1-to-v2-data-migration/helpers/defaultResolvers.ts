@@ -125,17 +125,6 @@ const documentsResolver: ResolverMap = {
     getDocuments(data, 'DECEASED_DEATH_CAUSE_PROOF'),
 }
 
-function mapMannerOfDeath(mannerOfDeath: string | undefined): any {
-  const mannerMap = {
-    NATURAL_CAUSES: 'MANNER_NATURAL',
-    ACCIDENT: 'MANNER_ACCIDENT',
-    HOMICIDE: 'MANNER_HOMICIDE',
-    SUICIDE: 'MANNER_SUICIDE',
-    MANNER_UNDETERMINED: 'MANNER_UNDETERMINED',
-  }
-  return mannerMap[mannerOfDeath as keyof typeof mannerMap]
-}
-
 export const defaultDeathResolver: ResolverMap = {
   'deceased.name': (data: EventRegistration) =>
     resolveName(data, data.deceased?.name?.[0]),
