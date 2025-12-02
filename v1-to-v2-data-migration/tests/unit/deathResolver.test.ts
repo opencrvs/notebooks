@@ -1,104 +1,16 @@
 import { assertEquals } from 'jsr:@std/assert'
 import { transform } from '../../helpers/transform.ts'
-import defaultResolvers, {
-  defaultDeathResolver,
-} from '../../helpers/defaultResolvers.ts'
-import { countryResolver } from '../../countryData/countryResolvers.ts'
-import type { EventRegistration } from '../../helpers/types.ts'
+import {
+  buildDeathResolver,
+  buildDeathEventRegistration,
+} from '../utils/test-helpers.ts'
 
 // Construct deathResolver as in migrate.ipynb
-const allResolvers = { ...defaultResolvers, ...countryResolver }
-const deathResolver = { ...defaultDeathResolver, ...allResolvers }
-
-function buildEventRegistration(
-  overrides: Partial<EventRegistration> = {}
-): EventRegistration {
-  return {
-    id: 'test-id',
-    deceased: {
-      id: 'deceased-id',
-      name: [{ use: 'en', firstNames: 'John', familyName: 'Doe' }],
-      gender: 'male',
-      birthDate: '1950-01-01',
-      identifier: [{ type: 'NATIONAL_ID', id: 'DEC123456' }],
-      nationality: ['FAR'],
-      maritalStatus: 'MARRIED',
-      address: [
-        {
-          type: 'PRIMARY_ADDRESS',
-          line: ['123 Main St', 'Apt 4'],
-          district: 'District1',
-          state: 'State1',
-          country: 'FAR',
-        },
-      ],
-      deceased: {
-        deathDate: '2024-01-01',
-      },
-    },
-    deathDate: '2024-01-01',
-    informant: {
-      id: 'informant-id',
-      relationship: 'SON',
-      name: [{ use: 'en', firstNames: 'Jane', familyName: 'Doe' }],
-      birthDate: '1980-01-01',
-      identifier: [{ type: 'NATIONAL_ID', id: 'INF789' }],
-      address: [
-        {
-          type: 'PRIMARY_ADDRESS',
-          line: ['456 Oak Ave'],
-          district: 'District2',
-          state: 'State2',
-          country: 'FAR',
-        },
-      ],
-    },
-    spouse: {
-      id: 'spouse-id',
-      detailsExist: true,
-      name: [{ use: 'en', firstNames: 'Mary', familyName: 'Smith' }],
-      birthDate: '1952-01-01',
-      nationality: ['FAR'],
-      identifier: [{ type: 'NATIONAL_ID', id: 'SPO456' }],
-      address: [
-        {
-          type: 'PRIMARY_ADDRESS',
-          line: ['789 Pine Rd'],
-          district: 'District3',
-          state: 'State3',
-          country: 'FAR',
-        },
-      ],
-    },
-    registration: {
-      trackingId: 'DW12345',
-      registrationNumber: 'REG123',
-      contactPhoneNumber: '+260987654321',
-      contactEmail: 'contact@example.com',
-    },
-    history: [
-      {
-        date: '2024-01-15T10:00:00.000Z',
-        regStatus: 'DECLARED',
-        user: { id: 'user-id', role: { id: 'FIELD_AGENT' } },
-        office: { id: 'office-id' },
-      },
-    ],
-    eventLocation: {
-      id: 'location-id',
-      type: 'HEALTH_FACILITY',
-    },
-    causeOfDeathEstablished: 'true',
-    causeOfDeathMethod: 'PHYSICIAN',
-    mannerOfDeath: 'NATURAL_CAUSES',
-    questionnaire: [],
-    ...overrides,
-  } as EventRegistration
-}
+const deathResolver = buildDeathResolver()
 
 Deno.test('deathResolver - deceased fields', async (t) => {
   await t.step('should resolve deceased.name', () => {
-    const data = buildEventRegistration()
+    const data = buildDeathEventRegistration()
     const result = transform(data, deathResolver, 'death')
     const declareAction = result.actions.find((a) => a.type === 'DECLARE')
 
@@ -110,7 +22,7 @@ Deno.test('deathResolver - deceased fields', async (t) => {
   })
 
   await t.step('should resolve deceased.gender', () => {
-    const data = buildEventRegistration()
+    const data = buildDeathEventRegistration()
     const result = transform(data, deathResolver, 'death')
     const declareAction = result.actions.find((a) => a.type === 'DECLARE')
 
@@ -118,7 +30,7 @@ Deno.test('deathResolver - deceased fields', async (t) => {
   })
 
   await t.step('should resolve deceased.dob', () => {
-    const data = buildEventRegistration()
+    const data = buildDeathEventRegistration()
     const result = transform(data, deathResolver, 'death')
     const declareAction = result.actions.find((a) => a.type === 'DECLARE')
 
@@ -126,9 +38,9 @@ Deno.test('deathResolver - deceased fields', async (t) => {
   })
 
   await t.step('should resolve deceased.dobUnknown', () => {
-    const data = buildEventRegistration({
+    const data = buildDeathEventRegistration({
       deceased: {
-        ...buildEventRegistration().deceased!,
+        ...buildDeathEventRegistration().deceased!,
         exactDateOfBirthUnknown: true,
       },
     })
@@ -139,9 +51,9 @@ Deno.test('deathResolver - deceased fields', async (t) => {
   })
 
   await t.step('should resolve deceased.age with asOfDateRef', () => {
-    const data = buildEventRegistration({
+    const data = buildDeathEventRegistration({
       deceased: {
-        ...buildEventRegistration().deceased!,
+        ...buildDeathEventRegistration().deceased!,
         ageOfIndividualInYears: 74,
       },
     })
@@ -155,7 +67,7 @@ Deno.test('deathResolver - deceased fields', async (t) => {
   })
 
   await t.step('should resolve deceased.nationality', () => {
-    const data = buildEventRegistration()
+    const data = buildDeathEventRegistration()
     const result = transform(data, deathResolver, 'death')
     const declareAction = result.actions.find((a) => a.type === 'DECLARE')
 
@@ -163,7 +75,7 @@ Deno.test('deathResolver - deceased fields', async (t) => {
   })
 
   await t.step('should resolve deceased.idType from questionnaire', () => {
-    const data = buildEventRegistration({
+    const data = buildDeathEventRegistration({
       questionnaire: [
         {
           fieldId: 'death.deceased.deceased-view-group.deceasedIdType',
@@ -178,7 +90,7 @@ Deno.test('deathResolver - deceased fields', async (t) => {
   })
 
   await t.step('should resolve deceased.nid', () => {
-    const data = buildEventRegistration()
+    const data = buildDeathEventRegistration()
     const result = transform(data, deathResolver, 'death')
     const declareAction = result.actions.find((a) => a.type === 'DECLARE')
 
@@ -186,9 +98,9 @@ Deno.test('deathResolver - deceased fields', async (t) => {
   })
 
   await t.step('should resolve deceased.passport', () => {
-    const data = buildEventRegistration({
+    const data = buildDeathEventRegistration({
       deceased: {
-        ...buildEventRegistration().deceased!,
+        ...buildDeathEventRegistration().deceased!,
         identifier: [{ type: 'PASSPORT', id: 'P123456' }],
       },
     })
@@ -199,9 +111,9 @@ Deno.test('deathResolver - deceased fields', async (t) => {
   })
 
   await t.step('should resolve deceased.brn', () => {
-    const data = buildEventRegistration({
+    const data = buildDeathEventRegistration({
       deceased: {
-        ...buildEventRegistration().deceased!,
+        ...buildDeathEventRegistration().deceased!,
         identifier: [{ type: 'BIRTH_REGISTRATION_NUMBER', id: 'B123456' }],
       },
     })
@@ -212,7 +124,7 @@ Deno.test('deathResolver - deceased fields', async (t) => {
   })
 
   await t.step('should resolve deceased.maritalStatus', () => {
-    const data = buildEventRegistration()
+    const data = buildDeathEventRegistration()
     const result = transform(data, deathResolver, 'death')
     const declareAction = result.actions.find((a) => a.type === 'DECLARE')
 
@@ -223,7 +135,7 @@ Deno.test('deathResolver - deceased fields', async (t) => {
   })
 
   await t.step('should resolve deceased.numberOfDependants', () => {
-    const data = buildEventRegistration({
+    const data = buildDeathEventRegistration({
       questionnaire: [
         {
           fieldId: 'death.deceased.deceased-view-group.numberOfDependants',
@@ -238,7 +150,7 @@ Deno.test('deathResolver - deceased fields', async (t) => {
   })
 
   await t.step('should resolve deceased.address', () => {
-    const data = buildEventRegistration()
+    const data = buildDeathEventRegistration()
     const result = transform(data, deathResolver, 'death')
     const declareAction = result.actions.find((a) => a.type === 'DECLARE')
 
@@ -250,7 +162,7 @@ Deno.test('deathResolver - deceased fields', async (t) => {
   })
 
   await t.step('should resolve deceased.verified from questionnaire', () => {
-    const data = buildEventRegistration({
+    const data = buildDeathEventRegistration({
       questionnaire: [
         {
           fieldId: 'death.deceased.deceased-view-group.verified',
@@ -269,7 +181,7 @@ Deno.test('deathResolver - eventDetails fields', async (t) => {
   await t.step(
     'should resolve eventDetails.date from deceased.deceased.deathDate',
     () => {
-      const data = buildEventRegistration()
+      const data = buildDeathEventRegistration()
       const result = transform(data, deathResolver, 'death')
       const declareAction = result.actions.find((a) => a.type === 'DECLARE')
 
@@ -283,9 +195,9 @@ Deno.test('deathResolver - eventDetails fields', async (t) => {
   await t.step(
     'should resolve eventDetails.date from deathDate fallback',
     () => {
-      const data = buildEventRegistration({
+      const data = buildDeathEventRegistration({
         deceased: {
-          ...buildEventRegistration().deceased!,
+          ...buildDeathEventRegistration().deceased!,
           deceased: undefined,
         },
       })
@@ -300,7 +212,7 @@ Deno.test('deathResolver - eventDetails fields', async (t) => {
   )
 
   await t.step('should resolve eventDetails.description', () => {
-    const data = buildEventRegistration({
+    const data = buildDeathEventRegistration({
       deathDescription: 'Natural causes',
     })
     const result = transform(data, deathResolver, 'death')
@@ -313,7 +225,7 @@ Deno.test('deathResolver - eventDetails fields', async (t) => {
   })
 
   await t.step('should resolve eventDetails.reasonForLateRegistration', () => {
-    const data = buildEventRegistration({
+    const data = buildDeathEventRegistration({
       questionnaire: [
         {
           fieldId:
@@ -332,7 +244,7 @@ Deno.test('deathResolver - eventDetails fields', async (t) => {
   })
 
   await t.step('should resolve eventDetails.causeOfDeathEstablished', () => {
-    const data = buildEventRegistration()
+    const data = buildDeathEventRegistration()
     const result = transform(data, deathResolver, 'death')
     const declareAction = result.actions.find((a) => a.type === 'DECLARE')
 
@@ -343,7 +255,7 @@ Deno.test('deathResolver - eventDetails fields', async (t) => {
   })
 
   await t.step('should resolve eventDetails.sourceCauseDeath', () => {
-    const data = buildEventRegistration()
+    const data = buildDeathEventRegistration()
     const result = transform(data, deathResolver, 'death')
     const declareAction = result.actions.find((a) => a.type === 'DECLARE')
 
@@ -354,7 +266,7 @@ Deno.test('deathResolver - eventDetails fields', async (t) => {
   })
 
   await t.step('should resolve eventDetails.mannerOfDeath', () => {
-    const data = buildEventRegistration()
+    const data = buildDeathEventRegistration()
     const result = transform(data, deathResolver, 'death')
     const declareAction = result.actions.find((a) => a.type === 'DECLARE')
 
@@ -365,7 +277,7 @@ Deno.test('deathResolver - eventDetails fields', async (t) => {
   })
 
   await t.step('should map ACCIDENT to MANNER_ACCIDENT', () => {
-    const data = buildEventRegistration({
+    const data = buildDeathEventRegistration({
       mannerOfDeath: 'ACCIDENT',
     })
     const result = transform(data, deathResolver, 'death')
@@ -378,7 +290,7 @@ Deno.test('deathResolver - eventDetails fields', async (t) => {
   })
 
   await t.step('should resolve eventDetails.placeOfDeath', () => {
-    const data = buildEventRegistration()
+    const data = buildDeathEventRegistration()
     const result = transform(data, deathResolver, 'death')
     const declareAction = result.actions.find((a) => a.type === 'DECLARE')
 
@@ -391,7 +303,7 @@ Deno.test('deathResolver - eventDetails fields', async (t) => {
   await t.step(
     'should resolve eventDetails.deathLocation for HEALTH_FACILITY',
     () => {
-      const data = buildEventRegistration()
+      const data = buildDeathEventRegistration()
       const result = transform(data, deathResolver, 'death')
       const declareAction = result.actions.find((a) => a.type === 'DECLARE')
 
@@ -405,7 +317,7 @@ Deno.test('deathResolver - eventDetails fields', async (t) => {
   await t.step(
     'should resolve eventDetails.deathLocationOther for OTHER',
     () => {
-      const data = buildEventRegistration({
+      const data = buildDeathEventRegistration({
         eventLocation: {
           id: 'other-location',
           type: 'OTHER',
@@ -439,13 +351,13 @@ Deno.test('deathResolver - informant fields', async (t) => {
         state: 'State1',
         country: 'FAR',
       }
-      const data = buildEventRegistration({
+      const data = buildDeathEventRegistration({
         deceased: {
-          ...buildEventRegistration().deceased!,
+          ...buildDeathEventRegistration().deceased!,
           address: [sharedAddress],
         },
         informant: {
-          ...buildEventRegistration().informant!,
+          ...buildDeathEventRegistration().informant!,
           address: [sharedAddress],
         },
       })
@@ -459,7 +371,7 @@ Deno.test('deathResolver - informant fields', async (t) => {
   await t.step(
     'should resolve informant.addressSameAs when addresses differ',
     () => {
-      const data = buildEventRegistration()
+      const data = buildDeathEventRegistration()
       const result = transform(data, deathResolver, 'death')
       const declareAction = result.actions.find((a) => a.type === 'DECLARE')
 
@@ -468,7 +380,7 @@ Deno.test('deathResolver - informant fields', async (t) => {
   )
 
   await t.step('should resolve informant.idType from questionnaire', () => {
-    const data = buildEventRegistration({
+    const data = buildDeathEventRegistration({
       questionnaire: [
         {
           fieldId: 'death.informant.informant-view-group.informantIdType',
@@ -483,7 +395,7 @@ Deno.test('deathResolver - informant fields', async (t) => {
   })
 
   await t.step('should resolve informant.dob for non-special informant', () => {
-    const data = buildEventRegistration()
+    const data = buildDeathEventRegistration()
     const result = transform(data, deathResolver, 'death')
     const declareAction = result.actions.find((a) => a.type === 'DECLARE')
 
@@ -491,9 +403,9 @@ Deno.test('deathResolver - informant fields', async (t) => {
   })
 
   await t.step('should not resolve informant.dob for SPOUSE', () => {
-    const data = buildEventRegistration({
+    const data = buildDeathEventRegistration({
       informant: {
-        ...buildEventRegistration().informant!,
+        ...buildDeathEventRegistration().informant!,
         relationship: 'SPOUSE',
       },
     })
@@ -506,7 +418,7 @@ Deno.test('deathResolver - informant fields', async (t) => {
   await t.step(
     'should resolve informant.address for non-special informant',
     () => {
-      const data = buildEventRegistration()
+      const data = buildDeathEventRegistration()
       const result = transform(data, deathResolver, 'death')
       const declareAction = result.actions.find((a) => a.type === 'DECLARE')
 
@@ -520,7 +432,7 @@ Deno.test('deathResolver - informant fields', async (t) => {
   await t.step(
     'should resolve informant.phoneNo with country code stripped',
     () => {
-      const data = buildEventRegistration()
+      const data = buildDeathEventRegistration()
       const result = transform(data, deathResolver, 'death')
       const declareAction = result.actions.find((a) => a.type === 'DECLARE')
 
@@ -532,7 +444,7 @@ Deno.test('deathResolver - informant fields', async (t) => {
   )
 
   await t.step('should resolve informant.email', () => {
-    const data = buildEventRegistration()
+    const data = buildDeathEventRegistration()
     const result = transform(data, deathResolver, 'death')
     const declareAction = result.actions.find((a) => a.type === 'DECLARE')
 
@@ -543,7 +455,7 @@ Deno.test('deathResolver - informant fields', async (t) => {
   })
 
   await t.step('should resolve informant.relation', () => {
-    const data = buildEventRegistration()
+    const data = buildDeathEventRegistration()
     const result = transform(data, deathResolver, 'death')
     const declareAction = result.actions.find((a) => a.type === 'DECLARE')
 
@@ -551,9 +463,9 @@ Deno.test('deathResolver - informant fields', async (t) => {
   })
 
   await t.step('should resolve informant.other.relation', () => {
-    const data = buildEventRegistration({
+    const data = buildDeathEventRegistration({
       informant: {
-        ...buildEventRegistration().informant!,
+        ...buildDeathEventRegistration().informant!,
         relationship: 'OTHER',
         otherRelationship: 'Caregiver',
       },
@@ -570,7 +482,7 @@ Deno.test('deathResolver - informant fields', async (t) => {
   await t.step(
     'should resolve informant.name for non-special informant',
     () => {
-      const data = buildEventRegistration()
+      const data = buildDeathEventRegistration()
       const result = transform(data, deathResolver, 'death')
       const declareAction = result.actions.find((a) => a.type === 'DECLARE')
 
@@ -583,9 +495,9 @@ Deno.test('deathResolver - informant fields', async (t) => {
   )
 
   await t.step('should resolve informant.dobUnknown', () => {
-    const data = buildEventRegistration({
+    const data = buildDeathEventRegistration({
       informant: {
-        ...buildEventRegistration().informant!,
+        ...buildDeathEventRegistration().informant!,
         birthDate: undefined,
         exactDateOfBirthUnknown: true,
       },
@@ -597,9 +509,9 @@ Deno.test('deathResolver - informant fields', async (t) => {
   })
 
   await t.step('should resolve informant.age', () => {
-    const data = buildEventRegistration({
+    const data = buildDeathEventRegistration({
       informant: {
-        ...buildEventRegistration().informant!,
+        ...buildDeathEventRegistration().informant!,
         birthDate: undefined,
         ageOfIndividualInYears: 44,
       },
@@ -614,9 +526,9 @@ Deno.test('deathResolver - informant fields', async (t) => {
   })
 
   await t.step('should resolve informant.nationality', () => {
-    const data = buildEventRegistration({
+    const data = buildDeathEventRegistration({
       informant: {
-        ...buildEventRegistration().informant!,
+        ...buildDeathEventRegistration().informant!,
         nationality: ['USA'],
       },
     })
@@ -627,9 +539,9 @@ Deno.test('deathResolver - informant fields', async (t) => {
   })
 
   await t.step('should resolve informant.brn', () => {
-    const data = buildEventRegistration({
+    const data = buildDeathEventRegistration({
       informant: {
-        ...buildEventRegistration().informant!,
+        ...buildDeathEventRegistration().informant!,
         identifier: [{ type: 'BIRTH_REGISTRATION_NUMBER', id: 'BRN123' }],
       },
     })
@@ -640,7 +552,7 @@ Deno.test('deathResolver - informant fields', async (t) => {
   })
 
   await t.step('should resolve informant.nid', () => {
-    const data = buildEventRegistration()
+    const data = buildDeathEventRegistration()
     const result = transform(data, deathResolver, 'death')
     const declareAction = result.actions.find((a) => a.type === 'DECLARE')
 
@@ -648,9 +560,9 @@ Deno.test('deathResolver - informant fields', async (t) => {
   })
 
   await t.step('should resolve informant.passport', () => {
-    const data = buildEventRegistration({
+    const data = buildDeathEventRegistration({
       informant: {
-        ...buildEventRegistration().informant!,
+        ...buildDeathEventRegistration().informant!,
         identifier: [{ type: 'PASSPORT', id: 'P789' }],
       },
     })
@@ -661,7 +573,7 @@ Deno.test('deathResolver - informant fields', async (t) => {
   })
 
   await t.step('should resolve informant.verified from questionnaire', () => {
-    const data = buildEventRegistration({
+    const data = buildDeathEventRegistration({
       questionnaire: [
         {
           fieldId: 'death.informant.informant-view-group.verified',
@@ -681,7 +593,7 @@ Deno.test('deathResolver - informant fields', async (t) => {
 
 Deno.test('deathResolver - spouse fields', async (t) => {
   await t.step('should resolve spouse.detailsNotAvailable when false', () => {
-    const data = buildEventRegistration()
+    const data = buildDeathEventRegistration()
     const result = transform(data, deathResolver, 'death')
     const declareAction = result.actions.find((a) => a.type === 'DECLARE')
 
@@ -692,9 +604,9 @@ Deno.test('deathResolver - spouse fields', async (t) => {
   })
 
   await t.step('should resolve spouse.detailsNotAvailable when true', () => {
-    const data = buildEventRegistration({
+    const data = buildDeathEventRegistration({
       spouse: {
-        ...buildEventRegistration().spouse!,
+        ...buildDeathEventRegistration().spouse!,
         detailsExist: false,
       },
     })
@@ -705,9 +617,9 @@ Deno.test('deathResolver - spouse fields', async (t) => {
   })
 
   await t.step('should resolve spouse.reason', () => {
-    const data = buildEventRegistration({
+    const data = buildDeathEventRegistration({
       spouse: {
-        ...buildEventRegistration().spouse!,
+        ...buildDeathEventRegistration().spouse!,
         reasonNotApplying: 'Divorced',
       },
     })
@@ -718,7 +630,7 @@ Deno.test('deathResolver - spouse fields', async (t) => {
   })
 
   await t.step('should resolve spouse.name', () => {
-    const data = buildEventRegistration()
+    const data = buildDeathEventRegistration()
     const result = transform(data, deathResolver, 'death')
     const declareAction = result.actions.find((a) => a.type === 'DECLARE')
 
@@ -730,7 +642,7 @@ Deno.test('deathResolver - spouse fields', async (t) => {
   })
 
   await t.step('should resolve spouse.dob', () => {
-    const data = buildEventRegistration()
+    const data = buildDeathEventRegistration()
     const result = transform(data, deathResolver, 'death')
     const declareAction = result.actions.find((a) => a.type === 'DECLARE')
 
@@ -738,9 +650,9 @@ Deno.test('deathResolver - spouse fields', async (t) => {
   })
 
   await t.step('should resolve spouse.dobUnknown', () => {
-    const data = buildEventRegistration({
+    const data = buildDeathEventRegistration({
       spouse: {
-        ...buildEventRegistration().spouse!,
+        ...buildDeathEventRegistration().spouse!,
         exactDateOfBirthUnknown: true,
       },
     })
@@ -751,9 +663,9 @@ Deno.test('deathResolver - spouse fields', async (t) => {
   })
 
   await t.step('should resolve spouse.age', () => {
-    const data = buildEventRegistration({
+    const data = buildDeathEventRegistration({
       spouse: {
-        ...buildEventRegistration().spouse!,
+        ...buildDeathEventRegistration().spouse!,
         ageOfIndividualInYears: 72,
       },
     })
@@ -767,7 +679,7 @@ Deno.test('deathResolver - spouse fields', async (t) => {
   })
 
   await t.step('should resolve spouse.nationality', () => {
-    const data = buildEventRegistration()
+    const data = buildDeathEventRegistration()
     const result = transform(data, deathResolver, 'death')
     const declareAction = result.actions.find((a) => a.type === 'DECLARE')
 
@@ -775,7 +687,7 @@ Deno.test('deathResolver - spouse fields', async (t) => {
   })
 
   await t.step('should resolve spouse.idType from questionnaire', () => {
-    const data = buildEventRegistration({
+    const data = buildDeathEventRegistration({
       questionnaire: [
         {
           fieldId: 'death.spouse.spouse-view-group.spouseIdType',
@@ -790,7 +702,7 @@ Deno.test('deathResolver - spouse fields', async (t) => {
   })
 
   await t.step('should resolve spouse.nid', () => {
-    const data = buildEventRegistration()
+    const data = buildDeathEventRegistration()
     const result = transform(data, deathResolver, 'death')
     const declareAction = result.actions.find((a) => a.type === 'DECLARE')
 
@@ -798,9 +710,9 @@ Deno.test('deathResolver - spouse fields', async (t) => {
   })
 
   await t.step('should resolve spouse.passport', () => {
-    const data = buildEventRegistration({
+    const data = buildDeathEventRegistration({
       spouse: {
-        ...buildEventRegistration().spouse!,
+        ...buildDeathEventRegistration().spouse!,
         identifier: [{ type: 'PASSPORT', id: 'P456' }],
       },
     })
@@ -811,9 +723,9 @@ Deno.test('deathResolver - spouse fields', async (t) => {
   })
 
   await t.step('should resolve spouse.brn', () => {
-    const data = buildEventRegistration({
+    const data = buildDeathEventRegistration({
       spouse: {
-        ...buildEventRegistration().spouse!,
+        ...buildDeathEventRegistration().spouse!,
         identifier: [{ type: 'BIRTH_REGISTRATION_NUMBER', id: 'B456' }],
       },
     })
@@ -824,7 +736,7 @@ Deno.test('deathResolver - spouse fields', async (t) => {
   })
 
   await t.step('should resolve spouse.address', () => {
-    const data = buildEventRegistration()
+    const data = buildDeathEventRegistration()
     const result = transform(data, deathResolver, 'death')
     const declareAction = result.actions.find((a) => a.type === 'DECLARE')
 
@@ -841,13 +753,13 @@ Deno.test('deathResolver - spouse fields', async (t) => {
         state: 'State1',
         country: 'FAR',
       }
-      const data = buildEventRegistration({
+      const data = buildDeathEventRegistration({
         deceased: {
-          ...buildEventRegistration().deceased!,
+          ...buildDeathEventRegistration().deceased!,
           address: [sharedAddress],
         },
         spouse: {
-          ...buildEventRegistration().spouse!,
+          ...buildDeathEventRegistration().spouse!,
           address: [sharedAddress],
         },
       })
@@ -861,7 +773,7 @@ Deno.test('deathResolver - spouse fields', async (t) => {
   await t.step(
     'should resolve spouse.addressSameAs when addresses differ',
     () => {
-      const data = buildEventRegistration()
+      const data = buildDeathEventRegistration()
       const result = transform(data, deathResolver, 'death')
       const declareAction = result.actions.find((a) => a.type === 'DECLARE')
 
@@ -870,7 +782,7 @@ Deno.test('deathResolver - spouse fields', async (t) => {
   )
 
   await t.step('should resolve spouse.verified from questionnaire', () => {
-    const data = buildEventRegistration({
+    const data = buildDeathEventRegistration({
       questionnaire: [
         {
           fieldId: 'death.spouse.spouse-view-group.verified',
@@ -887,7 +799,7 @@ Deno.test('deathResolver - spouse fields', async (t) => {
 
 Deno.test('deathResolver - documents fields', async (t) => {
   await t.step('should resolve documents.proofOfDeceased', () => {
-    const data = buildEventRegistration({
+    const data = buildDeathEventRegistration({
       registration: {
         trackingId: 'DW12345',
         attachments: [
@@ -914,7 +826,7 @@ Deno.test('deathResolver - documents fields', async (t) => {
   })
 
   await t.step('should resolve documents.proofOfDeath', () => {
-    const data = buildEventRegistration({
+    const data = buildDeathEventRegistration({
       registration: {
         trackingId: 'DW12345',
         attachments: [
@@ -941,7 +853,7 @@ Deno.test('deathResolver - documents fields', async (t) => {
   })
 
   await t.step('should resolve documents.proofOfCauseOfDeath', () => {
-    const data = buildEventRegistration({
+    const data = buildDeathEventRegistration({
       registration: {
         trackingId: 'DW12345',
         attachments: [
@@ -968,7 +880,7 @@ Deno.test('deathResolver - documents fields', async (t) => {
   })
 
   await t.step('should resolve documents.proofOfInformant', () => {
-    const data = buildEventRegistration({
+    const data = buildDeathEventRegistration({
       registration: {
         trackingId: 'DW12345',
         attachments: [
@@ -997,7 +909,7 @@ Deno.test('deathResolver - documents fields', async (t) => {
   await t.step(
     'should resolve documents.proofOther combining OTHER and LEGAL_GUARDIAN_PROOF',
     () => {
-      const data = buildEventRegistration({
+      const data = buildDeathEventRegistration({
         registration: {
           trackingId: 'DW12345',
           attachments: [

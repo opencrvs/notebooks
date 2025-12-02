@@ -1,42 +1,16 @@
 import { transform } from '../../helpers/transform.ts'
 import { assertEquals } from 'https://deno.land/std@0.210.0/assert/mod.ts'
-import defaultResolvers, {
-  defaultBirthResolver,
-} from '../../helpers/defaultResolvers.ts'
-import { countryResolver } from '../../countryData/countryResolvers.ts'
-import { EventRegistration } from '../../helpers/types.ts'
+import {
+  buildBirthResolver,
+  buildBirthEventRegistration,
+} from '../utils/test-helpers.ts'
 
 // Construct birthResolver as in migrate.ipynb
-const allResolvers = { ...defaultResolvers, ...countryResolver }
-const birthResolver = { ...defaultBirthResolver, ...allResolvers }
-
-function buildEventRegistration(
-  overrides?: Partial<EventRegistration>
-): EventRegistration {
-  return {
-    id: '123',
-    registration: {
-      trackingId: 'B123456',
-      registrationNumber: '2024B123456',
-      contactPhoneNumber: '+2600987654321',
-      contactEmail: 'test@example.com',
-      informantsSignature: 'data:image/png;base64,abc123',
-    },
-    history: [
-      {
-        date: '2024-01-01T10:00:00Z',
-        regStatus: 'DECLARED',
-        user: { id: 'user1', role: { id: 'FIELD_AGENT' } },
-        office: { id: 'office1' },
-      },
-    ],
-    ...overrides,
-  }
-}
+const birthResolver = buildBirthResolver()
 
 Deno.test('birthResolver - child fields', async (t) => {
   await t.step('should resolve child.name fields', () => {
-    const registration = buildEventRegistration({
+    const registration = buildBirthEventRegistration({
       child: {
         name: [
           {
@@ -59,7 +33,7 @@ Deno.test('birthResolver - child fields', async (t) => {
   })
 
   await t.step('should resolve child.gender', () => {
-    const registration = buildEventRegistration({
+    const registration = buildBirthEventRegistration({
       child: { gender: 'male' },
     })
 
@@ -70,7 +44,7 @@ Deno.test('birthResolver - child fields', async (t) => {
   })
 
   await t.step('should resolve child.dob', () => {
-    const registration = buildEventRegistration({
+    const registration = buildBirthEventRegistration({
       child: { birthDate: '2024-01-15' },
     })
 
@@ -81,7 +55,7 @@ Deno.test('birthResolver - child fields', async (t) => {
   })
 
   await t.step('should resolve child.placeOfBirth', () => {
-    const registration = buildEventRegistration({
+    const registration = buildBirthEventRegistration({
       eventLocation: { type: 'HEALTH_FACILITY', id: 'facility1' },
     })
 
@@ -95,7 +69,7 @@ Deno.test('birthResolver - child fields', async (t) => {
   })
 
   await t.step('should resolve child.birthLocation for HEALTH_FACILITY', () => {
-    const registration = buildEventRegistration({
+    const registration = buildBirthEventRegistration({
       eventLocation: { type: 'HEALTH_FACILITY', id: 'facility1' },
     })
 
@@ -108,7 +82,7 @@ Deno.test('birthResolver - child fields', async (t) => {
   await t.step(
     'should resolve child.birthLocation.privateHome for PRIVATE_HOME',
     () => {
-      const registration = buildEventRegistration({
+      const registration = buildBirthEventRegistration({
         eventLocation: {
           type: 'PRIVATE_HOME',
           address: {
@@ -138,7 +112,7 @@ Deno.test('birthResolver - child fields', async (t) => {
   )
 
   await t.step('should resolve child.birthLocation.other for OTHER', () => {
-    const registration = buildEventRegistration({
+    const registration = buildBirthEventRegistration({
       eventLocation: {
         type: 'OTHER',
         address: {
@@ -163,7 +137,7 @@ Deno.test('birthResolver - child fields', async (t) => {
   })
 
   await t.step('should resolve child.attendantAtBirth', () => {
-    const registration = buildEventRegistration({
+    const registration = buildBirthEventRegistration({
       attendantAtBirth: 'PHYSICIAN',
     })
 
@@ -177,7 +151,7 @@ Deno.test('birthResolver - child fields', async (t) => {
   })
 
   await t.step('should resolve child.birthType', () => {
-    const registration = buildEventRegistration({
+    const registration = buildBirthEventRegistration({
       birthType: 'TWIN',
     })
 
@@ -188,7 +162,7 @@ Deno.test('birthResolver - child fields', async (t) => {
   })
 
   await t.step('should resolve child.weightAtBirth', () => {
-    const registration = buildEventRegistration({
+    const registration = buildBirthEventRegistration({
       weightAtBirth: 3.5,
     })
 
@@ -199,7 +173,7 @@ Deno.test('birthResolver - child fields', async (t) => {
   })
 
   await t.step('should resolve child.reason from questionnaire', () => {
-    const registration = buildEventRegistration({
+    const registration = buildBirthEventRegistration({
       questionnaire: [
         {
           fieldId: 'birth.child.child-view-group.reasonForLateRegistration',
@@ -218,7 +192,7 @@ Deno.test('birthResolver - child fields', async (t) => {
   })
 
   await t.step('should resolve child.nid', () => {
-    const registration = buildEventRegistration({
+    const registration = buildBirthEventRegistration({
       child: {
         identifier: [{ id: '1234567890', type: 'NATIONAL_ID' }],
       },
@@ -233,7 +207,7 @@ Deno.test('birthResolver - child fields', async (t) => {
 
 Deno.test('birthResolver - mother fields', async (t) => {
   await t.step('should resolve mother.detailsNotAvailable when false', () => {
-    const registration = buildEventRegistration({
+    const registration = buildBirthEventRegistration({
       mother: { detailsExist: true },
     })
 
@@ -247,7 +221,7 @@ Deno.test('birthResolver - mother fields', async (t) => {
   })
 
   await t.step('should resolve mother.detailsNotAvailable when true', () => {
-    const registration = buildEventRegistration({
+    const registration = buildBirthEventRegistration({
       mother: { detailsExist: false },
     })
 
@@ -258,7 +232,7 @@ Deno.test('birthResolver - mother fields', async (t) => {
   })
 
   await t.step('should resolve mother.reason', () => {
-    const registration = buildEventRegistration({
+    const registration = buildBirthEventRegistration({
       mother: { reasonNotApplying: 'Mother unknown' },
     })
 
@@ -269,7 +243,7 @@ Deno.test('birthResolver - mother fields', async (t) => {
   })
 
   await t.step('should resolve mother.name', () => {
-    const registration = buildEventRegistration({
+    const registration = buildBirthEventRegistration({
       mother: {
         name: [
           {
@@ -292,7 +266,7 @@ Deno.test('birthResolver - mother fields', async (t) => {
   })
 
   await t.step('should resolve mother.dob', () => {
-    const registration = buildEventRegistration({
+    const registration = buildBirthEventRegistration({
       mother: { birthDate: '1990-05-15' },
     })
 
@@ -303,7 +277,7 @@ Deno.test('birthResolver - mother fields', async (t) => {
   })
 
   await t.step('should resolve mother.dobUnknown', () => {
-    const registration = buildEventRegistration({
+    const registration = buildBirthEventRegistration({
       mother: { exactDateOfBirthUnknown: true },
     })
 
@@ -314,7 +288,7 @@ Deno.test('birthResolver - mother fields', async (t) => {
   })
 
   await t.step('should resolve mother.age with asOfDateRef', () => {
-    const registration = buildEventRegistration({
+    const registration = buildBirthEventRegistration({
       mother: { ageOfIndividualInYears: 30 },
       child: { birthDate: '2024-01-15' },
     })
@@ -329,7 +303,7 @@ Deno.test('birthResolver - mother fields', async (t) => {
   })
 
   await t.step('should resolve mother.nationality', () => {
-    const registration = buildEventRegistration({
+    const registration = buildBirthEventRegistration({
       mother: { nationality: ['FAR'] },
     })
 
@@ -340,7 +314,7 @@ Deno.test('birthResolver - mother fields', async (t) => {
   })
 
   await t.step('should resolve mother.maritalStatus', () => {
-    const registration = buildEventRegistration({
+    const registration = buildBirthEventRegistration({
       mother: { maritalStatus: 'MARRIED' },
     })
 
@@ -351,7 +325,7 @@ Deno.test('birthResolver - mother fields', async (t) => {
   })
 
   await t.step('should resolve mother.educationalAttainment', () => {
-    const registration = buildEventRegistration({
+    const registration = buildBirthEventRegistration({
       mother: { educationalAttainment: 'ISCED_4' },
     })
 
@@ -365,7 +339,7 @@ Deno.test('birthResolver - mother fields', async (t) => {
   })
 
   await t.step('should resolve mother.occupation', () => {
-    const registration = buildEventRegistration({
+    const registration = buildBirthEventRegistration({
       mother: { occupation: 'Teacher' },
     })
 
@@ -376,7 +350,7 @@ Deno.test('birthResolver - mother fields', async (t) => {
   })
 
   await t.step('should resolve mother.previousBirths', () => {
-    const registration = buildEventRegistration({
+    const registration = buildBirthEventRegistration({
       mother: { multipleBirth: 2 },
     })
 
@@ -387,7 +361,7 @@ Deno.test('birthResolver - mother fields', async (t) => {
   })
 
   await t.step('should resolve mother.address', () => {
-    const registration = buildEventRegistration({
+    const registration = buildBirthEventRegistration({
       mother: {
         address: [
           {
@@ -414,7 +388,7 @@ Deno.test('birthResolver - mother fields', async (t) => {
   })
 
   await t.step('should resolve mother.brn', () => {
-    const registration = buildEventRegistration({
+    const registration = buildBirthEventRegistration({
       mother: {
         identifier: [{ id: 'B2020123456', type: 'BIRTH_REGISTRATION_NUMBER' }],
       },
@@ -427,7 +401,7 @@ Deno.test('birthResolver - mother fields', async (t) => {
   })
 
   await t.step('should resolve mother.nid', () => {
-    const registration = buildEventRegistration({
+    const registration = buildBirthEventRegistration({
       mother: {
         identifier: [{ id: '9876543210', type: 'NATIONAL_ID' }],
       },
@@ -440,7 +414,7 @@ Deno.test('birthResolver - mother fields', async (t) => {
   })
 
   await t.step('should resolve mother.passport', () => {
-    const registration = buildEventRegistration({
+    const registration = buildBirthEventRegistration({
       mother: {
         identifier: [{ id: 'P123456', type: 'PASSPORT' }],
       },
@@ -453,7 +427,7 @@ Deno.test('birthResolver - mother fields', async (t) => {
   })
 
   await t.step('should resolve mother.idType from questionnaire', () => {
-    const registration = buildEventRegistration({
+    const registration = buildBirthEventRegistration({
       questionnaire: [
         {
           fieldId: 'birth.mother.mother-view-group.motherIdType',
@@ -469,7 +443,7 @@ Deno.test('birthResolver - mother fields', async (t) => {
   })
 
   await t.step('should resolve mother.verified from questionnaire', () => {
-    const registration = buildEventRegistration({
+    const registration = buildBirthEventRegistration({
       questionnaire: [
         {
           fieldId: 'birth.mother.mother-view-group.verified',
@@ -487,7 +461,7 @@ Deno.test('birthResolver - mother fields', async (t) => {
 
 Deno.test('birthResolver - father fields', async (t) => {
   await t.step('should resolve father.detailsNotAvailable', () => {
-    const registration = buildEventRegistration({
+    const registration = buildBirthEventRegistration({
       father: { detailsExist: false },
     })
 
@@ -498,7 +472,7 @@ Deno.test('birthResolver - father fields', async (t) => {
   })
 
   await t.step('should resolve father.reason', () => {
-    const registration = buildEventRegistration({
+    const registration = buildBirthEventRegistration({
       father: { reasonNotApplying: 'Father unknown' },
     })
 
@@ -509,7 +483,7 @@ Deno.test('birthResolver - father fields', async (t) => {
   })
 
   await t.step('should resolve father.name', () => {
-    const registration = buildEventRegistration({
+    const registration = buildBirthEventRegistration({
       father: {
         name: [
           {
@@ -531,7 +505,7 @@ Deno.test('birthResolver - father fields', async (t) => {
   })
 
   await t.step('should resolve father.dob', () => {
-    const registration = buildEventRegistration({
+    const registration = buildBirthEventRegistration({
       father: { birthDate: '1988-03-20' },
     })
 
@@ -542,7 +516,7 @@ Deno.test('birthResolver - father fields', async (t) => {
   })
 
   await t.step('should resolve father.dobUnknown', () => {
-    const registration = buildEventRegistration({
+    const registration = buildBirthEventRegistration({
       father: { exactDateOfBirthUnknown: true },
     })
 
@@ -553,7 +527,7 @@ Deno.test('birthResolver - father fields', async (t) => {
   })
 
   await t.step('should resolve father.age', () => {
-    const registration = buildEventRegistration({
+    const registration = buildBirthEventRegistration({
       father: { ageOfIndividualInYears: 35 },
       child: { birthDate: '2024-01-15' },
     })
@@ -568,7 +542,7 @@ Deno.test('birthResolver - father fields', async (t) => {
   })
 
   await t.step('should resolve father.nationality', () => {
-    const registration = buildEventRegistration({
+    const registration = buildBirthEventRegistration({
       father: { nationality: ['USA'] },
     })
 
@@ -579,7 +553,7 @@ Deno.test('birthResolver - father fields', async (t) => {
   })
 
   await t.step('should resolve father.maritalStatus', () => {
-    const registration = buildEventRegistration({
+    const registration = buildBirthEventRegistration({
       father: { maritalStatus: 'MARRIED' },
     })
 
@@ -590,7 +564,7 @@ Deno.test('birthResolver - father fields', async (t) => {
   })
 
   await t.step('should resolve father.educationalAttainment', () => {
-    const registration = buildEventRegistration({
+    const registration = buildBirthEventRegistration({
       father: { educationalAttainment: 'ISCED_5' },
     })
 
@@ -604,7 +578,7 @@ Deno.test('birthResolver - father fields', async (t) => {
   })
 
   await t.step('should resolve father.occupation', () => {
-    const registration = buildEventRegistration({
+    const registration = buildBirthEventRegistration({
       father: { occupation: 'Engineer' },
     })
 
@@ -615,7 +589,7 @@ Deno.test('birthResolver - father fields', async (t) => {
   })
 
   await t.step('should resolve father.address', () => {
-    const registration = buildEventRegistration({
+    const registration = buildBirthEventRegistration({
       father: {
         address: [
           {
@@ -654,7 +628,7 @@ Deno.test('birthResolver - father fields', async (t) => {
         postalCode: '11111',
       }
 
-      const registration = buildEventRegistration({
+      const registration = buildBirthEventRegistration({
         mother: { address: [sameAddress] },
         father: { address: [sameAddress] },
       })
@@ -669,7 +643,7 @@ Deno.test('birthResolver - father fields', async (t) => {
   await t.step(
     'should resolve father.addressSameAs when addresses differ',
     () => {
-      const registration = buildEventRegistration({
+      const registration = buildBirthEventRegistration({
         mother: {
           address: [
             {
@@ -700,7 +674,7 @@ Deno.test('birthResolver - father fields', async (t) => {
   )
 
   await t.step('should resolve father.brn', () => {
-    const registration = buildEventRegistration({
+    const registration = buildBirthEventRegistration({
       father: {
         identifier: [{ id: 'B2018654321', type: 'BIRTH_REGISTRATION_NUMBER' }],
       },
@@ -713,7 +687,7 @@ Deno.test('birthResolver - father fields', async (t) => {
   })
 
   await t.step('should resolve father.nid', () => {
-    const registration = buildEventRegistration({
+    const registration = buildBirthEventRegistration({
       father: {
         identifier: [{ id: '1122334455', type: 'NATIONAL_ID' }],
       },
@@ -726,7 +700,7 @@ Deno.test('birthResolver - father fields', async (t) => {
   })
 
   await t.step('should resolve father.passport', () => {
-    const registration = buildEventRegistration({
+    const registration = buildBirthEventRegistration({
       father: {
         identifier: [{ id: 'P654321', type: 'PASSPORT' }],
       },
@@ -739,7 +713,7 @@ Deno.test('birthResolver - father fields', async (t) => {
   })
 
   await t.step('should resolve father.idType from questionnaire', () => {
-    const registration = buildEventRegistration({
+    const registration = buildBirthEventRegistration({
       questionnaire: [
         {
           fieldId: 'birth.father.father-view-group.fatherIdType',
@@ -755,7 +729,7 @@ Deno.test('birthResolver - father fields', async (t) => {
   })
 
   await t.step('should resolve father.verified from questionnaire', () => {
-    const registration = buildEventRegistration({
+    const registration = buildBirthEventRegistration({
       questionnaire: [
         {
           fieldId: 'birth.father.father-view-group.verified',
@@ -773,7 +747,7 @@ Deno.test('birthResolver - father fields', async (t) => {
 
 Deno.test('birthResolver - informant fields', async (t) => {
   await t.step('should resolve informant.dob for non-special informant', () => {
-    const registration = buildEventRegistration({
+    const registration = buildBirthEventRegistration({
       informant: {
         birthDate: '1995-08-10',
         relationship: 'BROTHER',
@@ -787,7 +761,7 @@ Deno.test('birthResolver - informant fields', async (t) => {
   })
 
   await t.step('should not resolve informant.dob for MOTHER', () => {
-    const registration = buildEventRegistration({
+    const registration = buildBirthEventRegistration({
       informant: {
         birthDate: '1995-08-10',
         relationship: 'MOTHER',
@@ -803,7 +777,7 @@ Deno.test('birthResolver - informant fields', async (t) => {
   await t.step(
     'should resolve informant.address for non-special informant',
     () => {
-      const registration = buildEventRegistration({
+      const registration = buildBirthEventRegistration({
         informant: {
           relationship: 'GRANDFATHER',
           address: [
@@ -833,7 +807,7 @@ Deno.test('birthResolver - informant fields', async (t) => {
   await t.step(
     'should resolve informant.phoneNo with country code stripped',
     () => {
-      const registration = buildEventRegistration({
+      const registration = buildBirthEventRegistration({
         registration: {
           trackingId: 'B123456',
           contactPhoneNumber: '+260987654321',
@@ -851,7 +825,7 @@ Deno.test('birthResolver - informant fields', async (t) => {
   )
 
   await t.step('should resolve informant.email', () => {
-    const registration = buildEventRegistration({
+    const registration = buildBirthEventRegistration({
       registration: {
         trackingId: 'B123456',
         contactEmail: 'informant@test.com',
@@ -868,7 +842,7 @@ Deno.test('birthResolver - informant fields', async (t) => {
   })
 
   await t.step('should resolve informant.relation', () => {
-    const registration = buildEventRegistration({
+    const registration = buildBirthEventRegistration({
       informant: { relationship: 'SISTER' },
     })
 
@@ -879,7 +853,7 @@ Deno.test('birthResolver - informant fields', async (t) => {
   })
 
   await t.step('should resolve informant.other.relation', () => {
-    const registration = buildEventRegistration({
+    const registration = buildBirthEventRegistration({
       informant: { otherRelationship: 'Cousin' },
     })
 
@@ -895,7 +869,7 @@ Deno.test('birthResolver - informant fields', async (t) => {
   await t.step(
     'should resolve informant.name for non-special informant',
     () => {
-      const registration = buildEventRegistration({
+      const registration = buildBirthEventRegistration({
         informant: {
           relationship: 'LEGAL_GUARDIAN',
           name: [
@@ -919,7 +893,7 @@ Deno.test('birthResolver - informant fields', async (t) => {
   )
 
   await t.step('should resolve informant.dobUnknown', () => {
-    const registration = buildEventRegistration({
+    const registration = buildBirthEventRegistration({
       informant: {
         relationship: 'GRANDFATHER',
         exactDateOfBirthUnknown: true,
@@ -933,7 +907,7 @@ Deno.test('birthResolver - informant fields', async (t) => {
   })
 
   await t.step('should resolve informant.age', () => {
-    const registration = buildEventRegistration({
+    const registration = buildBirthEventRegistration({
       informant: {
         relationship: 'OTHER',
         ageOfIndividualInYears: 45,
@@ -951,7 +925,7 @@ Deno.test('birthResolver - informant fields', async (t) => {
   })
 
   await t.step('should resolve informant.nationality', () => {
-    const registration = buildEventRegistration({
+    const registration = buildBirthEventRegistration({
       informant: {
         relationship: 'BROTHER',
         nationality: ['GBR'],
@@ -965,7 +939,7 @@ Deno.test('birthResolver - informant fields', async (t) => {
   })
 
   await t.step('should resolve informant.brn', () => {
-    const registration = buildEventRegistration({
+    const registration = buildBirthEventRegistration({
       informant: {
         relationship: 'SISTER',
         identifier: [{ id: 'B2015987654', type: 'BIRTH_REGISTRATION_NUMBER' }],
@@ -979,7 +953,7 @@ Deno.test('birthResolver - informant fields', async (t) => {
   })
 
   await t.step('should resolve informant.nid', () => {
-    const registration = buildEventRegistration({
+    const registration = buildBirthEventRegistration({
       informant: {
         relationship: 'GRANDFATHER',
         identifier: [{ id: '5566778899', type: 'NATIONAL_ID' }],
@@ -993,7 +967,7 @@ Deno.test('birthResolver - informant fields', async (t) => {
   })
 
   await t.step('should resolve informant.passport', () => {
-    const registration = buildEventRegistration({
+    const registration = buildBirthEventRegistration({
       informant: {
         relationship: 'OTHER',
         identifier: [{ id: 'P999888', type: 'PASSPORT' }],
@@ -1007,7 +981,7 @@ Deno.test('birthResolver - informant fields', async (t) => {
   })
 
   await t.step('should resolve informant.idType from questionnaire', () => {
-    const registration = buildEventRegistration({
+    const registration = buildBirthEventRegistration({
       questionnaire: [
         {
           fieldId: 'birth.informant.informant-view-group.informantIdType',
@@ -1026,7 +1000,7 @@ Deno.test('birthResolver - informant fields', async (t) => {
   })
 
   await t.step('should resolve informant.verified from questionnaire', () => {
-    const registration = buildEventRegistration({
+    const registration = buildBirthEventRegistration({
       questionnaire: [
         {
           fieldId: 'birth.informant.informant-view-group.verified',
@@ -1047,7 +1021,7 @@ Deno.test('birthResolver - informant fields', async (t) => {
 
 Deno.test('birthResolver - documents fields', async (t) => {
   await t.step('should resolve documents.proofOfBirth', () => {
-    const registration = buildEventRegistration({
+    const registration = buildBirthEventRegistration({
       registration: {
         trackingId: 'B123456',
         attachments: [
@@ -1072,7 +1046,7 @@ Deno.test('birthResolver - documents fields', async (t) => {
   })
 
   await t.step('should resolve documents.proofOfMother', () => {
-    const registration = buildEventRegistration({
+    const registration = buildBirthEventRegistration({
       registration: {
         trackingId: 'B123456',
         attachments: [
@@ -1100,7 +1074,7 @@ Deno.test('birthResolver - documents fields', async (t) => {
   })
 
   await t.step('should resolve documents.proofOfFather', () => {
-    const registration = buildEventRegistration({
+    const registration = buildBirthEventRegistration({
       registration: {
         trackingId: 'B123456',
         attachments: [
@@ -1128,7 +1102,7 @@ Deno.test('birthResolver - documents fields', async (t) => {
   })
 
   await t.step('should resolve documents.proofOfInformant', () => {
-    const registration = buildEventRegistration({
+    const registration = buildBirthEventRegistration({
       registration: {
         trackingId: 'B123456',
         attachments: [
@@ -1158,7 +1132,7 @@ Deno.test('birthResolver - documents fields', async (t) => {
   await t.step(
     'should resolve documents.proofOther combining OTHER and LEGAL_GUARDIAN_PROOF',
     () => {
-      const registration = buildEventRegistration({
+      const registration = buildBirthEventRegistration({
         registration: {
           trackingId: 'B123456',
           attachments: [

@@ -1,7 +1,7 @@
 import { faker } from '@faker-js/faker'
 import { format, subDays, subYears } from 'date-fns'
 import { v4 as uuidv4 } from 'uuid'
-import { getAllLocations } from '../utils.ts'
+import { getAllLocations } from './generatorUtils.ts'
 import type { fhir } from 'fhir'
 
 // Types for generated data

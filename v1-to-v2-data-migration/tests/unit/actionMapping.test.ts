@@ -1,30 +1,9 @@
 import { transform } from '../../helpers/transform.ts'
 import { assertEquals } from 'https://deno.land/std@0.210.0/assert/mod.ts'
-import type { EventRegistration, HistoryItem } from '../../helpers/types.ts'
-
-// Builders
-function buildHistoryItem(overrides: Partial<HistoryItem> = {}): HistoryItem {
-  return {
-    date: '2023-10-01T12:00:00Z',
-    user: { id: 'user-123', role: { id: 'FIELD_AGENT' } },
-    office: { id: 'office-456' },
-    ...overrides,
-  }
-}
-
-function buildEventRegistration(
-  overrides: Partial<EventRegistration> = {}
-): EventRegistration {
-  return {
-    id: 'event-123',
-    registration: {
-      trackingId: 'TRACK123',
-      registrationNumber: 'REG123',
-    },
-    history: [],
-    ...overrides,
-  }
-}
+import {
+  buildHistoryItem,
+  buildSimpleEventRegistration as buildEventRegistration,
+} from '../utils/test-helpers.ts'
 
 Deno.test('transform - basic action type mappings', async (t) => {
   await t.step(
