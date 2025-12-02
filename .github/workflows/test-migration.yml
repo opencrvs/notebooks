@@ -1,0 +1,57 @@
+name: Test Data Migration
+
+on:
+  pull_request:
+    paths:
+      - 'v1-to-v2-data-migration/**'
+      - '.github/workflows/test-migration.yml'
+
+jobs:
+  test:
+    name: Run Migration Tests
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Deno
+        uses: denoland/setup-deno@v1
+        with:
+          deno-version: v1.x
+
+      - name: Cache Deno dependencies
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.deno
+            ~/.cache/deno
+          key: ${{ runner.os }}-deno-${{ hashFiles('v1-to-v2-data-migration/tests/deno.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-deno-
+
+      - name: Run unit tests
+        working-directory: v1-to-v2-data-migration/tests
+        run: |
+          echo "Running unit tests..."
+          deno test unit/ --allow-all --coverage=coverage
+
+      - name: Generate coverage report
+        working-directory: v1-to-v2-data-migration/tests
+        run: |
+          deno coverage coverage --lcov --output=coverage.lcov
+
+      - name: Test Summary
+        if: always()
+        run: |
+          echo "## Test Results" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "✅ Unit tests completed" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### Tests Included" >> $GITHUB_STEP_SUMMARY
+          echo "- Birth resolver tests" >> $GITHUB_STEP_SUMMARY
+          echo "- Death resolver tests" >> $GITHUB_STEP_SUMMARY
+          echo "- Action mapping tests" >> $GITHUB_STEP_SUMMARY
+          echo "- Corrections tests" >> $GITHUB_STEP_SUMMARY
+          echo "- Transform function tests" >> $GITHUB_STEP_SUMMARY
+          echo "- Post-process tests" >> $GITHUB_STEP_SUMMARY
