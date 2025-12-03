@@ -4,7 +4,7 @@ import {
   buildBirthEventRegistration,
   buildDeathEventRegistration,
   buildDeathResolver,
-} from '../utils/test-helpers.ts'
+} from '../utils/testHelpers.ts'
 import { assertEquals } from 'https://deno.land/std@0.210.0/assert/mod.ts'
 import type { Action } from '../../helpers/types.ts'
 
@@ -222,100 +222,6 @@ Deno.test('PostProcess - Single Correction', async (t) => {
       })
     }
   )
-
-  await t.step('should handle correction with address fields', () => {
-    const registration = buildBirthEventRegistration({
-      history: [
-        {
-          date: '2024-01-01T10:00:00Z',
-          regStatus: 'DECLARED',
-          user: { id: 'user1', role: { id: 'FIELD_AGENT' } },
-          office: { id: 'office1' },
-        },
-        {
-          date: '2024-01-02T12:00:00Z',
-          regStatus: 'REGISTERED',
-          user: { id: 'user2', role: { id: 'REGISTRATION_AGENT' } },
-          office: { id: 'office1' },
-        },
-        {
-          date: '2024-01-03T14:00:00Z',
-          action: 'REQUESTED_CORRECTION',
-          user: { id: 'user3', role: { id: 'REGISTRATION_AGENT' } },
-          office: { id: 'office1' },
-          input: [
-            {
-              valueCode: 'mother',
-              valueId: 'internationalStatePrimaryMother',
-              value: 'OldState',
-            },
-            {
-              valueCode: 'mother',
-              valueId: 'internationalCityPrimaryMother',
-              value: 'OldCity',
-            },
-          ],
-          output: [
-            {
-              valueCode: 'mother',
-              valueId: 'internationalStatePrimaryMother',
-              value: 'NewState',
-            },
-            {
-              valueCode: 'mother',
-              valueId: 'internationalCityPrimaryMother',
-              value: 'NewCity',
-            },
-          ],
-        },
-      ],
-    })
-
-    const result = transform(registration, birthResolver, 'birth')
-
-    const registerAction = result.actions.find(
-      (a) => a.type === 'REGISTER'
-    ) as Action
-    const correctionAction = result.actions.find(
-      (a) => a.type === 'REQUEST_CORRECTION'
-    ) as Action
-
-    // Correction has new address
-    assertEquals(
-      correctionAction?.declaration?.['mother.address']?.streetLevelDetails
-        ?.state,
-      'NewState'
-    )
-    assertEquals(
-      correctionAction?.declaration?.['mother.address']?.streetLevelDetails
-        ?.cityOrTown,
-      'NewCity'
-    )
-
-    // Annotation has old address
-    assertEquals(
-      correctionAction?.annotation?.['mother.address']?.streetLevelDetails
-        ?.state,
-      'OldState'
-    )
-    assertEquals(
-      correctionAction?.annotation?.['mother.address']?.streetLevelDetails
-        ?.cityOrTown,
-      'OldCity'
-    )
-
-    // REGISTER action should now have old address
-    assertEquals(
-      registerAction?.declaration?.['mother.address']?.streetLevelDetails
-        ?.state,
-      'OldState'
-    )
-    assertEquals(
-      registerAction?.declaration?.['mother.address']?.streetLevelDetails
-        ?.cityOrTown,
-      'OldCity'
-    )
-  })
 })
 
 Deno.test('PostProcess - Multiple Corrections', async (t) => {

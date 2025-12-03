@@ -4,6 +4,8 @@ import defaultResolvers, {
 } from '../../helpers/defaultResolvers.ts'
 import { countryResolver } from '../../countryData/countryResolvers.ts'
 import type { EventRegistration, HistoryItem } from '../../helpers/types.ts'
+import { buildPhoneNumber } from './phoneBuilder.ts'
+import { COUNTRY_CODE } from '../../countryData/addressResolver.ts'
 
 /**
  * Build a birth resolver with all default and country resolvers
@@ -23,6 +25,7 @@ export function buildDeathResolver() {
 
 /**
  * Build a basic EventRegistration for birth tests with sensible defaults
+ * Includes custom fields that country resolvers might expect
  */
 export function buildBirthEventRegistration(
   overrides?: Partial<EventRegistration>
@@ -32,7 +35,7 @@ export function buildBirthEventRegistration(
     registration: {
       trackingId: 'B123456',
       registrationNumber: '2024B123456',
-      contactPhoneNumber: '+2600987654321',
+      contactPhoneNumber: buildPhoneNumber('0987654321'),
       contactEmail: 'test@example.com',
       informantsSignature: 'data:image/png;base64,abc123',
     },
@@ -44,6 +47,7 @@ export function buildBirthEventRegistration(
         office: { id: 'office1' },
       },
     ],
+    questionnaire: [],
     ...overrides,
   }
 }
@@ -62,7 +66,7 @@ export function buildDeathEventRegistration(
       gender: 'male',
       birthDate: '1950-01-01',
       identifier: [{ type: 'NATIONAL_ID', id: 'DEC123456' }],
-      nationality: ['FAR'],
+      nationality: [COUNTRY_CODE],
       maritalStatus: 'MARRIED',
       address: [
         {
@@ -70,7 +74,7 @@ export function buildDeathEventRegistration(
           line: ['123 Main St', 'Apt 4'],
           district: 'District1',
           state: 'State1',
-          country: 'FAR',
+          country: COUNTRY_CODE,
         },
       ],
       deceased: {
@@ -90,7 +94,7 @@ export function buildDeathEventRegistration(
           line: ['456 Oak Ave'],
           district: 'District2',
           state: 'State2',
-          country: 'FAR',
+          country: COUNTRY_CODE,
         },
       ],
     },
@@ -99,7 +103,7 @@ export function buildDeathEventRegistration(
       detailsExist: true,
       name: [{ use: 'en', firstNames: 'Mary', familyName: 'Smith' }],
       birthDate: '1952-01-01',
-      nationality: ['FAR'],
+      nationality: [COUNTRY_CODE],
       identifier: [{ type: 'NATIONAL_ID', id: 'SPO456' }],
       address: [
         {
@@ -107,14 +111,14 @@ export function buildDeathEventRegistration(
           line: ['789 Pine Rd'],
           district: 'District3',
           state: 'State3',
-          country: 'FAR',
+          country: COUNTRY_CODE,
         },
       ],
     },
     registration: {
       trackingId: 'DW12345',
       registrationNumber: 'REG123',
-      contactPhoneNumber: '+260987654321',
+      contactPhoneNumber: buildPhoneNumber('0987654321'),
       contactEmail: 'contact@example.com',
     },
     history: [
@@ -132,7 +136,12 @@ export function buildDeathEventRegistration(
     causeOfDeathEstablished: 'true',
     causeOfDeathMethod: 'PHYSICIAN',
     mannerOfDeath: 'NATURAL_CAUSES',
-    questionnaire: [],
+    questionnaire: [
+      {
+        fieldId: 'death.deceased.deceased-view-group.birthRegNo',
+        value: 'B123456',
+      },
+    ],
     ...overrides,
   } as EventRegistration
 }

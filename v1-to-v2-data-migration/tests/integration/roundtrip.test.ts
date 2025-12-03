@@ -1,5 +1,5 @@
 import { expect } from 'jsr:@std/expect'
-import { generateBirthRegistration } from '../utils/data-generators.ts'
+import { generateBirthRegistration } from '../utils/dataGenerators.ts'
 import { authenticate } from '../../helpers/authentication.ts'
 import { GATEWAY } from '../../helpers/routes.ts'
 import { createDeclaration, getEvent, runMigration } from '../utils.ts'

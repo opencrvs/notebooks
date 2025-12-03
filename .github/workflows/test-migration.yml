@@ -30,28 +30,37 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-deno-
 
-      - name: Run unit tests
+      - name: Detect country and run tests
         working-directory: v1-to-v2-data-migration/tests
         run: |
-          echo "Running unit tests..."
-          deno test unit/ --allow-all --coverage=coverage
-
-      - name: Generate coverage report
-        working-directory: v1-to-v2-data-migration/tests
-        run: |
-          deno coverage coverage --lcov --output=coverage.lcov
+          echo "🧪 Running migration tests with automatic country detection..."
+          deno task test
 
       - name: Test Summary
         if: always()
+        working-directory: v1-to-v2-data-migration/tests
         run: |
-          echo "## Test Results" >> $GITHUB_STEP_SUMMARY
+          # Extract country code from addressResolver.ts
+          COUNTRY=$(deno eval "import { COUNTRY_CODE } from '../countryData/addressResolver.ts'; console.log(COUNTRY_CODE)")
+
+          echo "## 🧪 Migration Test Results" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
-          echo "✅ Unit tests completed" >> $GITHUB_STEP_SUMMARY
+          echo "**Branch:** \`${{ github.ref_name }}\`" >> $GITHUB_STEP_SUMMARY
+          echo "**Country:** \`$COUNTRY\`" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
-          echo "### Tests Included" >> $GITHUB_STEP_SUMMARY
+          echo "### 📦 Test Suites Executed" >> $GITHUB_STEP_SUMMARY
+          echo "- ✅ Common unit tests (\`unit/\`)" >> $GITHUB_STEP_SUMMARY
+          echo "- ✅ Country-specific tests (\`$COUNTRY/\`)" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### 🎯 Tests Included" >> $GITHUB_STEP_SUMMARY
+          echo "**Common Tests:**" >> $GITHUB_STEP_SUMMARY
           echo "- Birth resolver tests" >> $GITHUB_STEP_SUMMARY
           echo "- Death resolver tests" >> $GITHUB_STEP_SUMMARY
           echo "- Action mapping tests" >> $GITHUB_STEP_SUMMARY
           echo "- Corrections tests" >> $GITHUB_STEP_SUMMARY
           echo "- Transform function tests" >> $GITHUB_STEP_SUMMARY
           echo "- Post-process tests" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Country-Specific Tests:**" >> $GITHUB_STEP_SUMMARY
+          echo "- Address resolution tests" >> $GITHUB_STEP_SUMMARY
+          echo "- Address corrections tests" >> $GITHUB_STEP_SUMMARY

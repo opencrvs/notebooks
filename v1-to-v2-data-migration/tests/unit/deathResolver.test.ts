@@ -3,7 +3,8 @@ import { transform } from '../../helpers/transform.ts'
 import {
   buildDeathResolver,
   buildDeathEventRegistration,
-} from '../utils/test-helpers.ts'
+} from '../utils/testHelpers.ts'
+import { COUNTRY_CODE } from '../../countryData/addressResolver.ts'
 
 // Construct deathResolver as in migrate.ipynb
 const deathResolver = buildDeathResolver()
@@ -71,7 +72,10 @@ Deno.test('deathResolver - deceased fields', async (t) => {
     const result = transform(data, deathResolver, 'death')
     const declareAction = result.actions.find((a) => a.type === 'DECLARE')
 
-    assertEquals(declareAction?.declaration['deceased.nationality'], 'FAR')
+    assertEquals(
+      declareAction?.declaration['deceased.nationality'],
+      COUNTRY_CODE
+    )
   })
 
   await t.step('should resolve deceased.idType from questionnaire', () => {
@@ -147,18 +151,6 @@ Deno.test('deathResolver - deceased fields', async (t) => {
     const declareAction = result.actions.find((a) => a.type === 'DECLARE')
 
     assertEquals(declareAction?.declaration['deceased.numberOfDependants'], 3)
-  })
-
-  await t.step('should resolve deceased.address', () => {
-    const data = buildDeathEventRegistration()
-    const result = transform(data, deathResolver, 'death')
-    const declareAction = result.actions.find((a) => a.type === 'DECLARE')
-
-    assertEquals(declareAction?.declaration['deceased.address']?.country, 'FAR')
-    assertEquals(
-      declareAction?.declaration['deceased.address']?.administrativeArea,
-      'District1'
-    )
   })
 
   await t.step('should resolve deceased.verified from questionnaire', () => {
@@ -313,72 +305,9 @@ Deno.test('deathResolver - eventDetails fields', async (t) => {
       )
     }
   )
-
-  await t.step(
-    'should resolve eventDetails.deathLocationOther for OTHER',
-    () => {
-      const data = buildDeathEventRegistration({
-        eventLocation: {
-          id: 'other-location',
-          type: 'OTHER',
-          address: {
-            line: ['999 Death St'],
-            district: 'DistrictX',
-            state: 'StateX',
-            country: 'FAR',
-          },
-        },
-      })
-      const result = transform(data, deathResolver, 'death')
-      const declareAction = result.actions.find((a) => a.type === 'DECLARE')
-
-      assertEquals(
-        declareAction?.declaration['eventDetails.deathLocationOther']?.country,
-        'FAR'
-      )
-    }
-  )
 })
 
 Deno.test('deathResolver - informant fields', async (t) => {
-  await t.step(
-    'should resolve informant.addressSameAs when addresses match',
-    () => {
-      const sharedAddress = {
-        type: 'PRIMARY_ADDRESS',
-        line: ['Same St'],
-        district: 'District1',
-        state: 'State1',
-        country: 'FAR',
-      }
-      const data = buildDeathEventRegistration({
-        deceased: {
-          ...buildDeathEventRegistration().deceased!,
-          address: [sharedAddress],
-        },
-        informant: {
-          ...buildDeathEventRegistration().informant!,
-          address: [sharedAddress],
-        },
-      })
-      const result = transform(data, deathResolver, 'death')
-      const declareAction = result.actions.find((a) => a.type === 'DECLARE')
-
-      assertEquals(declareAction?.declaration['informant.addressSameAs'], 'YES')
-    }
-  )
-
-  await t.step(
-    'should resolve informant.addressSameAs when addresses differ',
-    () => {
-      const data = buildDeathEventRegistration()
-      const result = transform(data, deathResolver, 'death')
-      const declareAction = result.actions.find((a) => a.type === 'DECLARE')
-
-      assertEquals(declareAction?.declaration['informant.addressSameAs'], 'NO')
-    }
-  )
-
   await t.step('should resolve informant.idType from questionnaire', () => {
     const data = buildDeathEventRegistration({
       questionnaire: [
@@ -414,20 +343,6 @@ Deno.test('deathResolver - informant fields', async (t) => {
 
     assertEquals(declareAction?.declaration['informant.dob'], undefined)
   })
-
-  await t.step(
-    'should resolve informant.address for non-special informant',
-    () => {
-      const data = buildDeathEventRegistration()
-      const result = transform(data, deathResolver, 'death')
-      const declareAction = result.actions.find((a) => a.type === 'DECLARE')
-
-      assertEquals(
-        declareAction?.declaration['informant.address']?.country,
-        'FAR'
-      )
-    }
-  )
 
   await t.step(
     'should resolve informant.phoneNo with country code stripped',
@@ -683,7 +598,7 @@ Deno.test('deathResolver - spouse fields', async (t) => {
     const result = transform(data, deathResolver, 'death')
     const declareAction = result.actions.find((a) => a.type === 'DECLARE')
 
-    assertEquals(declareAction?.declaration['spouse.nationality'], 'FAR')
+    assertEquals(declareAction?.declaration['spouse.nationality'], COUNTRY_CODE)
   })
 
   await t.step('should resolve spouse.idType from questionnaire', () => {
@@ -734,52 +649,6 @@ Deno.test('deathResolver - spouse fields', async (t) => {
 
     assertEquals(declareAction?.declaration['spouse.brn'], 'B456')
   })
-
-  await t.step('should resolve spouse.address', () => {
-    const data = buildDeathEventRegistration()
-    const result = transform(data, deathResolver, 'death')
-    const declareAction = result.actions.find((a) => a.type === 'DECLARE')
-
-    assertEquals(declareAction?.declaration['spouse.address']?.country, 'FAR')
-  })
-
-  await t.step(
-    'should resolve spouse.addressSameAs when addresses match',
-    () => {
-      const sharedAddress = {
-        type: 'PRIMARY_ADDRESS',
-        line: ['Same St'],
-        district: 'District1',
-        state: 'State1',
-        country: 'FAR',
-      }
-      const data = buildDeathEventRegistration({
-        deceased: {
-          ...buildDeathEventRegistration().deceased!,
-          address: [sharedAddress],
-        },
-        spouse: {
-          ...buildDeathEventRegistration().spouse!,
-          address: [sharedAddress],
-        },
-      })
-      const result = transform(data, deathResolver, 'death')
-      const declareAction = result.actions.find((a) => a.type === 'DECLARE')
-
-      assertEquals(declareAction?.declaration['spouse.addressSameAs'], 'YES')
-    }
-  )
-
-  await t.step(
-    'should resolve spouse.addressSameAs when addresses differ',
-    () => {
-      const data = buildDeathEventRegistration()
-      const result = transform(data, deathResolver, 'death')
-      const declareAction = result.actions.find((a) => a.type === 'DECLARE')
-
-      assertEquals(declareAction?.declaration['spouse.addressSameAs'], 'NO')
-    }
-  )
 
   await t.step('should resolve spouse.verified from questionnaire', () => {
     const data = buildDeathEventRegistration({

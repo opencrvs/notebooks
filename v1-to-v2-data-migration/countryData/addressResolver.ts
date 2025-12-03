@@ -38,7 +38,9 @@ export function resolveAddress(
   if (!address) {
     return null
   }
-  const lines = address.line.filter(Boolean).filter((line) => !['URBAN', 'RURAL'].includes(line))
+  const lines = address.line
+    .filter(Boolean)
+    .filter((line) => !['URBAN', 'RURAL'].includes(line))
   const international = address.country !== COUNTRY_CODE
   if (international) {
     return {

@@ -3,7 +3,7 @@ import { assertEquals } from 'https://deno.land/std@0.210.0/assert/mod.ts'
 import {
   buildHistoryItem,
   buildSimpleEventRegistration as buildEventRegistration,
-} from '../utils/test-helpers.ts'
+} from '../utils/testHelpers.ts'
 
 Deno.test('transform - basic action type mappings', async (t) => {
   await t.step(
