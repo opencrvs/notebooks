@@ -3,6 +3,8 @@ import { v4 as uuidv4 } from 'npm:uuid'
 import {
   DEFAULT_FIELD_MAPPINGS,
   CUSTOM_FIELD_MAPPINGS,
+  AGE_MAPPINGS,
+  VERIFIED_MAPPINGS,
 } from './defaultMappings.ts'
 import { COUNTRY_FIELD_MAPPINGS } from '../countryData/countryMappings.ts'
 import { NAME_MAPPINGS } from '../countryData/nameMappings.ts'
@@ -47,6 +49,15 @@ function patternMatch(
       const nameKey = Object.keys(nameMapping)[0]
       const existing = transformedData[nameKey] || {}
       transformedData[nameKey] = { ...existing, ...nameMapping[nameKey] }
+    } else if (VERIFIED_MAPPINGS[key]) {
+      const verifiedMapping = VERIFIED_MAPPINGS[key](value as string)
+      const verifiedKey = Object.keys(verifiedMapping)[0]
+      transformedData[verifiedKey] = verifiedMapping[verifiedKey]
+    } else if (AGE_MAPPINGS[key]) {
+      const ageMapping = AGE_MAPPINGS[key](value as string)
+      const ageKey = Object.keys(ageMapping)[0]
+      const existing = transformedData[ageKey] || {}
+      transformedData[ageKey] = { ...existing, ...ageMapping[ageKey] }
     } else if (ADDRESS_MAPPINGS[key]) {
       const addressMapping = ADDRESS_MAPPINGS[key](value as string)
       let addressKey = Object.keys(addressMapping)[0]
@@ -137,13 +148,14 @@ function legacyHistoryItemToV2ActionType(
   record: EventRegistration,
   declaration: Record<string, any>,
   historyItem: HistoryItem,
+  eventType: 'birth' | 'death',
   rejectItem: boolean
 ): Partial<Action> {
   if (!historyItem.action) {
+    const signed = record.registration.informantsSignature
+    const uri = signed && new URL(signed)
     switch (historyItem.regStatus) {
       case 'DECLARED':
-        const signed = record.registration.informantsSignature
-        const uri = signed && new URL(signed)
         return {
           type: 'DECLARE' as ActionType,
           declaration: declaration,
@@ -157,6 +169,10 @@ function legacyHistoryItemToV2ActionType(
           type: 'REGISTER' as ActionType,
           declaration: declaration,
           registrationNumber: record.registration.registrationNumber,
+          annotation: {
+            'review.signature': declareResolver['review.signature'](uri),
+            'review.comment': declareResolver['review.comment'](historyItem),
+          },
         }
       case 'WAITING_VALIDATION':
         if (rejectItem) {
@@ -178,6 +194,10 @@ function legacyHistoryItemToV2ActionType(
         return {
           type: 'VALIDATE' as ActionType,
           declaration,
+          annotation: {
+            'review.signature': declareResolver['review.signature'](uri),
+            'review.comment': declareResolver['review.comment'](historyItem),
+          },
         }
       case 'ISSUED':
         const annotation = {}
@@ -237,7 +257,7 @@ function legacyHistoryItemToV2ActionType(
     case 'REQUESTED_CORRECTION':
       const correction = transformCorrection(
         historyItem,
-        record.child ? 'birth' : 'death',
+        eventType,
         declaration
       )
 
@@ -394,10 +414,11 @@ const preProcessHistory = (eventRegistration: EventRegistration) => {
 
 export function transform(
   eventRegistration: EventRegistration,
-  resolver: ResolverMap
+  resolver: ResolverMap,
+  eventType: 'birth' | 'death'
 ): TransformedDocument {
   const result = Object.entries(resolver).map(([fieldId, r]) => {
-    return [fieldId, r(eventRegistration)]
+    return [fieldId, r(eventRegistration, eventType)]
   })
 
   const withOutNulls = result.filter(
@@ -416,7 +437,7 @@ export function transform(
 
   const documents: TransformedDocument = {
     id: eventRegistration.id,
-    type: eventRegistration.child ? 'birth' : 'death',
+    type: eventType,
     createdAt: new Date(historyAsc[0].date).toISOString(),
     updatedAt: new Date(newest.date).toISOString(),
     updatedAtLocation: newest.office?.id || '',
@@ -452,6 +473,7 @@ export function transform(
             eventRegistration,
             declaration,
             history,
+            eventType,
             newest.regStatus === 'WAITING_VALIDATION'
           ),
         } as Action
