@@ -462,13 +462,51 @@ export function transform(
   return postProcess(documents)
 }
 
+/**
+ * Deep merge two objects, with priority given to source values
+ */
+function deepMerge(target: any, source: any): any {
+  const result = { ...target }
+
+  for (const key in source) {
+    if (source.hasOwnProperty(key)) {
+      const sourceValue = source[key]
+      const targetValue = target[key]
+
+      // If both are plain objects, merge recursively
+      if (
+        sourceValue &&
+        typeof sourceValue === 'object' &&
+        !Array.isArray(sourceValue) &&
+        targetValue &&
+        typeof targetValue === 'object' &&
+        !Array.isArray(targetValue)
+      ) {
+        result[key] = deepMerge(targetValue, sourceValue)
+      } else {
+        // Otherwise, use source value
+        result[key] = sourceValue
+      }
+    }
+  }
+
+  return result
+}
+
 function postProcess(documents: TransformedDocument): TransformedDocument {
   const correctionResolverKeys = Object.keys(correctionResolver)
+
+  // Track which fields have been processed to handle sequential corrections correctly
+  const processedFields = new Set<string>()
 
   for (let i = 0; i < documents.actions.length; i++) {
     const action = documents.actions[i]
 
-    if (action.type === 'REQUEST_CORRECTION' && action.annotation) {
+    if (
+      action.type === 'REQUEST_CORRECTION' &&
+      action.annotation &&
+      action.declaration
+    ) {
       // Filter out correctionResolver fields from the annotation
       const filteredAnnotation = Object.fromEntries(
         Object.entries(action.annotation).filter(
@@ -476,17 +514,67 @@ function postProcess(documents: TransformedDocument): TransformedDocument {
         )
       )
 
-      // Find the first action before this one with a non-empty declaration
-      for (let j = i - 1; j >= 0; j--) {
-        const previousAction = documents.actions[j]
+      // Only extract fields that are in the correction's declaration (i.e., fields that were actually corrected)
+      // This prevents us from copying the entire base declaration
+      const correctedFieldKeys = new Set(Object.keys(action.declaration))
+      const actualCorrectionFields: Record<string, any> = {}
 
-        if (
-          previousAction.declaration &&
-          typeof previousAction.declaration === 'object' &&
-          Object.keys(previousAction.declaration).length > 0
-        ) {
-          previousAction.declaration = filteredAnnotation
-          break
+      for (const [key, value] of Object.entries(filteredAnnotation)) {
+        if (correctedFieldKeys.has(key)) {
+          actualCorrectionFields[key] = value
+        }
+      }
+
+      // Separate fields into new and already-corrected
+      const newFields: Record<string, any> = {}
+      const correctedFields: Record<string, any> = {}
+
+      for (const [key, value] of Object.entries(actualCorrectionFields)) {
+        if (processedFields.has(key)) {
+          correctedFields[key] = value
+        } else {
+          newFields[key] = value
+          processedFields.add(key)
+        }
+      }
+
+      // For new fields, find the base action (REGISTER/DECLARE) and update it
+      if (Object.keys(newFields).length > 0) {
+        for (let j = i - 1; j >= 0; j--) {
+          const previousAction = documents.actions[j]
+
+          // Skip other correction actions - we want to update the base action
+          if (previousAction.type === 'REQUEST_CORRECTION') {
+            continue
+          }
+
+          if (
+            previousAction.declaration &&
+            typeof previousAction.declaration === 'object' &&
+            Object.keys(previousAction.declaration).length > 0
+          ) {
+            previousAction.declaration = deepMerge(
+              previousAction.declaration,
+              newFields
+            )
+            break
+          }
+        }
+      }
+
+      // For already-corrected fields, find the previous correction action and update it
+      if (Object.keys(correctedFields).length > 0) {
+        for (let j = i - 1; j >= 0; j--) {
+          const previousAction = documents.actions[j]
+
+          // Look for the previous correction action
+          if (previousAction.type === 'REQUEST_CORRECTION') {
+            previousAction.declaration = deepMerge(
+              previousAction.declaration,
+              correctedFields
+            )
+            break
+          }
         }
       }
     }
