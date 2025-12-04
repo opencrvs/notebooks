@@ -221,6 +221,10 @@ function legacyHistoryItemToV2ActionType(
         return {
           type: 'NOTIFY' as ActionType,
           declaration: declaration,
+          annotation: {
+            'review.signature': declareResolver['review.signature'](uri),
+            'review.comment': declareResolver['review.comment'](historyItem),
+          },
         }
       case 'DECLARATION_UPDATED': //TODO - check if this is correct
         return {
