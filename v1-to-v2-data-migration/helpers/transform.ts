@@ -496,87 +496,79 @@ function deepMerge(target: any, source: any): any {
 function postProcess(documents: TransformedDocument): TransformedDocument {
   const correctionResolverKeys = Object.keys(correctionResolver)
 
-  // Track which fields have been processed to handle sequential corrections correctly
-  const processedFields = new Set<string>()
+  // Step 1: Build a map of current declaration state at each action
+  // We start from the final declaration and work backwards
+  let currentDeclaration: Record<string, any> = {}
+
+  // Find the final declaration by merging all DECLARE/REGISTER/VALIDATE declarations
+  for (const action of documents.actions) {
+    if (
+      (action.type === 'DECLARE' ||
+        action.type === 'REGISTER' ||
+        action.type === 'VALIDATE') &&
+      action.declaration &&
+      Object.keys(action.declaration).length > 0
+    ) {
+      currentDeclaration = deepMerge(currentDeclaration, action.declaration)
+    }
+  }
+
+  // Step 2: Process corrections in reverse order to reverse-engineer the original state
+  const corrections: Array<{ index: number; action: Action }> = []
 
   for (let i = 0; i < documents.actions.length; i++) {
-    const action = documents.actions[i]
+    if (documents.actions[i].type === 'REQUEST_CORRECTION') {
+      corrections.push({ index: i, action: documents.actions[i] })
+    }
+  }
 
-    if (
-      action.type === 'REQUEST_CORRECTION' &&
-      action.annotation &&
-      action.declaration
-    ) {
-      // Filter out correctionResolver fields from the annotation
-      const filteredAnnotation = Object.fromEntries(
-        Object.entries(action.annotation).filter(
-          ([key]) => !correctionResolverKeys.includes(key)
-        )
+  // Process corrections from newest to oldest to reverse engineer
+  for (let i = corrections.length - 1; i >= 0; i--) {
+    const { action } = corrections[i]
+
+    if (!action.annotation || !action.declaration) {
+      continue
+    }
+
+    // Filter out correctionResolver metadata fields from annotation
+    const filteredAnnotation = Object.fromEntries(
+      Object.entries(action.annotation).filter(
+        ([key]) => !correctionResolverKeys.includes(key)
       )
+    )
 
-      // Only extract fields that are in the correction's declaration (i.e., fields that were actually corrected)
-      // This prevents us from copying the entire base declaration
-      const correctedFieldKeys = new Set(Object.keys(action.declaration))
-      const actualCorrectionFields: Record<string, any> = {}
-
-      for (const [key, value] of Object.entries(filteredAnnotation)) {
-        if (correctedFieldKeys.has(key)) {
-          actualCorrectionFields[key] = value
-        }
+    // First, reverse the correction: for each field in the correction's declaration,
+    // replace the current state with the input value (from filteredAnnotation)
+    for (const key of Object.keys(action.declaration)) {
+      if (filteredAnnotation.hasOwnProperty(key)) {
+        currentDeclaration[key] = filteredAnnotation[key]
       }
+    }
 
-      // Separate fields into new and already-corrected
-      const newFields: Record<string, any> = {}
-      const correctedFields: Record<string, any> = {}
+    // Now set the annotation to the reversed state (which is the state BEFORE this correction)
+    const newAnnotation = {
+      ...currentDeclaration,
+      ...Object.fromEntries(
+        Object.entries(action.annotation).filter(([key]) =>
+          correctionResolverKeys.includes(key)
+        )
+      ),
+    }
 
-      for (const [key, value] of Object.entries(actualCorrectionFields)) {
-        if (processedFields.has(key)) {
-          correctedFields[key] = value
-        } else {
-          newFields[key] = value
-          processedFields.add(key)
-        }
-      }
+    action.annotation = newAnnotation
+  }
 
-      // For new fields, find the base action (REGISTER/DECLARE) and update it
-      if (Object.keys(newFields).length > 0) {
-        for (let j = i - 1; j >= 0; j--) {
-          const previousAction = documents.actions[j]
-
-          // Skip other correction actions - we want to update the base action
-          if (previousAction.type === 'REQUEST_CORRECTION') {
-            continue
-          }
-
-          if (
-            previousAction.declaration &&
-            typeof previousAction.declaration === 'object' &&
-            Object.keys(previousAction.declaration).length > 0
-          ) {
-            previousAction.declaration = deepMerge(
-              previousAction.declaration,
-              newFields
-            )
-            break
-          }
-        }
-      }
-
-      // For already-corrected fields, find the previous correction action and update it
-      if (Object.keys(correctedFields).length > 0) {
-        for (let j = i - 1; j >= 0; j--) {
-          const previousAction = documents.actions[j]
-
-          // Look for the previous correction action
-          if (previousAction.type === 'REQUEST_CORRECTION') {
-            previousAction.declaration = deepMerge(
-              previousAction.declaration,
-              correctedFields
-            )
-            break
-          }
-        }
-      }
+  // Step 3: Update the base DECLARE/REGISTER/VALIDATE actions with the reverse-engineered state
+  // Find the first action with a non-empty declaration
+  for (const action of documents.actions) {
+    if (
+      (action.type === 'DECLARE' ||
+        action.type === 'REGISTER' ||
+        action.type === 'VALIDATE') &&
+      action.declaration &&
+      Object.keys(action.declaration).length > 0
+    ) {
+      action.declaration = { ...currentDeclaration }
     }
   }
 

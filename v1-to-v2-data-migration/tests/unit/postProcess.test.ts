@@ -850,3 +850,106 @@ Deno.test('PostProcess - Death Event Corrections', async (t) => {
     }
   )
 })
+
+Deno.test('PostProcess - Multiple Corrections', async (t) => {
+  const birthResolver = buildBirthResolver()
+
+  await t.step(
+    'should set annotation to previous declaration and reverse enngineer the original declaration',
+    () => {
+      const registration = buildBirthEventRegistration({
+        child: {
+          gender: 'female',
+        },
+        mother: {
+          nationality: ['GBR'],
+        },
+        history: [
+          {
+            date: '2024-01-01T10:00:00Z',
+            regStatus: 'DECLARED',
+            user: { id: 'user1', role: { id: 'FIELD_AGENT' } },
+            office: { id: 'office1' },
+          },
+          {
+            date: '2024-01-02T12:00:00Z',
+            regStatus: 'REGISTERED',
+            user: { id: 'user2', role: { id: 'REGISTRATION_AGENT' } },
+            office: { id: 'office1' },
+          },
+          {
+            date: '2024-01-03T14:00:00Z',
+            action: 'REQUESTED_CORRECTION',
+            user: { id: 'user3', role: { id: 'REGISTRATION_AGENT' } },
+            office: { id: 'office1' },
+            input: [
+              {
+                valueCode: 'child',
+                valueId: 'gender',
+                value: 'male',
+              },
+            ],
+            output: [
+              {
+                valueCode: 'child',
+                valueId: 'gender',
+                value: 'female',
+              },
+            ],
+          },
+          {
+            date: '2024-01-04T16:00:00Z',
+            action: 'REQUESTED_CORRECTION',
+            user: { id: 'user4', role: { id: 'REGISTRATION_AGENT' } },
+            office: { id: 'office1' },
+            input: [
+              {
+                valueCode: 'mother',
+                valueId: 'nationality',
+                value: 'USA',
+              },
+            ],
+            output: [
+              {
+                valueCode: 'mother',
+                valueId: 'nationality',
+                value: 'GBR',
+              },
+            ],
+          },
+        ],
+      })
+
+      const result = transform(registration, birthResolver, 'birth')
+      console.log(JSON.stringify(result, null, 2))
+
+      const registerAction = result.actions.find(
+        (a) => a.type === 'REGISTER'
+      ) as Action
+      const declareAction = result.actions.find(
+        (a) => a.type === 'DECLARE'
+      ) as Action
+      const corrections = result.actions.filter(
+        (a) => a.type === 'REQUEST_CORRECTION'
+      ) as Action[]
+
+      assertEquals(corrections.length, 2)
+
+      // First correction (child.gender)
+      assertEquals(corrections[0]?.declaration?.['child.gender'], 'female')
+      assertEquals(corrections[0]?.annotation?.['child.gender'], 'male')
+      assertEquals(corrections[0]?.annotation?.['mother.nationality'], 'USA')
+
+      // Second correction (mother.nationality) - different field
+      assertEquals(corrections[1]?.declaration?.['mother.nationality'], 'GBR')
+      assertEquals(corrections[1]?.annotation?.['mother.nationality'], 'USA')
+      assertEquals(corrections[1]?.annotation?.['child.gender'], 'female')
+
+      // REGISTER and DECLARE should have BOTH reverse engineered values
+      assertEquals(registerAction?.declaration?.['child.gender'], 'male')
+      assertEquals(declareAction?.declaration?.['child.gender'], 'male')
+      assertEquals(registerAction?.declaration?.['mother.nationality'], 'USA')
+      assertEquals(declareAction?.declaration?.['mother.nationality'], 'USA')
+    }
+  )
+})
