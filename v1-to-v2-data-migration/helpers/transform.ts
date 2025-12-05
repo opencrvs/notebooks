@@ -344,8 +344,11 @@ const preProcessHistory = (eventRegistration: EventRegistration) => {
       })
 
       // Second item: APPROVE_CORRECTION
+      const approveDate = new Date(historyItem.date)
+      approveDate.setMilliseconds(approveDate.getMilliseconds() + 1)
       processedHistory.push({
         ...historyItem,
+        date: approveDate,
         action: 'APPROVED_CORRECTION',
         requestId: requestCorrectionId,
         annotation: {
