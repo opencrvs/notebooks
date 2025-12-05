@@ -89,7 +89,7 @@ export const DEFAULT_FIELD_MAPPINGS = {
   'death.spouse.reasonNotApplying': 'spouse.reason',
   'death.spouse.spouseBirthDate': 'spouse.dob',
   'death.spouse.exactDateOfBirthUnknown': 'spouse.dobUnknown',
-  'death.spouse.ageOfIndividualInYears': 'spouse.age',
+  // age mapping handled by AGE_MAPPINGS to transform to object with asOfDateRef
   'death.spouse.nationality': 'spouse.nationality',
   'death.spouse.spouseNationalId': 'spouse.nid',
   'death.spouse.spousePassport': 'spouse.passport',
@@ -122,7 +122,7 @@ export const CUSTOM_FIELD_MAPPINGS = {
   'death.spouse.spouse-view-group.verified': 'spouse.verified',
 }
 
-export const VERIFIED_MAPPINGS : Record<
+export const VERIFIED_MAPPINGS: Record<
   string,
   (data: string) => Record<string, any>
 > = {
@@ -187,4 +187,3 @@ export const AGE_MAPPINGS: Record<
     },
   }),
 }
-
