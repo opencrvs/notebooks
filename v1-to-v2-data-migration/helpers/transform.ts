@@ -6,6 +6,7 @@ import {
   AGE_MAPPINGS,
   VERIFIED_MAPPINGS,
 } from './defaultMappings.ts'
+import { normalizeDateString, isDateField } from './dateUtils.ts'
 import { COUNTRY_FIELD_MAPPINGS } from '../countryData/countryMappings.ts'
 import { NAME_MAPPINGS } from '../countryData/nameMappings.ts'
 import { ADDRESS_MAPPINGS } from '../countryData/addressMappings.ts'
@@ -124,7 +125,11 @@ export function transformCorrection(
 
   const v1OutputDeclaration =
     historyItem.output?.reduce((acc: Record<string, any>, curr: any) => {
-      acc[`${event}.${curr.valueCode}.${curr.valueId}`] = curr.value
+      // Normalize date strings in output to ensure proper zero-padding
+      const value = isDateField(curr.valueId)
+        ? normalizeDateString(curr.value)
+        : curr.value
+      acc[`${event}.${curr.valueCode}.${curr.valueId}`] = value
       return acc
     }, {}) || {}
 
