@@ -82,8 +82,8 @@ Deno.test('Corrections - Birth', async (t) => {
             },
             {
               valueCode: 'informant',
-              valueId: 'informantPassport',
-              value: 'OLD123',
+              valueId: 'informantNationalId',
+              value: '',
             },
           ],
           output: [
@@ -107,12 +107,14 @@ Deno.test('Corrections - Birth', async (t) => {
       (a) => a.type === 'REQUEST_CORRECTION'
     )
 
+    console.log(JSON.stringify(correctionAction, null, 2))
+
     assertEquals(correctionAction?.declaration, {
       'informant.idType': 'NATIONAL_ID',
       'informant.nid': 'NEW456',
     })
     assertEquals(correctionAction?.annotation?.['informant.idType'], 'PASSPORT')
-    assertEquals(correctionAction?.annotation?.['informant.passport'], 'OLD123')
+    assertEquals(correctionAction?.annotation?.['informant.nid'], '')
   })
 
   await t.step('should transform name field corrections', () => {
@@ -1335,9 +1337,9 @@ Deno.test('Corrections - Death', async (t) => {
               value: 'PASSPORT',
             },
             {
-              valueCode: 'deceased',
-              valueId: 'deceasedPassport',
-              value: 'P123456',
+              valueCode: 'deathEvent',
+              valueId: 'reasonForLateRegistration',
+              value: 'Out of country',
             },
           ],
           output: [
@@ -1347,9 +1349,9 @@ Deno.test('Corrections - Death', async (t) => {
               value: 'NATIONAL_ID',
             },
             {
-              valueCode: 'deceased',
-              valueId: 'deceasedNationalId',
-              value: 'N789012',
+              valueCode: 'deathEvent',
+              valueId: 'reasonForLateRegistration',
+              value: 'Missing in action',
             },
           ],
         },
@@ -1363,10 +1365,13 @@ Deno.test('Corrections - Death', async (t) => {
 
     assertEquals(correctionAction?.declaration, {
       'deceased.idType': 'NATIONAL_ID',
-      'deceased.nid': 'N789012',
+      'eventDetails.reasonForLateRegistration': 'Missing in action',
     })
     assertEquals(correctionAction?.annotation?.['deceased.idType'], 'PASSPORT')
-    assertEquals(correctionAction?.annotation?.['deceased.passport'], 'P123456')
+    assertEquals(
+      correctionAction?.annotation?.['eventDetails.reasonForLateRegistration'],
+      'Out of country'
+    )
   })
 
   await t.step('should transform verified fields in death', () => {

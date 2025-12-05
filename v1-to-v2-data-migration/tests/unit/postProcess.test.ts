@@ -921,7 +921,6 @@ Deno.test('PostProcess - Multiple Corrections', async (t) => {
       })
 
       const result = transform(registration, birthResolver, 'birth')
-      console.log(JSON.stringify(result, null, 2))
 
       const registerAction = result.actions.find(
         (a) => a.type === 'REGISTER'
