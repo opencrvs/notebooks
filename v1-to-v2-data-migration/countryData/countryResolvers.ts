@@ -2,6 +2,11 @@ import { getCustomField, getIdentifier } from '../helpers/resolverUtils.ts'
 import { EventRegistration } from '../helpers/types.ts'
 import { Address, COUNTRY_CODE, resolveAddress } from './addressResolver.ts'
 
+// The V1 response will populate both the informant and special informant fields
+// so we need to check if the informant is a special informant to avoid duplication
+export const birthSpecialInformants = ['MOTHER', 'FATHER']
+export const deathSpecialInformants = []
+
 const convertChildAddress = (data: EventRegistration): Address => {
   const country = getCustomField(
     data,

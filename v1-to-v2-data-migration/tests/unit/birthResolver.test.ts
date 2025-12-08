@@ -4,7 +4,7 @@ import {
   buildBirthResolver,
   buildBirthEventRegistration,
 } from '../utils/testHelpers.ts'
-import { buildPhoneNumber, stripCountryCode } from '../utils/phoneBuilder.ts'
+import { buildPhoneNumber } from '../utils/phoneBuilder.ts'
 
 // Construct birthResolver as in migrate.ipynb
 const birthResolver = buildBirthResolver()

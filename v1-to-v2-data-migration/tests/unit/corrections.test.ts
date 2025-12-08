@@ -82,8 +82,8 @@ Deno.test('Corrections - Birth', async (t) => {
             },
             {
               valueCode: 'informant',
-              valueId: 'informantPassport',
-              value: 'OLD123',
+              valueId: 'informantNationalId',
+              value: '',
             },
           ],
           output: [
@@ -112,7 +112,7 @@ Deno.test('Corrections - Birth', async (t) => {
       'informant.nid': 'NEW456',
     })
     assertEquals(correctionAction?.annotation?.['informant.idType'], 'PASSPORT')
-    assertEquals(correctionAction?.annotation?.['informant.passport'], 'OLD123')
+    assertEquals(correctionAction?.annotation?.['informant.nid'], '')
   })
 
   await t.step('should transform name field corrections', () => {
@@ -1335,9 +1335,9 @@ Deno.test('Corrections - Death', async (t) => {
               value: 'PASSPORT',
             },
             {
-              valueCode: 'deceased',
-              valueId: 'deceasedPassport',
-              value: 'P123456',
+              valueCode: 'deathEvent',
+              valueId: 'reasonForLateRegistration',
+              value: 'Out of country',
             },
           ],
           output: [
@@ -1347,9 +1347,9 @@ Deno.test('Corrections - Death', async (t) => {
               value: 'NATIONAL_ID',
             },
             {
-              valueCode: 'deceased',
-              valueId: 'deceasedNationalId',
-              value: 'N789012',
+              valueCode: 'deathEvent',
+              valueId: 'reasonForLateRegistration',
+              value: 'Missing in action',
             },
           ],
         },
@@ -1363,10 +1363,13 @@ Deno.test('Corrections - Death', async (t) => {
 
     assertEquals(correctionAction?.declaration, {
       'deceased.idType': 'NATIONAL_ID',
-      'deceased.nid': 'N789012',
+      'eventDetails.reasonForLateRegistration': 'Missing in action',
     })
     assertEquals(correctionAction?.annotation?.['deceased.idType'], 'PASSPORT')
-    assertEquals(correctionAction?.annotation?.['deceased.passport'], 'P123456')
+    assertEquals(
+      correctionAction?.annotation?.['eventDetails.reasonForLateRegistration'],
+      'Out of country'
+    )
   })
 
   await t.step('should transform verified fields in death', () => {
@@ -1540,6 +1543,129 @@ Deno.test('Corrections - Edge Cases', async (t) => {
         correctionAction?.annotation?.['informant.phoneNo'],
         '0788888888'
       )
+    }
+  )
+})
+
+Deno.test('Corrections - with incorrectly formatted dates', async (t) => {
+  const birthResolver = buildBirthResolver()
+
+  await t.step(
+    'for birth should zero pad months and days with one character',
+    () => {
+      const registration = buildBirthEventRegistration({
+        history: [
+          {
+            date: '2024-01-01T10:00:00Z',
+            regStatus: 'DECLARED',
+            user: { id: 'user1', role: { id: 'FIELD_AGENT' } },
+            office: { id: 'office1' },
+          },
+          {
+            date: '2024-01-02T12:00:00Z',
+            action: 'REQUESTED_CORRECTION',
+            user: { id: 'user2', role: { id: 'REGISTRATION_AGENT' } },
+            office: { id: 'office1' },
+            input: [],
+            output: [
+              {
+                valueCode: 'child',
+                valueId: 'childBirthDate',
+                value: '2025-3-3',
+              },
+              {
+                valueCode: 'mother',
+                valueId: 'motherBirthDate',
+                value: '1971-1-1',
+              },
+              {
+                valueCode: 'father',
+                valueId: 'fatherBirthDate',
+                value: '1970-6-6',
+              },
+              {
+                valueCode: 'informant',
+                valueId: 'informantBirthDate',
+                value: '1966-6-6',
+              },
+            ],
+          },
+        ],
+      })
+
+      const result = transform(registration, birthResolver, 'birth')
+      const correctionAction = result.actions.find(
+        (a) => a.type === 'REQUEST_CORRECTION'
+      )
+
+      assertEquals(correctionAction?.declaration, {
+        'child.dob': '2025-03-03',
+        'mother.dob': '1971-01-01',
+        'father.dob': '1970-06-06',
+        'informant.dob': '1966-06-06',
+      })
+    }
+  )
+
+  await t.step(
+    'for death should zero pad months and days with one character',
+    () => {
+      const registration = buildDeathEventRegistration({
+        history: [
+          {
+            date: '2024-01-01T10:00:00Z',
+            regStatus: 'DECLARED',
+            user: { id: 'user1', role: { id: 'FIELD_AGENT' } },
+            office: { id: 'office1' },
+          },
+          {
+            date: '2024-01-02T12:00:00Z',
+            action: 'REQUESTED_CORRECTION',
+            user: { id: 'user2', role: { id: 'REGISTRATION_AGENT' } },
+            office: { id: 'office1' },
+            input: [],
+            output: [
+              {
+                valueCode: 'deceased',
+                valueId: 'deceasedBirthDate',
+                value: '2025-3-3',
+              },
+              {
+                valueCode: 'deathEvent',
+                valueId: 'deathDate',
+                value: '1971-1-1',
+              },
+              {
+                valueCode: 'spouse',
+                valueId: 'spouseBirthDate',
+                value: '1970-6-6',
+              },
+              {
+                valueCode: 'informant',
+                valueId: 'informantBirthDate',
+                value: '1966-6-6',
+              },
+              {
+                valueCode: 'informant',
+                valueId: 'exactDateOfBirthUnknown',
+                value: 'false',
+              },
+            ],
+          },
+        ],
+      })
+
+      const result = transform(registration, birthResolver, 'death')
+      const correctionAction = result.actions.find(
+        (a) => a.type === 'REQUEST_CORRECTION'
+      )
+      assertEquals(correctionAction?.declaration, {
+        'deceased.dob': '2025-03-03',
+        'eventDetails.date': '1971-01-01',
+        'spouse.dob': '1970-06-06',
+        'informant.dob': '1966-06-06',
+        'informant.dobUnknown': 'false',
+      })
     }
   )
 })
