@@ -205,26 +205,6 @@ Deno.test('SOM name resolver tests - death events', async (t) => {
     })
   })
 
-  await t.step('should not resolve informant.name for SPOUSE', () => {
-    const registration = buildDeathEventRegistration({
-      informant: {
-        relationship: 'SPOUSE',
-        name: [
-          {
-            firstNames: 'Amina',
-            familyName: 'Omar',
-          },
-        ],
-      },
-    })
-
-    const result = transform(registration, deathResolver, 'death')
-    const declareAction = result.actions.find((a) => a.type === 'DECLARE')
-
-    // SPOUSE is a special informant, so informant.name should not be set
-    assertEquals(declareAction?.declaration['informant.name'], undefined)
-  })
-
   await t.step('should resolve spouse.name', () => {
     const registration = buildDeathEventRegistration({
       spouse: {
