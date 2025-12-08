@@ -40,6 +40,7 @@ export interface Document {
   uri: string
   contentType: string
   type: string
+  subject?: string
 }
 
 export interface ProcessedDocumentWithOptionType {
@@ -56,6 +57,7 @@ export interface ProcessedDocument {
 
 // Address types
 export interface AddressLine {
+  type?: string
   line: string[]
   city?: string
   district?: string
@@ -111,7 +113,7 @@ export interface Registration {
   contactEmail?: string
   informantsSignature?: string
   attachments?: Document[]
-  duplicates?: Array<{ compositionId: string }>
+  duplicates?: Array<{ compositionId: string; trackingId?: string }>
 }
 
 // History item types
@@ -177,7 +179,10 @@ export interface HistoryItem {
 }
 
 // Resolver types
-export type ResolverFunction<T = any> = (data: T, eventType: 'birth' | 'death') => any
+export type ResolverFunction<T = any> = (
+  data: T,
+  eventType: 'birth' | 'death'
+) => any
 
 export interface ResolverMap {
   [fieldId: string]: ResolverFunction
@@ -204,7 +209,7 @@ export interface EventRegistration {
   weightAtBirth?: number
   deathDate?: string
   deathDescription?: string
-  causeOfDeathEstablished?: "true" | "false"
+  causeOfDeathEstablished?: 'true' | 'false'
   causeOfDeathMethod?: string
   mannerOfDeath?: string
 }
