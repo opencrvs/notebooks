@@ -10,7 +10,7 @@ export function normalizeDateString(
   }
 
   const datePattern = /^(\d{4})-(\d{1,2})-(\d{1,2})$/
-  const match = dateStr.match(datePattern)
+  const match = dateStr?.toString().match(datePattern)
 
   if (!match) {
     return dateStr
@@ -26,6 +26,5 @@ export function normalizeDateString(
 
 export function isDateField(fieldId: string): boolean {
   const dateFieldPatterns = ['BirthDate', 'birthDate', 'Date', 'deathDate']
-
   return dateFieldPatterns.some((pattern) => fieldId.includes(pattern))
 }
