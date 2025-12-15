@@ -4,7 +4,9 @@ import {
   DEFAULT_FIELD_MAPPINGS,
   CUSTOM_FIELD_MAPPINGS,
   AGE_MAPPINGS,
+  VERIFIED_MAPPINGS,
 } from './defaultMappings.ts'
+import { normalizeDateString, isDateField } from './dateUtils.ts'
 import { COUNTRY_FIELD_MAPPINGS } from '../countryData/countryMappings.ts'
 import { NAME_MAPPINGS } from '../countryData/nameMappings.ts'
 import { ADDRESS_MAPPINGS } from '../countryData/addressMappings.ts'
@@ -48,6 +50,10 @@ function patternMatch(
       const nameKey = Object.keys(nameMapping)[0]
       const existing = transformedData[nameKey] || {}
       transformedData[nameKey] = { ...existing, ...nameMapping[nameKey] }
+    } else if (VERIFIED_MAPPINGS[key]) {
+      const verifiedMapping = VERIFIED_MAPPINGS[key](value as string)
+      const verifiedKey = Object.keys(verifiedMapping)[0]
+      transformedData[verifiedKey] = verifiedMapping[verifiedKey]
     } else if (AGE_MAPPINGS[key]) {
       const ageMapping = AGE_MAPPINGS[key](value as string)
       const ageKey = Object.keys(ageMapping)[0]
@@ -119,7 +125,11 @@ export function transformCorrection(
 
   const v1OutputDeclaration =
     historyItem.output?.reduce((acc: Record<string, any>, curr: any) => {
-      acc[`${event}.${curr.valueCode}.${curr.valueId}`] = curr.value
+      // Normalize date strings in output to ensure proper zero-padding
+      const value = isDateField(curr.valueId)
+        ? normalizeDateString(curr.value)
+        : curr.value
+      acc[`${event}.${curr.valueCode}.${curr.valueId}`] = value
       return acc
     }, {}) || {}
 
@@ -132,13 +142,14 @@ export function transformCorrection(
 function legacyHistoryItemToV2ActionType(
   record: EventRegistration,
   declaration: Record<string, any>,
-  historyItem: HistoryItem
+  historyItem: HistoryItem,
+  eventType: 'birth' | 'death'
 ): Partial<Action> {
   if (!historyItem.action) {
+    const signed = record.registration.informantsSignature
+    const uri = signed && new URL(signed)
     switch (historyItem.regStatus) {
       case 'DECLARED':
-        const signed = record.registration.informantsSignature
-        const uri = signed && new URL(signed)
         return {
           type: 'DECLARE' as ActionType,
           declaration: declaration,
@@ -152,6 +163,10 @@ function legacyHistoryItemToV2ActionType(
           type: 'REGISTER' as ActionType,
           declaration: declaration,
           registrationNumber: record.registration.registrationNumber,
+          annotation: {
+            'review.signature': declareResolver['review.signature'](uri),
+            'review.comment': declareResolver['review.comment'](historyItem),
+          },
         }
       case 'WAITING_VALIDATION':
         return {
@@ -163,6 +178,10 @@ function legacyHistoryItemToV2ActionType(
         return {
           type: 'VALIDATE' as ActionType,
           declaration,
+          annotation: {
+            'review.signature': declareResolver['review.signature'](uri),
+            'review.comment': declareResolver['review.comment'](historyItem),
+          },
         }
       case 'ISSUED':
         const annotation = {}
@@ -207,6 +226,10 @@ function legacyHistoryItemToV2ActionType(
         return {
           type: 'NOTIFY' as ActionType,
           declaration: declaration,
+          annotation: {
+            'review.signature': declareResolver['review.signature'](uri),
+            'review.comment': declareResolver['review.comment'](historyItem),
+          },
         }
       case 'DECLARATION_UPDATED': //TODO - check if this is correct
         return {
@@ -222,7 +245,7 @@ function legacyHistoryItemToV2ActionType(
     case 'REQUESTED_CORRECTION':
       const correction = transformCorrection(
         historyItem,
-        record.child ? 'birth' : 'death',
+        eventType,
         declaration
       )
 
@@ -326,8 +349,11 @@ const preProcessHistory = (eventRegistration: EventRegistration) => {
       })
 
       // Second item: APPROVE_CORRECTION
+      const approveDate = new Date(historyItem.date)
+      approveDate.setMilliseconds(approveDate.getMilliseconds() + 1)
       processedHistory.push({
         ...historyItem,
+        date: approveDate,
         action: 'APPROVED_CORRECTION',
         requestId: requestCorrectionId,
         annotation: {
@@ -379,10 +405,11 @@ const preProcessHistory = (eventRegistration: EventRegistration) => {
 
 export function transform(
   eventRegistration: EventRegistration,
-  resolver: ResolverMap
+  resolver: ResolverMap,
+  eventType: 'birth' | 'death'
 ): TransformedDocument {
   const result = Object.entries(resolver).map(([fieldId, r]) => {
-    return [fieldId, r(eventRegistration)]
+    return [fieldId, r(eventRegistration, eventType)]
   })
 
   const withOutNulls = result.filter(
@@ -401,7 +428,7 @@ export function transform(
 
   const documents: TransformedDocument = {
     id: eventRegistration.id,
-    type: eventRegistration.child ? 'birth' : 'death',
+    type: eventType,
     createdAt: new Date(historyAsc[0].date).toISOString(),
     updatedAt: new Date(newest.date).toISOString(),
     updatedAtLocation: newest.office?.id || '',
@@ -436,7 +463,8 @@ export function transform(
           ...legacyHistoryItemToV2ActionType(
             eventRegistration,
             declaration,
-            history
+            history,
+            eventType
           ),
         } as Action
       }),
@@ -446,33 +474,113 @@ export function transform(
   return postProcess(documents)
 }
 
+/**
+ * Deep merge two objects, with priority given to source values
+ */
+function deepMerge(target: any, source: any): any {
+  const result = { ...target }
+
+  for (const key in source) {
+    if (source.hasOwnProperty(key)) {
+      const sourceValue = source[key]
+      const targetValue = target[key]
+
+      // If both are plain objects, merge recursively
+      if (
+        sourceValue &&
+        typeof sourceValue === 'object' &&
+        !Array.isArray(sourceValue) &&
+        targetValue &&
+        typeof targetValue === 'object' &&
+        !Array.isArray(targetValue)
+      ) {
+        result[key] = deepMerge(targetValue, sourceValue)
+      } else {
+        // Otherwise, use source value
+        result[key] = sourceValue
+      }
+    }
+  }
+
+  return result
+}
+
 function postProcess(documents: TransformedDocument): TransformedDocument {
   const correctionResolverKeys = Object.keys(correctionResolver)
 
+  // Step 1: Build a map of current declaration state at each action
+  // We start from the final declaration and work backwards
+  let currentDeclaration: Record<string, any> = {}
+
+  // Find the final declaration by merging all DECLARE/REGISTER/VALIDATE declarations
+  for (const action of documents.actions) {
+    if (
+      (action.type === 'DECLARE' ||
+        action.type === 'REGISTER' ||
+        action.type === 'VALIDATE') &&
+      action.declaration &&
+      Object.keys(action.declaration).length > 0
+    ) {
+      currentDeclaration = deepMerge(currentDeclaration, action.declaration)
+    }
+  }
+
+  // Step 2: Process corrections in reverse order to reverse-engineer the original state
+  const corrections: Array<{ index: number; action: Action }> = []
+
   for (let i = 0; i < documents.actions.length; i++) {
-    const action = documents.actions[i]
+    if (documents.actions[i].type === 'REQUEST_CORRECTION') {
+      corrections.push({ index: i, action: documents.actions[i] })
+    }
+  }
 
-    if (action.type === 'REQUEST_CORRECTION' && action.annotation) {
-      // Filter out correctionResolver fields from the annotation
-      const filteredAnnotation = Object.fromEntries(
-        Object.entries(action.annotation).filter(
-          ([key]) => !correctionResolverKeys.includes(key)
-        )
+  // Process corrections from newest to oldest to reverse engineer
+  for (let i = corrections.length - 1; i >= 0; i--) {
+    const { action } = corrections[i]
+
+    if (!action.annotation || !action.declaration) {
+      continue
+    }
+
+    // Filter out correctionResolver metadata fields from annotation
+    const filteredAnnotation = Object.fromEntries(
+      Object.entries(action.annotation).filter(
+        ([key]) => !correctionResolverKeys.includes(key)
       )
+    )
 
-      // Find the first action before this one with a non-empty declaration
-      for (let j = i - 1; j >= 0; j--) {
-        const previousAction = documents.actions[j]
-
-        if (
-          previousAction.declaration &&
-          typeof previousAction.declaration === 'object' &&
-          Object.keys(previousAction.declaration).length > 0
-        ) {
-          previousAction.declaration = filteredAnnotation
-          break
-        }
+    // First, reverse the correction: for each field in the correction's declaration,
+    // replace the current state with the input value (from filteredAnnotation)
+    for (const key of Object.keys(action.declaration)) {
+      if (filteredAnnotation.hasOwnProperty(key)) {
+        currentDeclaration[key] = filteredAnnotation[key]
       }
+    }
+
+    // Now set the annotation to the reversed state (which is the state BEFORE this correction)
+    const newAnnotation = {
+      ...currentDeclaration,
+      ...Object.fromEntries(
+        Object.entries(action.annotation).filter(([key]) =>
+          correctionResolverKeys.includes(key)
+        )
+      ),
+    }
+
+    action.annotation = newAnnotation
+  }
+
+  // Step 3: Update the base DECLARE/REGISTER/VALIDATE actions with the reverse-engineered state
+  // Find the first action with a non-empty declaration
+  for (const action of documents.actions) {
+    if (
+      (action.type === 'DECLARE' ||
+        action.type === 'REGISTER' ||
+        action.type === 'VALIDATE') &&
+      action.declaration &&
+      Object.keys(action.declaration).length > 0
+    ) {
+      action.declaration = { ...currentDeclaration }
     }
   }
 
