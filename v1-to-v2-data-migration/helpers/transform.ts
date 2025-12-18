@@ -546,7 +546,7 @@ function postProcess(
       action.declaration = previousDeclaration
       if (hasKeys(annotation)) {
         previousDeclaration = deepMerge(previousDeclaration, annotation)
-        action.annotation = deepMerge(previousDeclaration, annotation)
+        action.annotation = previousDeclaration
       }
     }
   }

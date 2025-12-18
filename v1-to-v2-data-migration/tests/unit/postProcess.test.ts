@@ -70,7 +70,6 @@ Deno.test('PostProcess - Single Correction', async (t) => {
       })
 
       const result = transform(registration, birthResolver, 'birth')
-      console.log(JSON.stringify(result, null, 2))
 
       // Find the actions
       const registerAction = result.actions.find(
@@ -968,7 +967,7 @@ Deno.test('PostProcess - Multiple Corrections', async (t) => {
   const birthResolver = buildBirthResolver()
 
   await t.step(
-    'should set annotation to previous declaration and reverse enngineer the original declaration',
+    'should set annotation to previous declaration and reverse engineer the original declaration',
     () => {
       const registration = buildBirthEventRegistration({
         child: {
