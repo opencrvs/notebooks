@@ -28,6 +28,7 @@ import {
   BIRTH_LOCATION_PRIVATE_HOME_KEY,
   COUNTRY_CODE,
 } from '../countryData/addressResolver.ts'
+import { documentsResolver } from './defaultResolvers.ts'
 
 const mappings = {
   ...DEFAULT_FIELD_MAPPINGS,
@@ -44,6 +45,9 @@ function patternMatch(
   for (const [key, value] of Object.entries(correction)) {
     const valueKey = mappings[key as keyof typeof mappings]
     if (valueKey) {
+      if (Object.keys(documentsResolver).includes(valueKey)) {
+        continue
+      }
       transformedData[valueKey] = value
     } else if (NAME_MAPPINGS[key]) {
       const nameMapping = NAME_MAPPINGS[key](value as string)
@@ -262,7 +266,7 @@ function legacyHistoryItemToV2ActionType(
         status: 'Accepted',
         type: 'REQUEST_CORRECTION' as ActionType,
         declaration: correction.output,
-        annotation: { ...annotation, ...correction.input },
+        annotation: deepMerge(annotation, correction.input),
         requestId: historyItem.id,
       }
     case 'APPROVED_CORRECTION':
