@@ -232,9 +232,11 @@ function legacyHistoryItemToV2ActionType(
           },
         }
       case 'DECLARATION_UPDATED': //TODO - check if this is correct
+        const update = transformCorrection(historyItem, eventType, declaration)
         return {
           type: 'DECLARE' as ActionType,
-          declaration: {},
+          declaration: update.output,
+          annotation: update.input,
         }
       default:
         break
@@ -260,7 +262,7 @@ function legacyHistoryItemToV2ActionType(
         status: 'Accepted',
         type: 'REQUEST_CORRECTION' as ActionType,
         declaration: correction.output,
-        annotation: { ...declaration, ...annotation, ...correction.input },
+        annotation: { ...annotation, ...correction.input },
         requestId: historyItem.id,
       }
     case 'APPROVED_CORRECTION':
@@ -471,7 +473,7 @@ export function transform(
     ],
   }
 
-  return postProcess(documents)
+  return postProcess(documents, declaration)
 }
 
 /**
@@ -505,84 +507,51 @@ function deepMerge(target: any, source: any): any {
   return result
 }
 
-function postProcess(documents: TransformedDocument): TransformedDocument {
-  const correctionResolverKeys = Object.keys(correctionResolver)
+function postProcess(
+  document: TransformedDocument,
+  currDeclaration: Record<string, any>
+): TransformedDocument {
+  const resolverKeys = Object.keys({
+    ...correctionResolver,
+    ...declareResolver,
+  })
+  const hasKeys = (declaration: {} | null | undefined) =>
+    Object.keys(declaration || {}).length > 0
+  let previousDeclaration = currDeclaration
 
-  // Step 1: Build a map of current declaration state at each action
-  // We start from the final declaration and work backwards
-  let currentDeclaration: Record<string, any> = {}
+  const approvedCorrections = []
 
-  // Find the final declaration by merging all DECLARE/REGISTER/VALIDATE declarations
-  for (const action of documents.actions) {
-    if (
-      (action.type === 'DECLARE' ||
-        action.type === 'REGISTER' ||
-        action.type === 'VALIDATE') &&
-      action.declaration &&
-      Object.keys(action.declaration).length > 0
-    ) {
-      currentDeclaration = deepMerge(currentDeclaration, action.declaration)
-    }
-  }
+  const rev = document.actions.slice().reverse()
 
-  // Step 2: Process corrections in reverse order to reverse-engineer the original state
-  const corrections: Array<{ index: number; action: Action }> = []
-
-  for (let i = 0; i < documents.actions.length; i++) {
-    if (documents.actions[i].type === 'REQUEST_CORRECTION') {
-      corrections.push({ index: i, action: documents.actions[i] })
-    }
-  }
-
-  // Process corrections from newest to oldest to reverse engineer
-  for (let i = corrections.length - 1; i >= 0; i--) {
-    const { action } = corrections[i]
-
-    if (!action.annotation || !action.declaration) {
-      continue
+  for (const action of rev) {
+    if (action.type === 'APPROVE_CORRECTION') {
+      approvedCorrections.push(action.requestId)
     }
 
-    // Filter out correctionResolver metadata fields from annotation
-    const filteredAnnotation = Object.fromEntries(
-      Object.entries(action.annotation).filter(
-        ([key]) => !correctionResolverKeys.includes(key)
+    const declaration = action.declaration || {}
+    const annotation = Object.fromEntries(
+      Object.entries(action.annotation || {}).filter(
+        ([key]) => !resolverKeys.includes(key)
       )
     )
 
-    // First, reverse the correction: for each field in the correction's declaration,
-    // replace the current state with the input value (from filteredAnnotation)
-    for (const key of Object.keys(action.declaration)) {
-      if (filteredAnnotation.hasOwnProperty(key)) {
-        currentDeclaration[key] = filteredAnnotation[key]
+    if (hasKeys(declaration)) {
+      if (action.type === 'REQUEST_CORRECTION') {
+        if (approvedCorrections.includes(action.requestId)) {
+          previousDeclaration = deepMerge(previousDeclaration, annotation)
+          action.annotation = previousDeclaration
+        }
+        continue
+      }
+      action.declaration = previousDeclaration
+      if (hasKeys(annotation)) {
+        previousDeclaration = deepMerge(previousDeclaration, annotation)
+        action.annotation = previousDeclaration
       }
     }
-
-    // Now set the annotation to the reversed state (which is the state BEFORE this correction)
-    const newAnnotation = {
-      ...currentDeclaration,
-      ...Object.fromEntries(
-        Object.entries(action.annotation).filter(([key]) =>
-          correctionResolverKeys.includes(key)
-        )
-      ),
-    }
-
-    action.annotation = newAnnotation
   }
 
-  // Step 3: Update the base DECLARE/REGISTER/VALIDATE actions with the reverse-engineered state
-  // Find the first action with a non-empty declaration
-  for (const action of documents.actions) {
-    if (
-      (action.type === 'DECLARE' ||
-        action.type === 'REGISTER' ||
-        action.type === 'VALIDATE') &&
-      action.declaration &&
-      Object.keys(action.declaration).length > 0
-    ) {
-      action.declaration = { ...currentDeclaration }
-    }
-  }
+  document.actions = rev.reverse()
 
-  return documents
+  return document
 }
