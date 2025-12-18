@@ -29,6 +29,7 @@ Deno.test('PostProcess - Single Correction', async (t) => {
             office: { id: 'office1' },
           },
           {
+            id: 'correction1',
             date: '2024-01-03T14:00:00Z',
             action: 'REQUESTED_CORRECTION',
             user: { id: 'user3', role: { id: 'REGISTRATION_AGENT' } },
@@ -58,10 +59,18 @@ Deno.test('PostProcess - Single Correction', async (t) => {
               },
             ],
           },
+          {
+            date: '2024-01-04T14:00:00Z',
+            action: 'APPROVED_CORRECTION',
+            user: { id: 'user3', role: { id: 'REGISTRATION_AGENT' } },
+            office: { id: 'office1' },
+            requestId: 'correction1',
+          },
         ],
       })
 
       const result = transform(registration, birthResolver, 'birth')
+      console.log(JSON.stringify(result, null, 2))
 
       // Find the actions
       const registerAction = result.actions.find(
@@ -106,6 +115,7 @@ Deno.test('PostProcess - Single Correction', async (t) => {
             office: { id: 'office1' },
           },
           {
+            id: 'correction2',
             date: '2024-01-02T14:00:00Z',
             action: 'REQUESTED_CORRECTION',
             user: { id: 'user2', role: { id: 'REGISTRATION_AGENT' } },
@@ -124,6 +134,13 @@ Deno.test('PostProcess - Single Correction', async (t) => {
                 value: 'GBR',
               },
             ],
+          },
+          {
+            date: '2024-01-04T14:00:00Z',
+            action: 'APPROVED_CORRECTION',
+            user: { id: 'user3', role: { id: 'REGISTRATION_AGENT' } },
+            office: { id: 'office1' },
+            requestId: 'correction2',
           },
         ],
       })
@@ -164,6 +181,7 @@ Deno.test('PostProcess - Single Correction', async (t) => {
             office: { id: 'office1' },
           },
           {
+            id: 'correction3',
             date: '2024-01-03T14:00:00Z',
             action: 'REQUESTED_CORRECTION',
             user: { id: 'user3', role: { id: 'REGISTRATION_AGENT' } },
@@ -192,6 +210,13 @@ Deno.test('PostProcess - Single Correction', async (t) => {
                 value: 'NewLastName',
               },
             ],
+          },
+          {
+            date: '2024-01-04T14:00:00Z',
+            action: 'APPROVED_CORRECTION',
+            user: { id: 'user3', role: { id: 'REGISTRATION_AGENT' } },
+            office: { id: 'office1' },
+            requestId: 'correction3',
           },
         ],
       })
@@ -245,6 +270,7 @@ Deno.test('PostProcess - Multiple Corrections', async (t) => {
             office: { id: 'office1' },
           },
           {
+            id: 'correction1',
             date: '2024-01-03T14:00:00Z',
             action: 'REQUESTED_CORRECTION',
             user: { id: 'user3', role: { id: 'REGISTRATION_AGENT' } },
@@ -265,6 +291,14 @@ Deno.test('PostProcess - Multiple Corrections', async (t) => {
             ],
           },
           {
+            date: '2024-01-04T14:00:00Z',
+            action: 'APPROVED_CORRECTION',
+            user: { id: 'user3', role: { id: 'REGISTRATION_AGENT' } },
+            office: { id: 'office1' },
+            requestId: 'correction1',
+          },
+          {
+            id: 'correction2',
             date: '2024-01-04T16:00:00Z',
             action: 'REQUESTED_CORRECTION',
             user: { id: 'user4', role: { id: 'REGISTRATION_AGENT' } },
@@ -293,6 +327,13 @@ Deno.test('PostProcess - Multiple Corrections', async (t) => {
                 value: 'GBR',
               },
             ],
+          },
+          {
+            date: '2024-01-05T14:00:00Z',
+            action: 'APPROVED_CORRECTION',
+            user: { id: 'user3', role: { id: 'REGISTRATION_AGENT' } },
+            office: { id: 'office1' },
+            requestId: 'correction2',
           },
         ],
       })
@@ -352,6 +393,7 @@ Deno.test('PostProcess - Multiple Corrections', async (t) => {
             office: { id: 'office1' },
           },
           {
+            id: 'correction1',
             date: '2024-01-03T14:00:00Z',
             action: 'REQUESTED_CORRECTION',
             user: { id: 'user3', role: { id: 'REGISTRATION_AGENT' } },
@@ -372,6 +414,14 @@ Deno.test('PostProcess - Multiple Corrections', async (t) => {
             ],
           },
           {
+            date: '2024-01-04T14:00:00Z',
+            action: 'APPROVED_CORRECTION',
+            user: { id: 'user3', role: { id: 'REGISTRATION_AGENT' } },
+            office: { id: 'office1' },
+            requestId: 'correction1',
+          },
+          {
+            id: 'correction2',
             date: '2024-01-04T16:00:00Z',
             action: 'REQUESTED_CORRECTION',
             user: { id: 'user4', role: { id: 'REGISTRATION_AGENT' } },
@@ -390,6 +440,13 @@ Deno.test('PostProcess - Multiple Corrections', async (t) => {
                 value: 'GBR',
               },
             ],
+          },
+          {
+            date: '2024-01-05T14:00:00Z',
+            action: 'APPROVED_CORRECTION',
+            user: { id: 'user3', role: { id: 'REGISTRATION_AGENT' } },
+            office: { id: 'office1' },
+            requestId: 'correction2',
           },
         ],
       })
@@ -453,6 +510,7 @@ Deno.test('PostProcess - Corrections With Actions In Between', async (t) => {
             office: { id: 'office1' },
           },
           {
+            id: 'correction1',
             date: '2024-01-05T15:00:00Z',
             action: 'REQUESTED_CORRECTION',
             user: { id: 'user5', role: { id: 'REGISTRATION_AGENT' } },
@@ -471,6 +529,13 @@ Deno.test('PostProcess - Corrections With Actions In Between', async (t) => {
                 value: 'female',
               },
             ],
+          },
+          {
+            date: '2024-01-06T14:00:00Z',
+            action: 'APPROVED_CORRECTION',
+            user: { id: 'user3', role: { id: 'REGISTRATION_AGENT' } },
+            office: { id: 'office1' },
+            requestId: 'correction1',
           },
         ],
       })
@@ -519,6 +584,7 @@ Deno.test('PostProcess - Corrections With Actions In Between', async (t) => {
             office: { id: 'office1' },
           },
           {
+            id: 'correction1',
             date: '2024-01-03T14:00:00Z',
             action: 'REQUESTED_CORRECTION',
             user: { id: 'user3', role: { id: 'REGISTRATION_AGENT' } },
@@ -539,6 +605,13 @@ Deno.test('PostProcess - Corrections With Actions In Between', async (t) => {
             ],
           },
           {
+            date: '2024-01-04T14:00:00Z',
+            action: 'APPROVED_CORRECTION',
+            user: { id: 'user3', role: { id: 'REGISTRATION_AGENT' } },
+            office: { id: 'office1' },
+            requestId: 'correction1',
+          },
+          {
             date: '2024-01-04T15:00:00Z',
             action: 'VIEWED',
             user: { id: 'user4', role: { id: 'FIELD_AGENT' } },
@@ -551,6 +624,7 @@ Deno.test('PostProcess - Corrections With Actions In Between', async (t) => {
             office: { id: 'office1' },
           },
           {
+            id: 'correction2',
             date: '2024-01-06T17:00:00Z',
             action: 'REQUESTED_CORRECTION',
             user: { id: 'user6', role: { id: 'REGISTRATION_AGENT' } },
@@ -579,6 +653,13 @@ Deno.test('PostProcess - Corrections With Actions In Between', async (t) => {
                 value: 'GBR',
               },
             ],
+          },
+          {
+            date: '2024-01-07T14:00:00Z',
+            action: 'APPROVED_CORRECTION',
+            user: { id: 'user3', role: { id: 'REGISTRATION_AGENT' } },
+            office: { id: 'office1' },
+            requestId: 'correction2',
           },
         ],
       })
@@ -643,6 +724,7 @@ Deno.test('PostProcess - Corrections With Actions In Between', async (t) => {
             office: { id: 'office1' },
           },
           {
+            id: 'correction1',
             date: '2024-01-04T14:00:00Z',
             action: 'REQUESTED_CORRECTION',
             user: { id: 'user4', role: { id: 'REGISTRATION_AGENT' } },
@@ -661,6 +743,13 @@ Deno.test('PostProcess - Corrections With Actions In Between', async (t) => {
                 value: '0799999999',
               },
             ],
+          },
+          {
+            date: '2024-01-05T14:00:00Z',
+            action: 'APPROVED_CORRECTION',
+            user: { id: 'user3', role: { id: 'REGISTRATION_AGENT' } },
+            office: { id: 'office1' },
+            requestId: 'correction1',
           },
         ],
       })
@@ -713,6 +802,7 @@ Deno.test('PostProcess - Death Event Corrections', async (t) => {
           office: { id: 'office1' },
         },
         {
+          id: 'correction1',
           date: '2024-01-03T14:00:00Z',
           action: 'REQUESTED_CORRECTION',
           user: { id: 'user3', role: { id: 'REGISTRATION_AGENT' } },
@@ -731,6 +821,13 @@ Deno.test('PostProcess - Death Event Corrections', async (t) => {
               value: 'female',
             },
           ],
+        },
+        {
+          date: '2024-01-04T14:00:00Z',
+          action: 'APPROVED_CORRECTION',
+          user: { id: 'user3', role: { id: 'REGISTRATION_AGENT' } },
+          office: { id: 'office1' },
+          requestId: 'correction1',
         },
       ],
     })
@@ -774,6 +871,7 @@ Deno.test('PostProcess - Death Event Corrections', async (t) => {
             office: { id: 'office1' },
           },
           {
+            id: 'correction1',
             date: '2024-01-03T14:00:00Z',
             action: 'REQUESTED_CORRECTION',
             user: { id: 'user3', role: { id: 'REGISTRATION_AGENT' } },
@@ -794,6 +892,14 @@ Deno.test('PostProcess - Death Event Corrections', async (t) => {
             ],
           },
           {
+            date: '2024-01-04T14:00:00Z',
+            action: 'APPROVED_CORRECTION',
+            user: { id: 'user3', role: { id: 'REGISTRATION_AGENT' } },
+            office: { id: 'office1' },
+            requestId: 'correction1',
+          },
+          {
+            id: 'correction2',
             date: '2024-01-04T16:00:00Z',
             action: 'REQUESTED_CORRECTION',
             user: { id: 'user4', role: { id: 'REGISTRATION_AGENT' } },
@@ -812,6 +918,13 @@ Deno.test('PostProcess - Death Event Corrections', async (t) => {
                 value: 'ACCIDENT',
               },
             ],
+          },
+          {
+            date: '2024-01-06T14:00:00Z',
+            action: 'APPROVED_CORRECTION',
+            user: { id: 'user3', role: { id: 'REGISTRATION_AGENT' } },
+            office: { id: 'office1' },
+            requestId: 'correction2',
           },
         ],
       })
@@ -878,6 +991,7 @@ Deno.test('PostProcess - Multiple Corrections', async (t) => {
             office: { id: 'office1' },
           },
           {
+            id: 'correction1',
             date: '2024-01-03T14:00:00Z',
             action: 'REQUESTED_CORRECTION',
             user: { id: 'user3', role: { id: 'REGISTRATION_AGENT' } },
@@ -898,6 +1012,14 @@ Deno.test('PostProcess - Multiple Corrections', async (t) => {
             ],
           },
           {
+            date: '2024-01-04T14:00:00Z',
+            action: 'APPROVED_CORRECTION',
+            user: { id: 'user3', role: { id: 'REGISTRATION_AGENT' } },
+            office: { id: 'office1' },
+            requestId: 'correction1',
+          },
+          {
+            id: 'correction2',
             date: '2024-01-04T16:00:00Z',
             action: 'REQUESTED_CORRECTION',
             user: { id: 'user4', role: { id: 'REGISTRATION_AGENT' } },
@@ -916,6 +1038,13 @@ Deno.test('PostProcess - Multiple Corrections', async (t) => {
                 value: 'GBR',
               },
             ],
+          },
+          {
+            date: '2024-01-05T14:00:00Z',
+            action: 'APPROVED_CORRECTION',
+            user: { id: 'user3', role: { id: 'REGISTRATION_AGENT' } },
+            office: { id: 'office1' },
+            requestId: 'correction2',
           },
         ],
       })
@@ -949,6 +1078,464 @@ Deno.test('PostProcess - Multiple Corrections', async (t) => {
       assertEquals(declareAction?.declaration?.['child.gender'], 'male')
       assertEquals(registerAction?.declaration?.['mother.nationality'], 'USA')
       assertEquals(declareAction?.declaration?.['mother.nationality'], 'USA')
+    }
+  )
+})
+
+Deno.test('PostProcess - Updates', async (t) => {
+  const birthResolver = buildBirthResolver()
+
+  await t.step(
+    'should set annotation to previous declaration and reverse enngineer the original declaration',
+    () => {
+      const registration = buildBirthEventRegistration({
+        child: {
+          gender: 'female',
+        },
+        mother: {
+          nationality: ['GBR'],
+        },
+        history: [
+          {
+            date: '2024-01-01T10:00:00Z',
+            regStatus: 'DECLARED',
+            user: { id: 'user1', role: { id: 'FIELD_AGENT' } },
+            office: { id: 'office1' },
+          },
+          {
+            date: '2024-01-02T12:00:00Z',
+            regStatus: 'REGISTERED',
+            user: { id: 'user2', role: { id: 'REGISTRATION_AGENT' } },
+            office: { id: 'office1' },
+          },
+          {
+            date: '2024-01-03T14:00:00Z',
+            regStatus: 'DECLARATION_UPDATED',
+            user: { id: 'user3', role: { id: 'REGISTRATION_AGENT' } },
+            office: { id: 'office1' },
+            input: [
+              {
+                valueCode: 'child',
+                valueId: 'gender',
+                value: 'male',
+              },
+              {
+                valueCode: 'mother',
+                valueId: 'nationality',
+                value: 'USA',
+              },
+            ],
+            output: [
+              {
+                valueCode: 'child',
+                valueId: 'gender',
+                value: 'female',
+              },
+              {
+                valueCode: 'mother',
+                valueId: 'nationality',
+                value: 'GBR',
+              },
+            ],
+          },
+        ],
+      })
+
+      const result = transform(registration, birthResolver, 'birth')
+
+      const registerAction = result.actions.find(
+        (a) => a.type === 'REGISTER'
+      ) as Action
+      const declareActions = result.actions.filter((a) => a.type === 'DECLARE')
+      const originalDeclareAction = declareActions[0]
+      const updatedDeclareAction = declareActions[1]
+
+      // First correction (child.gender)
+      assertEquals(
+        updatedDeclareAction?.declaration?.['child.gender'],
+        'female'
+      )
+      assertEquals(
+        updatedDeclareAction?.declaration?.['mother.nationality'],
+        'GBR'
+      )
+
+      // REGISTER and DECLARE should have BOTH reverse engineered values
+      assertEquals(registerAction?.declaration?.['child.gender'], 'male')
+      assertEquals(originalDeclareAction?.declaration?.['child.gender'], 'male')
+      assertEquals(registerAction?.declaration?.['mother.nationality'], 'USA')
+      assertEquals(
+        originalDeclareAction?.declaration?.['mother.nationality'],
+        'USA'
+      )
+    }
+  )
+})
+
+Deno.test('PostProcess - Mix of Updates and Corrections', async (t) => {
+  const birthResolver = buildBirthResolver()
+
+  await t.step(
+    'should handle both DECLARATION_UPDATED and corrections in the same history',
+    () => {
+      const registration = buildBirthEventRegistration({
+        child: {
+          gender: 'male',
+        },
+        mother: {
+          nationality: ['GBR'],
+        },
+        registration: {
+          trackingId: 'B123456',
+          registrationNumber: '2024B123456',
+          contactPhoneNumber: '0711111111',
+        },
+        history: [
+          {
+            date: '2024-01-01T10:00:00Z',
+            regStatus: 'DECLARED',
+            user: { id: 'user1', role: { id: 'FIELD_AGENT' } },
+            office: { id: 'office1' },
+          },
+          {
+            date: '2024-01-02T12:00:00Z',
+            regStatus: 'DECLARATION_UPDATED',
+            user: { id: 'user2', role: { id: 'FIELD_AGENT' } },
+            office: { id: 'office1' },
+            input: [
+              {
+                valueCode: 'child',
+                valueId: 'gender',
+                value: 'female',
+              },
+            ],
+            output: [
+              {
+                valueCode: 'child',
+                valueId: 'gender',
+                value: 'male',
+              },
+            ],
+          },
+          {
+            date: '2024-01-03T12:00:00Z',
+            regStatus: 'REGISTERED',
+            user: { id: 'user3', role: { id: 'REGISTRATION_AGENT' } },
+            office: { id: 'office1' },
+          },
+          {
+            id: 'correction1',
+            date: '2024-01-04T14:00:00Z',
+            action: 'REQUESTED_CORRECTION',
+            user: { id: 'user4', role: { id: 'REGISTRATION_AGENT' } },
+            office: { id: 'office1' },
+            input: [
+              {
+                valueCode: 'mother',
+                valueId: 'nationality',
+                value: 'USA',
+              },
+              {
+                valueCode: 'informant',
+                valueId: 'registrationPhone',
+                value: '0799999999',
+              },
+            ],
+            output: [
+              {
+                valueCode: 'mother',
+                valueId: 'nationality',
+                value: 'GBR',
+              },
+              {
+                valueCode: 'informant',
+                valueId: 'registrationPhone',
+                value: '0711111111',
+              },
+            ],
+          },
+          {
+            date: '2024-01-05T14:00:00Z',
+            action: 'APPROVED_CORRECTION',
+            user: { id: 'user5', role: { id: 'REGISTRATION_AGENT' } },
+            office: { id: 'office1' },
+            requestId: 'correction1',
+          },
+        ],
+      })
+
+      const result = transform(registration, birthResolver, 'birth')
+
+      // Find all actions
+      const declareActions = result.actions.filter((a) => a.type === 'DECLARE')
+      const originalDeclareAction = declareActions[0]
+      const updatedDeclareAction = declareActions[1]
+      const registerAction = result.actions.find(
+        (a) => a.type === 'REGISTER'
+      ) as Action
+      const correctionAction = result.actions.find(
+        (a) => a.type === 'REQUEST_CORRECTION'
+      ) as Action
+
+      // The updated DECLARE action should have the value after the update
+      assertEquals(updatedDeclareAction?.declaration?.['child.gender'], 'male')
+
+      // The original DECLARE action should be reverse-engineered to show the value before the update
+      assertEquals(
+        originalDeclareAction?.declaration?.['child.gender'],
+        'female'
+      )
+
+      // The correction should have new values in declaration
+      assertEquals(correctionAction?.declaration?.['mother.nationality'], 'GBR')
+      assertEquals(
+        correctionAction?.declaration?.['informant.phoneNo'],
+        '0711111111'
+      )
+
+      // The correction should have old values in annotation
+      assertEquals(correctionAction?.annotation?.['mother.nationality'], 'USA')
+      assertEquals(
+        correctionAction?.annotation?.['informant.phoneNo'],
+        '0799999999'
+      )
+
+      // The REGISTER action should be reverse-engineered to show values before the correction
+      assertEquals(registerAction?.declaration?.['mother.nationality'], 'USA')
+      assertEquals(
+        registerAction?.declaration?.['informant.phoneNo'],
+        '0799999999'
+      )
+
+      // The REGISTER action should also have the updated child gender (from update)
+      assertEquals(registerAction?.declaration?.['child.gender'], 'male')
+    }
+  )
+})
+
+Deno.test('PostProcess - Correction Without Approval', async (t) => {
+  const birthResolver = buildBirthResolver()
+
+  await t.step(
+    'should not reverse engineer declaration or annotation for correction without approval',
+    () => {
+      const registration = buildBirthEventRegistration({
+        child: {
+          gender: 'female',
+        },
+        mother: {
+          nationality: ['GBR'],
+        },
+        history: [
+          {
+            date: '2024-01-01T10:00:00Z',
+            regStatus: 'DECLARED',
+            user: { id: 'user1', role: { id: 'FIELD_AGENT' } },
+            office: { id: 'office1' },
+          },
+          {
+            date: '2024-01-02T12:00:00Z',
+            regStatus: 'REGISTERED',
+            user: { id: 'user2', role: { id: 'REGISTRATION_AGENT' } },
+            office: { id: 'office1' },
+          },
+          {
+            id: 'correction1',
+            date: '2024-01-03T14:00:00Z',
+            action: 'REQUESTED_CORRECTION',
+            user: { id: 'user3', role: { id: 'REGISTRATION_AGENT' } },
+            office: { id: 'office1' },
+            input: [
+              {
+                valueCode: 'child',
+                valueId: 'gender',
+                value: 'male',
+              },
+              {
+                valueCode: 'mother',
+                valueId: 'nationality',
+                value: 'USA',
+              },
+            ],
+            output: [
+              {
+                valueCode: 'child',
+                valueId: 'gender',
+                value: 'female',
+              },
+              {
+                valueCode: 'mother',
+                valueId: 'nationality',
+                value: 'GBR',
+              },
+            ],
+          },
+          // Note: No APPROVED_CORRECTION action here
+        ],
+      })
+
+      const result = transform(registration, birthResolver, 'birth')
+
+      const registerAction = result.actions.find(
+        (a) => a.type === 'REGISTER'
+      ) as Action
+      const declareAction = result.actions.find(
+        (a) => a.type === 'DECLARE'
+      ) as Action
+      const correctionAction = result.actions.find(
+        (a) => a.type === 'REQUEST_CORRECTION'
+      ) as Action
+
+      // The correction action should still have declaration set from the output
+      assertEquals(correctionAction?.declaration?.['child.gender'], 'female')
+      assertEquals(correctionAction?.declaration?.['mother.nationality'], 'GBR')
+
+      // The correction action should have annotation with input values (unchanged by post-processing without approval)
+      assertEquals(correctionAction?.annotation?.['child.gender'], 'male')
+      assertEquals(correctionAction?.annotation?.['mother.nationality'], 'USA')
+
+      // The REGISTER action should NOT be modified - it should still have the final state values
+      // Because without approval, no reverse engineering should happen
+      assertEquals(registerAction?.declaration?.['child.gender'], 'female')
+      assertEquals(registerAction?.declaration?.['mother.nationality'], 'GBR')
+
+      // The DECLARE action should also NOT be modified
+      assertEquals(declareAction?.declaration?.['child.gender'], 'female')
+      assertEquals(declareAction?.declaration?.['mother.nationality'], 'GBR')
+    }
+  )
+
+  await t.step(
+    'should not reverse engineer for multiple corrections where only some are approved',
+    () => {
+      const registration = buildBirthEventRegistration({
+        child: {
+          gender: 'unknown',
+        },
+        mother: {
+          nationality: ['FRA'],
+        },
+        registration: {
+          trackingId: 'B123456',
+          registrationNumber: '2024B123456',
+          contactPhoneNumber: '0733333333',
+        },
+        history: [
+          {
+            date: '2024-01-01T10:00:00Z',
+            regStatus: 'DECLARED',
+            user: { id: 'user1', role: { id: 'FIELD_AGENT' } },
+            office: { id: 'office1' },
+          },
+          {
+            date: '2024-01-02T12:00:00Z',
+            regStatus: 'REGISTERED',
+            user: { id: 'user2', role: { id: 'REGISTRATION_AGENT' } },
+            office: { id: 'office1' },
+          },
+          {
+            id: 'correction1',
+            date: '2024-01-03T14:00:00Z',
+            action: 'REQUESTED_CORRECTION',
+            user: { id: 'user3', role: { id: 'REGISTRATION_AGENT' } },
+            office: { id: 'office1' },
+            input: [
+              {
+                valueCode: 'child',
+                valueId: 'gender',
+                value: 'male',
+              },
+            ],
+            output: [
+              {
+                valueCode: 'child',
+                valueId: 'gender',
+                value: 'female',
+              },
+            ],
+          },
+          {
+            date: '2024-01-04T14:00:00Z',
+            action: 'APPROVED_CORRECTION',
+            user: { id: 'user3', role: { id: 'REGISTRATION_AGENT' } },
+            office: { id: 'office1' },
+            requestId: 'correction1',
+          },
+          {
+            id: 'correction2',
+            date: '2024-01-05T14:00:00Z',
+            action: 'REQUESTED_CORRECTION',
+            user: { id: 'user4', role: { id: 'REGISTRATION_AGENT' } },
+            office: { id: 'office1' },
+            input: [
+              {
+                valueCode: 'mother',
+                valueId: 'nationality',
+                value: 'USA',
+              },
+              {
+                valueCode: 'informant',
+                valueId: 'registrationPhone',
+                value: '0799999999',
+              },
+            ],
+            output: [
+              {
+                valueCode: 'mother',
+                valueId: 'nationality',
+                value: 'FRA',
+              },
+              {
+                valueCode: 'informant',
+                valueId: 'registrationPhone',
+                value: '0733333333',
+              },
+            ],
+          },
+          // Note: correction2 is NOT approved
+        ],
+      })
+
+      const result = transform(registration, birthResolver, 'birth')
+
+      const registerAction = result.actions.find(
+        (a) => a.type === 'REGISTER'
+      ) as Action
+      const corrections = result.actions.filter(
+        (a) => a.type === 'REQUEST_CORRECTION'
+      ) as Action[]
+
+      assertEquals(corrections.length, 2)
+
+      const firstCorrection = corrections[0]
+      const secondCorrection = corrections[1]
+
+      // First correction (approved) should have annotation and reverse engineering
+      assertEquals(firstCorrection?.declaration?.['child.gender'], 'female')
+      assertEquals(firstCorrection?.annotation?.['child.gender'], 'male')
+
+      // REGISTER should be reverse-engineered for the first correction
+      assertEquals(registerAction?.declaration?.['child.gender'], 'male')
+
+      // Second correction (not approved) should have annotation with input values (unchanged by post-processing)
+      assertEquals(secondCorrection?.declaration?.['mother.nationality'], 'FRA')
+      assertEquals(
+        secondCorrection?.declaration?.['informant.phoneNo'],
+        '0733333333'
+      )
+      assertEquals(secondCorrection?.annotation?.['mother.nationality'], 'USA')
+      assertEquals(
+        secondCorrection?.annotation?.['informant.phoneNo'],
+        '0799999999'
+      )
+
+      // For the second correction fields, REGISTER should NOT be reverse-engineered
+      // It should keep the final state values
+      assertEquals(registerAction?.declaration?.['mother.nationality'], 'FRA')
+      assertEquals(
+        registerAction?.declaration?.['informant.phoneNo'],
+        '0733333333'
+      )
     }
   )
 })
