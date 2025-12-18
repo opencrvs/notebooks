@@ -1563,7 +1563,7 @@ Deno.test('Corrections - with incorrectly formatted dates', async (t) => {
           },
           {
             date: '2024-01-02T12:00:00Z',
-            action: 'REQUESTED_CORRECTION',
+            action: 'CORRECTED',
             user: { id: 'user2', role: { id: 'REGISTRATION_AGENT' } },
             office: { id: 'office1' },
             input: [],
@@ -1588,6 +1588,11 @@ Deno.test('Corrections - with incorrectly formatted dates', async (t) => {
                 valueId: 'informantBirthDate',
                 value: '1966-6-6',
               },
+              {
+                valueCode: 'informant',
+                valueId: 'exactDateOfBirthUnknown',
+                value: true,
+              },
             ],
           },
         ],
@@ -1603,6 +1608,7 @@ Deno.test('Corrections - with incorrectly formatted dates', async (t) => {
         'mother.dob': '1971-01-01',
         'father.dob': '1970-06-06',
         'informant.dob': '1966-06-06',
+        'informant.dobUnknown': true,
       })
     }
   )
@@ -1648,7 +1654,7 @@ Deno.test('Corrections - with incorrectly formatted dates', async (t) => {
               {
                 valueCode: 'informant',
                 valueId: 'exactDateOfBirthUnknown',
-                value: 'false',
+                value: false,
               },
             ],
           },
@@ -1664,7 +1670,7 @@ Deno.test('Corrections - with incorrectly formatted dates', async (t) => {
         'eventDetails.date': '1971-01-01',
         'spouse.dob': '1970-06-06',
         'informant.dob': '1966-06-06',
-        'informant.dobUnknown': 'false',
+        'informant.dobUnknown': false,
       })
     }
   )
