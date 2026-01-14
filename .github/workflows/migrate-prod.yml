@@ -21,6 +21,11 @@ on:
         required: true
         type: string
         default: 'farajaland.opencrvs.org'
+      skip:
+        description: 'Number of records to skip'
+        required: false
+        type: number
+        default: 0
 
 jobs:
   migrate:
@@ -123,6 +128,7 @@ jobs:
         env:
           OPENCRVS_EVENT: ${{ github.event.inputs.event }}
           OPENCRVS_DOMAIN: ${{ github.event.inputs.domain }}
+          RECORD_SKIP: ${{ github.event.inputs.skip }}
           OPENCRVS_CLIENT_ID: ${{ secrets.OPENCRVS_CLIENT_ID }}
           OPENCRVS_CLIENT_SECRET: ${{ secrets.OPENCRVS_CLIENT_SECRET }}
         run: |

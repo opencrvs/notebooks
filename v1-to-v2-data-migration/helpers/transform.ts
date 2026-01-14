@@ -530,12 +530,10 @@ function postProcess(
 
   const approvedCorrections = []
 
-  // if there are multiple actions of type REGISTER, set registrationNumber to null for all except the first one
-
   const rev = document.actions.slice().reverse()
+  let firstRegisterFound = false
 
   for (const action of rev) {
-    let firstRegisterFound = false
     if (action.type === 'REGISTER' && action.registrationNumber) {
       if (firstRegisterFound) {
         console.warn(
