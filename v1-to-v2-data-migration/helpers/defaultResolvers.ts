@@ -45,11 +45,14 @@ const informantResolver: ResolverMap = {
     !isSpecialInformant(data.informant, eventType)
       ? resolveName(data, data.informant?.name?.[0])
       : undefined, // FieldType.TEXT
-  'informant.dobUnknown': (data: EventRegistration, eventType: 'birth' | 'death') => {
-    if(isSpecialInformant(data.informant, eventType)) {
+  'informant.dobUnknown': (
+    data: EventRegistration,
+    eventType: 'birth' | 'death'
+  ) => {
+    if (isSpecialInformant(data.informant, eventType)) {
       return undefined
     }
-    if(data.informant?.birthDate) {
+    if (data.informant?.birthDate) {
       return false
     }
 
@@ -57,17 +60,19 @@ const informantResolver: ResolverMap = {
   }, // FieldType.CHECKBOX
   // @question, is this informant.age or informant.ageOfIndividualInYears?
   'informant.age': (data: EventRegistration, eventType: 'birth' | 'death') => {
-    if(isSpecialInformant(data.informant, eventType)) {
+    if (isSpecialInformant(data.informant, eventType)) {
       return undefined
     }
-    if(data.informant?.birthDate) {
+    if (data.informant?.birthDate) {
       return undefined
     }
 
-    return data.informant?.ageOfIndividualInYears && {
-      age: parseInt(data.informant?.ageOfIndividualInYears?.toString(), 10),
-      asOfDateRef: eventType == 'birth' ? 'child.dob' : 'eventDetails.date',
-    };
+    return (
+      data.informant?.ageOfIndividualInYears && {
+        age: parseInt(data.informant?.ageOfIndividualInYears?.toString(), 10),
+        asOfDateRef: eventType == 'birth' ? 'child.dob' : 'eventDetails.date',
+      }
+    )
   },
   'informant.nationality': (
     data: EventRegistration,
@@ -93,7 +98,7 @@ const informantResolver: ResolverMap = {
       : undefined,
 }
 
-const documentsResolver: ResolverMap = {
+export const documentsResolver: ResolverMap = {
   'documents.proofOfBirth': (data: EventRegistration) =>
     getDocument(data, 'CHILD'),
   'documents.proofOfMother': (data: EventRegistration) =>
