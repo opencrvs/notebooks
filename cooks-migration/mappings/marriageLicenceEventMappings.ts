@@ -1,0 +1,73 @@
+export const marriageLicenceEventMapping: Record<string, string> = {
+  'informant.contact': '',
+  'reason.option': '',
+  'reason.other': '',
+  'noticeOfIntendedMarriageDetails.dateOfNoticeLodgement': '',
+  'noticeOfIntendedMarriageDetails.dateOfMarriage': 'marriage.MARRIAGE_DATE',
+  'noticeOfIntendedMarriageDetails.placeOfMarriage': 'marriage.MARRIAGE_PLACE',
+  'noticeOfIntendedMarriageDetails.venueName': 'marriage.CHURCH_NAME',
+  'noticeOfIntendedMarriageDetails.officiantType': '',
+  'noticeOfIntendedMarriageDetails.officiantFullName': 'marriage.PASTOR_NAME',
+  'noticeOfIntendedMarriageDetails.officiantOrganisation':
+    'marriage.DENOMINATION',
+  'brideGroom.name': 'marriage.GROOM_FIRSTNAME',
+  'brideGroom.dob': 'marriage.GROOM_DOB',
+  'brideGroom.placeOfBirth': 'marriage.GROOM_BIRTHPLACE',
+  'brideGroom.occupation': 'marriage.GROOM_OCCUPATION',
+  'brideGroom.conjugalStatus': 'marriage.GROOM_STATUS',
+  'brideGroom.dateDecreeAbsolute': '',
+  'brideGroom.dateDeathFormerWife': 'marriage.GROOM_DOD_WIDOW',
+  'brideGroom.address': 'marriage.GROOM_RESIDENCE',
+  'brideGroom.fatherFullName': 'marriage.GROOM_FATHER',
+  'brideGroom.fatherOccupation': 'marriage.GROOM_FATHER_JOB',
+  'brideGroom.motherFullName': 'marriage.GROOM_MOTHER',
+  'brideGroom.motherMaidenSurname': 'marriage.GROOM_MOTHER_MAIDEN',
+  'brideGroom.motherOccupation': '',
+  'bride.name': 'marriage.BRIDE_FIRSTNAME',
+  'bride.dob': 'marriage.BRIDE_DOB',
+  'bride.placeOfBirth': 'marriage.BRIDE_BIRTHPLACE',
+  'bride.occupation': 'marriage.BRIDE_OCCUPATION',
+  'bride.conjugalStatus': 'marriage.BRIDE_STATUS',
+  'bride.dateOfDecreeAbsolute': '',
+  'bride.dateOfDeathOfFormerHusband': 'marriage.BRIDE_DOD_WIDOWER',
+  'bride.address': 'marriage.BRIDE_RESIDENCE',
+  'bride.fatherName': 'marriage.BRIDE_FATHER',
+  'bride.fatherOccupation': 'marriage.BRIDE_FATHER_JOB',
+  'bride.motherName': 'marriage.BRIDE_MOTHER',
+  'bride.motherMaidenSurname': 'marriage.BRIDE_MOTHER_MAIDEN',
+  'bride.motherOccupation': '',
+  'informantDetails.informantType': '',
+  'informantDetails.relationshipToCouple': '',
+  'informantDetails.name': '',
+  'informantDetails.dob': '',
+  'informantDetails.dobUnknown': '',
+  'informantDetails.age': '',
+  'informantDetails.nationality': '',
+  'informantDetails.idType': '',
+  'informantDetails.passport': '',
+  'informantDetails.bc': '',
+  'informantDetails.other': '',
+  'informantDetails.address': '',
+  'informantDetails.occupation': '',
+  'informantDetails.phoneNumber': '',
+  'informantDetails.email': '',
+}
+
+export const marriageLicenceMetaDataMapping: Record<string, string> = {
+  registrationNumber: 'marriage.NOTICE_NUMBER', // That could make this not unique since it's used in marriage registrations too
+  dateOfRegistration: 'marriage.MARRIAGE_DATE',
+  registrar: 'marriage.REGISTRAR',
+}
+
+export const marriageLicenceNameMapping: Record<string, string> = {
+  'brideGroom.name.firstname': 'marriage.GROOM_FIRSTNAME',
+  'brideGroom.name.surname': 'marriage.GROOM_LASTNAME',
+  'bride.name.firstname': 'marriage.BRIDE_FIRSTNAME',
+  'bride.name.surname': 'marriage.BRIDE_LASTNAME',
+}
+
+export default {
+  ...marriageLicenceEventMapping,
+  ...marriageLicenceMetaDataMapping,
+  ...marriageLicenceNameMapping,
+}

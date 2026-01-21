@@ -10,3 +10,5 @@ test-results/
 */countryData/v2EventFields.json
 */countryData/v1FormFields.json
 .env
+
+*/sourceData/*
