@@ -37,7 +37,7 @@ export type BirthResolver = {
   'reason.other': string
   'child.name': ResolverFunction<Name>
   'child.dob': ResolverFunction<string>
-  'child.reason': string
+  'child.reason': ResolverFunction<string>
   'child.gender': ResolverFunction<Gender>
   'child.placeOfBirth': ResolverFunction<PlaceOfBirth>
   'child.birthLocation': ResolverFunction<string | null>

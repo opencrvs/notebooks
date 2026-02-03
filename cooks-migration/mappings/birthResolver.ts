@@ -1,11 +1,16 @@
 import { BirthCsvRecord, CsvFields } from '../helpers/csvTypes.ts'
-import { BirthResolver, BirthInformant } from '../helpers/birthTypes.ts'
+import {
+  BirthResolver,
+  BirthInformant,
+  ResolverFunction,
+} from '../helpers/birthTypes.ts'
 import { Gender, LocationMap } from '../helpers/types.ts'
 import { Address, Country } from '../helpers/addressConfig.ts'
 import { birthInformantMap } from '../lookupMappings/informantTypes.ts'
 import { nationalityMap } from '../lookupMappings/nationalities.ts'
 import { raceMap } from '../lookupMappings/races.ts'
 import { twinsMap } from '../lookupMappings/twins.ts'
+import { FALLBACK_ISLAND_PREFIX_MAP } from '../helpers/generators.ts'
 
 const lookUpNameChange = (CsvFields: CsvFields, birthRef: string) => {
   return CsvFields.deedpoll
@@ -95,7 +100,7 @@ export const birthResolver: BirthResolver = {
   'child.name': (data: BirthCsvRecord) =>
     toName(data.CHILDS_NAME, data.FATHERS_SURNAME || data.MOTHERS_SURNAME),
   'child.dob': (data: BirthCsvRecord) => toDate(data.CHILDS_DOB),
-  'child.reason': 'Data migration', // Confirm this with Shez
+  'child.reason': (_: BirthCsvRecord) => 'Data migration', // Confirm this with Shez
   'child.gender': (data: BirthCsvRecord) => toGender(data.CHILDS_GENDER),
   'child.placeOfBirth': (
     data: BirthCsvRecord,
@@ -230,4 +235,30 @@ export const birthResolver: BirthResolver = {
   'informant.occupation': (data: BirthCsvRecord) => data.INFORMANTS_OCCUPATION,
   'informant.phoneNo': '',
   'informant.email': '',
+}
+
+export type BirthMetaData = {
+  registrationDate: ResolverFunction<string>
+  registrar: ResolverFunction<string>
+  locationCode: ResolverFunction<string | null>
+}
+
+export const birthMetaData: BirthMetaData = {
+  registrationDate: (data: BirthCsvRecord) => toISODate(data.DATE_REGISTERED),
+  registrar: (data: BirthCsvRecord) => data.REGISTRAR,
+  locationCode: (
+    data: BirthCsvRecord,
+    _: CsvFields,
+    locationMap: LocationMap[],
+  ) => {
+    const location = getLocation(data.CHILDS_BIRTHPLACE, locationMap)
+    if (location?.map?.includes('COK')) {
+      return location.map
+    }
+    return (
+      Object.entries(FALLBACK_ISLAND_PREFIX_MAP).find(
+        ([_, value]) => value === data.BIRTH_REF.substring(0, 4),
+      )?.[0] || null
+    )
+  },
 }
