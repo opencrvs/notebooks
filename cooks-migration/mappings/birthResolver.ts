@@ -100,7 +100,7 @@ export const birthResolver: BirthResolver = {
   'child.name': (data: BirthCsvRecord) =>
     toName(data.CHILDS_NAME, data.FATHERS_SURNAME || data.MOTHERS_SURNAME),
   'child.dob': (data: BirthCsvRecord) => toDate(data.CHILDS_DOB),
-  'child.reason': (_: BirthCsvRecord) => 'Data migration', // Confirm this with Shez
+  'child.reason': (_: BirthCsvRecord) => 'Data migration', // Confirm this with Shez, maybe Legacy record
   'child.gender': (data: BirthCsvRecord) => toGender(data.CHILDS_GENDER),
   'child.placeOfBirth': (
     data: BirthCsvRecord,
@@ -138,6 +138,7 @@ export const birthResolver: BirthResolver = {
   'child.attendantAtBirth.givenNames': '',
   'child.attendantAtBirth.surname': '',
   'child.isRenamed': (data: BirthCsvRecord) => !!data.CHILDS_NEW_NAME, // Calculate !!birth.CHILDS_NEW_NAME
+  'child.isAdoptionOrder': (data: BirthCsvRecord) => !!data.ADOP_REC_REF,
 
   'nameChange.deedPollNumber1': (data: BirthCsvRecord, all: CsvFields) =>
     lookUpNameChange(all, data.BIRTH_REF)[0]?.DP_REF,
@@ -159,6 +160,10 @@ export const birthResolver: BirthResolver = {
     lookUpNameChange(all, data.BIRTH_REF)[2]?.NEW_FIRSTNAMES,
   'nameChange.newSurname3': (data: BirthCsvRecord, all: CsvFields) =>
     lookUpNameChange(all, data.BIRTH_REF)[2]?.NEW_SURNAME,
+
+  'adoptionOrder.registrationNumber': (data: BirthCsvRecord) =>
+    data.ADOP_REC_REF,
+  'adoptionOrder.orderDocument': (data: BirthCsvRecord) => data.ADOPT_BOOK_REF,
 
   'mother.detailsUnavailable': '',
   'mother.unavailableReason': '',

@@ -53,6 +53,7 @@ export type BirthResolver = {
   'child.attendantAtBirth.givenNames': string
   'child.attendantAtBirth.surname': string
   'child.isRenamed': ResolverFunction<boolean>
+  'child.isAdoptionOrder': ResolverFunction<boolean>
   'nameChange.deedPollNumber1': ResolverFunction<string | undefined>
   'nameChange.newGivenNames1': ResolverFunction<string | undefined>
   'nameChange.newSurname1': ResolverFunction<string | undefined>
@@ -64,6 +65,8 @@ export type BirthResolver = {
   'nameChange.deedPollNumber3': ResolverFunction<string | undefined>
   'nameChange.newGivenNames3': ResolverFunction<string | undefined>
   'nameChange.newSurname3': ResolverFunction<string | undefined>
+  'adoptionOrder.registrationNumber': ResolverFunction<string | undefined>
+  'adoptionOrder.orderDocument': ResolverFunction<string | undefined>
   'mother.detailsUnavailable': string
   'mother.unavailableReason': string
   'mother.name': ResolverFunction<Name>
