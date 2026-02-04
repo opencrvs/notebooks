@@ -1,7 +1,8 @@
 import { Certificate, HistoryItem } from './types.ts'
 
 export const collectorResolver = {
-  'collector.requesterId': (data: Certificate) => other(data) ? 'SOMEONE_ELSE' : data.collector?.relationship,
+  'collector.requesterId': (data: Certificate) =>
+    other(data) ? 'SOMEONE_ELSE' : data.collector?.relationship,
   'collector.OTHER.name': (data: Certificate) =>
     other(data) && {
       surname: data.collector?.name[0].familyName, // TODO - I think I need to use the name resolver
@@ -14,11 +15,13 @@ export const collectorResolver = {
     other(data) && getId(data).type,
   'collector.PASSPORT.details': (data: Certificate) =>
     getIdForType(data, 'PASSPORT'),
-  'collector.DRIVING_LICENSE.details': (data: Certificate) =>
+  'collector.DRIVING-LICENCE.details': (data: Certificate) =>
     getIdForType(data, 'DRIVING_LICENSE'),
-  'collector.REFUGEE_NUMBER.details': (data: Certificate) =>
+  'collector.DRIVING-LICENSE.details': (data: Certificate) =>
+    getIdForType(data, 'DRIVING_LICENSE'),
+  'collector.REFUGEE-NUMBER.details': (data: Certificate) =>
     getIdForType(data, 'REFUGEE_NUMBER'),
-  'collector.ALIEN_NUMBER.details': (data: Certificate) =>
+  'collector.ALIEN-NUMBER.details': (data: Certificate) =>
     getIdForType(data, 'ALIEN_NUMBER'),
   'collector.OTHER.idTypeOther': (data: Certificate) =>
     other(data) && getId(data).otherType,
@@ -39,6 +42,9 @@ export const collectorResolver = {
     data: Certificate
   ) => data.x, // TODO
   'collector.collect.payment.data.beforeRegistrationTarget': (
+    data: Certificate
+  ) => data.x, // TODO
+  'collector.collect.payment.data.afterRegistrationTarget': (
     data: Certificate
   ) => data.x, // TODO
 }

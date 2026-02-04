@@ -1,4 +1,14 @@
-import { Identifier, Document, ProcessedDocumentWithOptionType, PersonWithIdentifiers, ProcessedDocument } from './types.ts'
+import {
+  birthSpecialInformants,
+  deathSpecialInformants,
+} from '../countryData/countryResolvers.ts'
+import {
+  Identifier,
+  Document,
+  ProcessedDocumentWithOptionType,
+  PersonWithIdentifiers,
+  ProcessedDocument,
+} from './types.ts'
 
 export const getIdentifier = (
   data: { identifier?: Identifier[] } | undefined,
@@ -16,7 +26,7 @@ export const getDocument = (
       return {
         path: doc.uri,
         originalFilename: doc.uri.replace('/ocrvs/', ''),
-        type: doc.contentType
+        type: doc.contentType,
       }
     })[0]
   if (!document) {
@@ -58,20 +68,21 @@ export function getCustomField(data: any, id: string): any {
 
 }
 
-
 /**
  * Special informants have their own special sections like `mother.`, `father.` or `spouse.`.
  */
-export const isSpecialInformant = (informant: PersonWithIdentifiers | undefined, eventType: 'birth' | 'death') => {
-  if (!informant) return false
+export const isSpecialInformant = (
+  informant: PersonWithIdentifiers | undefined,
+  eventType: 'birth' | 'death'
+) => {
+  if (!informant?.relationship) return false
 
-  if(eventType === 'birth') {
-    return informant.relationship === 'MOTHER'
-    || informant.relationship === 'FATHER'
+  if (eventType === 'birth') {
+    return birthSpecialInformants.includes(informant.relationship)
   }
 
-  if(eventType === 'death') {
-    return informant.relationship === 'SPOUSE'
+  if (eventType === 'death') {
+    return deathSpecialInformants.includes(informant.relationship)
   }
   return false
 }

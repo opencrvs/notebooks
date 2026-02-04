@@ -93,3 +93,5 @@ export const countryResolver = {
 /* 'birth.informant-view-group.fokontanyCustomAddress' : 'informant.address.streetLevelDetails.fokontanyCustomAddress',  */
 /* 'birth.father-view-group.fokontanyCustomAddress' : 'father.address.streetLevelDetails.fokontanyCustomAddress' */
 /* 'birth.documents-view-group.uploadDocForRecognition' : '' */
+export const birthSpecialInformants = ['MOTHER', 'FATHER']
+export const deathSpecialInformants = ['SPOUSE']

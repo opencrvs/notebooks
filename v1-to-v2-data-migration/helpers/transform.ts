@@ -6,6 +6,7 @@ import {
   AGE_MAPPINGS,
   VERIFIED_MAPPINGS,
 } from './defaultMappings.ts'
+import { normalizeDateString, isDateField } from './dateUtils.ts'
 import { COUNTRY_FIELD_MAPPINGS } from '../countryData/countryMappings.ts'
 import { NAME_MAPPINGS } from '../countryData/nameMappings.ts'
 import { ADDRESS_MAPPINGS } from '../countryData/addressMappings.ts'
@@ -27,6 +28,7 @@ import {
   BIRTH_LOCATION_PRIVATE_HOME_KEY,
   COUNTRY_CODE,
 } from '../countryData/addressResolver.ts'
+import { documentsResolver } from './defaultResolvers.ts'
 
 const mappings = {
   ...DEFAULT_FIELD_MAPPINGS,
@@ -43,6 +45,9 @@ function patternMatch(
   for (const [key, value] of Object.entries(correction)) {
     const valueKey = mappings[key as keyof typeof mappings]
     if (valueKey) {
+      if (Object.keys(documentsResolver).includes(valueKey)) {
+        continue
+      }
       transformedData[valueKey] = value
     } else if (NAME_MAPPINGS[key]) {
       const nameMapping = NAME_MAPPINGS[key](value as string)
@@ -134,7 +139,11 @@ export function transformCorrection(
 
   const v1OutputDeclaration =
     historyItem.output?.reduce((acc: Record<string, any>, curr: any) => {
-      acc[`${event}.${curr.valueCode}.${curr.valueId}`] = normalizeValue(curr.value)
+      // Normalize date strings in output to ensure proper zero-padding
+      const value = isDateField(curr.valueId)
+        ? normalizeDateString(curr.value)
+        : curr.value
+      acc[`${event}.${curr.valueCode}.${curr.valueId}`] = value
       return acc
     }, {}) || {}
 
@@ -242,11 +251,17 @@ function legacyHistoryItemToV2ActionType(
         return {
           type: 'NOTIFY' as ActionType,
           declaration: declaration,
+          annotation: {
+            'review.signature': declareResolver['review.signature'](uri),
+            'review.comment': declareResolver['review.comment'](historyItem),
+          },
         }
       case 'DECLARATION_UPDATED': //TODO - check if this is correct
+        const update = transformCorrection(historyItem, eventType, declaration)
         return {
           type: 'DECLARE' as ActionType,
-          declaration: {},
+          declaration: update.output,
+          annotation: update.input,
         }
       default:
         break
@@ -272,7 +287,7 @@ function legacyHistoryItemToV2ActionType(
         status: 'Accepted',
         type: 'REQUEST_CORRECTION' as ActionType,
         declaration: correction.output,
-        annotation: { ...declaration, ...annotation, ...correction.input },
+        annotation: deepMerge(annotation, correction.input),
         requestId: historyItem.id,
       }
     case 'APPROVED_CORRECTION':
@@ -361,8 +376,11 @@ const preProcessHistory = (eventRegistration: EventRegistration) => {
       })
 
       // Second item: APPROVE_CORRECTION
+      const approveDate = new Date(historyItem.date)
+      approveDate.setMilliseconds(approveDate.getMilliseconds() + 1)
       processedHistory.push({
         ...historyItem,
+        date: approveDate,
         action: 'APPROVED_CORRECTION',
         requestId: requestCorrectionId,
         annotation: {
@@ -481,38 +499,85 @@ export function transform(
     ],
   }
 
-  return postProcess(documents)
+  return postProcess(documents, declaration)
 }
 
-function postProcess(documents: TransformedDocument): TransformedDocument {
-  const correctionResolverKeys = Object.keys(correctionResolver)
+/**
+ * Deep merge two objects, with priority given to source values
+ */
+function deepMerge(target: any, source: any): any {
+  const result = { ...target }
 
-  for (let i = 0; i < documents.actions.length; i++) {
-    const action = documents.actions[i]
+  for (const key in source) {
+    if (source.hasOwnProperty(key)) {
+      const sourceValue = source[key]
+      const targetValue = target[key]
 
-    if (action.type === 'REQUEST_CORRECTION' && action.annotation) {
-      // Filter out correctionResolver fields from the annotation
-      const filteredAnnotation = Object.fromEntries(
-        Object.entries(action.annotation).filter(
-          ([key]) => !correctionResolverKeys.includes(key)
-        )
-      )
-
-      // Find the first action before this one with a non-empty declaration
-      for (let j = i - 1; j >= 0; j--) {
-        const previousAction = documents.actions[j]
-
-        if (
-          previousAction.declaration &&
-          typeof previousAction.declaration === 'object' &&
-          Object.keys(previousAction.declaration).length > 0
-        ) {
-          previousAction.declaration = filteredAnnotation
-          break
-        }
+      // If both are plain objects, merge recursively
+      if (
+        sourceValue &&
+        typeof sourceValue === 'object' &&
+        !Array.isArray(sourceValue) &&
+        targetValue &&
+        typeof targetValue === 'object' &&
+        !Array.isArray(targetValue)
+      ) {
+        result[key] = deepMerge(targetValue, sourceValue)
+      } else {
+        // Otherwise, use source value
+        result[key] = sourceValue
       }
     }
   }
 
-  return documents
+  return result
+}
+
+function postProcess(
+  document: TransformedDocument,
+  currDeclaration: Record<string, any>
+): TransformedDocument {
+  const resolverKeys = Object.keys({
+    ...correctionResolver,
+    ...declareResolver,
+  })
+  const hasKeys = (declaration: {} | null | undefined) =>
+    Object.keys(declaration || {}).length > 0
+  let previousDeclaration = currDeclaration
+
+  const approvedCorrections = []
+
+  const rev = document.actions.slice().reverse()
+
+  for (const action of rev) {
+    if (action.type === 'APPROVE_CORRECTION') {
+      approvedCorrections.push(action.requestId)
+    }
+
+    const declaration = action.declaration || {}
+    const annotation = Object.fromEntries(
+      Object.entries(action.annotation || {}).filter(
+        ([key]) => !resolverKeys.includes(key)
+      )
+    )
+
+    if (hasKeys(declaration)) {
+      if (action.type === 'REQUEST_CORRECTION') {
+        if (approvedCorrections.includes(action.requestId)) {
+          previousDeclaration = deepMerge(previousDeclaration, annotation)
+          action.annotation = previousDeclaration
+        }
+        continue
+      }
+      action.declaration = previousDeclaration
+      if (hasKeys(annotation)) {
+        previousDeclaration = deepMerge(previousDeclaration, annotation)
+        action.annotation = previousDeclaration
+      }
+    }
+  }
+
+  document.actions = rev.reverse()
+
+  return document
 }
