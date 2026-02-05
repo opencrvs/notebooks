@@ -525,9 +525,33 @@ function postProcess(
 
   const approvedCorrections = []
 
-  const rev = document.actions.slice().reverse()
+  let rev = document.actions.slice().reverse()
+  let firstRegisterAction = null
+  const actionsToRemove: string[] = []
 
   for (const action of rev) {
+    if (action.type === 'REGISTER') {
+      if (action.registrationNumber) {
+        if (firstRegisterAction) {
+          console.warn(
+            `Multiple REGISTER actions found for document ${document.id}`,
+          )
+          action.registrationNumber = undefined
+          action.status = 'Requested'
+
+          firstRegisterAction.originalActionId = action.id
+        } else {
+          firstRegisterAction = action
+        }
+      } else {
+        if (!firstRegisterAction || firstRegisterAction.originalActionId) {
+          actionsToRemove.push(action.id)
+        } else {
+          firstRegisterAction.originalActionId = action.id
+        }
+      }
+    }
+
     if (action.type === 'APPROVE_CORRECTION') {
       approvedCorrections.push(action.requestId)
     }
@@ -553,6 +577,10 @@ function postProcess(
         action.annotation = previousDeclaration
       }
     }
+  }
+
+  if (actionsToRemove.length > 0) {
+    rev = rev.filter((action) => !actionsToRemove.includes(action.id))
   }
 
   document.actions = rev.reverse()
