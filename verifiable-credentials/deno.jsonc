@@ -1,0 +1,6 @@
+{
+  "imports": {
+    "@opencrvs/toolkit/api": "npm:@opencrvs/toolkit@1.9.0-rc.f45cc23/api",
+    "@opencrvs/toolkit/events": "npm:@opencrvs/toolkit@1.9.0-rc.f45cc23/events"
+  }
+}
