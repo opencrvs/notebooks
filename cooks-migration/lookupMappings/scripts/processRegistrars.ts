@@ -1,4 +1,4 @@
-import registrarsRaw from './registrarsRaw.json' with { type: 'json' }
+import registrarsRaw from '../registrarsRaw.json' with { type: 'json' }
 
 // Function to check if a string is likely a date
 function isLikelyDate(str: string): boolean {

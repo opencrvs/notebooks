@@ -46,3 +46,5 @@ export type CrvsEvent = {
   trackingId: string
   actions: Array<Action>
 }
+
+export type Name = { firstname: string; surname: string }

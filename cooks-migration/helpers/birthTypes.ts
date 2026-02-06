@@ -1,6 +1,6 @@
 import { Address, Country } from './addressConfig.ts'
 import { BirthCsvRecord, CsvFields } from './csvTypes.ts'
-import { Gender, LocationMap } from './types.ts'
+import { Gender, LocationMap, Name } from './types.ts'
 
 export type BirthInformant = 'MOTHER' | 'FATHER' | 'MOTHER_AND_FATHER' | 'OTHER'
 
@@ -10,8 +10,6 @@ export type ResolverFunction<T> =
   | ((data: BirthCsvRecord, all: CsvFields, locationMap: LocationMap[]) => T)
 
 export type PlaceOfBirth = 'HEALTH_FACILITY' | 'OTHER'
-
-export type Name = { firstname: string; surname: string }
 
 export type BirthType =
   | 'SINGLE'
@@ -113,4 +111,10 @@ export type BirthResolver = {
   'informant.occupation': ResolverFunction<string>
   'informant.phoneNo': string
   'informant.email': string
+}
+
+export type BirthMetaData = {
+  registrationDate: ResolverFunction<string>
+  registrar: ResolverFunction<string>
+  locationCode: ResolverFunction<string | null>
 }

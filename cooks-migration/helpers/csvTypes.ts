@@ -221,3 +221,16 @@ export type CsvFields = {
   adoption: AdoptionCsvRecord[]
   deedpoll: DeedpollCsvRecord[]
 }
+
+export type Register =
+  | BirthCsvRecord[]
+  | DeathCsvRecord[]
+  | MarriageCsvRecord[]
+  | AdoptionCsvRecord[]
+  | DeedpollCsvRecord[]
+
+export type RegisterField = keyof BirthCsvRecord &
+  keyof DeathCsvRecord &
+  keyof MarriageCsvRecord &
+  keyof AdoptionCsvRecord &
+  keyof DeedpollCsvRecord
