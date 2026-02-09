@@ -38,3 +38,8 @@ export async function csvToJson(path: string, lines?: number): Promise<any[]> {
 
   return results
 }
+
+export const readJsonFile = (path: string) => {
+  const data = Deno.readFileSync(path)
+  return JSON.parse(new TextDecoder().decode(data))
+}

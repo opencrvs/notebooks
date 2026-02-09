@@ -3,10 +3,10 @@ import { Country } from './addressConfig.ts'
 export type LocationMap = {
   id: string
   name: string
-  map: string | null
-  facilityCode: string | null
-  country: Country | null
-  intlTown: string | null
+  map?: string
+  facilityCode?: string
+  country?: Country
+  intlTown?: string
 }
 
 export type EventType =

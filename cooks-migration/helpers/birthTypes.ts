@@ -64,7 +64,7 @@ export type BirthResolver = {
   'nameChange.newGivenNames3': ResolverFunction<string | undefined>
   'nameChange.newSurname3': ResolverFunction<string | undefined>
   'adoptionOrder.registrationNumber': ResolverFunction<string | undefined>
-  'adoptionOrder.orderDocument': ResolverFunction<string | undefined>
+  'adoptionOrder.orderDocument': string
   'mother.detailsUnavailable': string
   'mother.unavailableReason': string
   'mother.name': ResolverFunction<Name>

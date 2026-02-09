@@ -2,17 +2,21 @@ import { BirthCsvRecord, CsvFields } from '../helpers/csvTypes.ts'
 import {
   BirthResolver,
   BirthInformant,
-  ResolverFunction,
   BirthMetaData,
 } from '../helpers/birthTypes.ts'
 import { Gender, LocationMap } from '../helpers/types.ts'
-import { Address, Country } from '../helpers/addressConfig.ts'
+import { Country } from '../helpers/addressConfig.ts'
 import { birthInformantMap } from '../lookupMappings/informantTypes.ts'
 import { nationalityMap } from '../lookupMappings/nationalities.ts'
 import { raceMap } from '../lookupMappings/races.ts'
 import { twinsMap } from '../lookupMappings/twins.ts'
 import { FALLBACK_ISLAND_PREFIX_MAP } from '../helpers/generators.ts'
-import { toCrvsDate, toISODate, toName } from '../helpers/resolverHelpers.ts'
+import {
+  resolveAddress,
+  toCrvsDate,
+  toISODate,
+  toName,
+} from '../helpers/resolverHelpers.ts'
 
 const lookUpNameChange = (CsvFields: CsvFields, birthRef: string) => {
   return CsvFields.deedpoll
@@ -22,30 +26,6 @@ const lookUpNameChange = (CsvFields: CsvFields, birthRef: string) => {
         new Date(toISODate(a.DATE)).getTime() -
         new Date(toISODate(b.DATE)).getTime(),
     )
-}
-
-const resolveAddress = (
-  addressString: string,
-  locationMap: LocationMap[],
-): Address | undefined => {
-  const location = locationMap.find((loc) => loc.name === addressString)
-  if (location?.map && location?.id) {
-    return {
-      addressType: 'DOMESTIC',
-      country: 'COK',
-      administrativeArea: location.id,
-      streetLevelDetails: {},
-    }
-  }
-  if (location?.intlTown) {
-    return {
-      addressType: 'INTERNATIONAL',
-      country: location.country,
-      streetLevelDetails: {
-        town: location.intlTown,
-      },
-    }
-  }
 }
 
 const toAge = (ageString: string) => {

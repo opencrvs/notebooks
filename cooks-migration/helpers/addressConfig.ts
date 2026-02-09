@@ -1,6 +1,6 @@
 export interface Address {
   addressType: 'INTERNATIONAL' | 'DOMESTIC'
-  country: Country | null
+  country: Country | undefined
   administrativeArea?: string
   streetLevelDetails: StreetLevelDetails
 }
