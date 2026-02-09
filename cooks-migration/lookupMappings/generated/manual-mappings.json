@@ -1,0 +1,24 @@
+{
+  "_comment": "Manual address mappings for garbage entries. Format: { 'original_address': { type: 'local'|'intl'|'facility'|'garbage', value: 'COK-xxx' | {country: 'XXX', town: 'YYY'} | 'facilityId' | null } }",
+  "_instructions": "Go through garbage.json and classify each entry. Update this file as you go, then create a script to merge these mappings into the final outputs.",
+
+  "example_local": {
+    "type": "local",
+    "value": "COK-001-005"
+  },
+  "example_international": {
+    "type": "intl",
+    "value": {
+      "country": "NZL",
+      "town": "Some Town"
+    }
+  },
+  "example_facility": {
+    "type": "facility",
+    "value": "nLhbC6Mf8qCQRUXf7oRpoS"
+  },
+  "example_true_garbage": {
+    "type": "garbage",
+    "value": null
+  }
+}
