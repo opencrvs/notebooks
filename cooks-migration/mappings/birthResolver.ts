@@ -3,6 +3,7 @@ import {
   BirthResolver,
   BirthInformant,
   ResolverFunction,
+  BirthMetaData,
 } from '../helpers/birthTypes.ts'
 import { Gender, LocationMap } from '../helpers/types.ts'
 import { Address, Country } from '../helpers/addressConfig.ts'
@@ -11,6 +12,7 @@ import { nationalityMap } from '../lookupMappings/nationalities.ts'
 import { raceMap } from '../lookupMappings/races.ts'
 import { twinsMap } from '../lookupMappings/twins.ts'
 import { FALLBACK_ISLAND_PREFIX_MAP } from '../helpers/generators.ts'
+import { toCrvsDate, toISODate, toName } from '../helpers/resolverHelpers.ts'
 
 const lookUpNameChange = (CsvFields: CsvFields, birthRef: string) => {
   return CsvFields.deedpoll
@@ -20,21 +22,6 @@ const lookUpNameChange = (CsvFields: CsvFields, birthRef: string) => {
         new Date(toISODate(a.DATE)).getTime() -
         new Date(toISODate(b.DATE)).getTime(),
     )
-}
-
-const toISODate = (dateString: string): string => {
-  const [month, day, year] = dateString.split('/').map(Number)
-  if (!month || !day || !year) return ''
-
-  const date = new Date(Date.UTC(year, month - 1, day))
-  return date.toISOString()
-}
-
-const toDate = (dateString: string): string => {
-  const [month, day, year] = dateString.split('/').map(Number)
-  if (!month || !day || !year) return ''
-
-  return `${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`
 }
 
 const resolveAddress = (
@@ -60,11 +47,6 @@ const resolveAddress = (
     }
   }
 }
-
-const toName = (firstname: string, surname: string) => ({
-  firstname,
-  surname,
-})
 
 const toAge = (ageString: string) => {
   const age = Number(ageString)
@@ -99,7 +81,7 @@ export const birthResolver: BirthResolver = {
   'reason.other': '',
   'child.name': (data: BirthCsvRecord) =>
     toName(data.CHILDS_NAME, data.FATHERS_SURNAME || data.MOTHERS_SURNAME),
-  'child.dob': (data: BirthCsvRecord) => toDate(data.CHILDS_DOB),
+  'child.dob': (data: BirthCsvRecord) => toCrvsDate(data.CHILDS_DOB),
   'child.reason': (_: BirthCsvRecord) => 'Data migration', // Confirm this with Shez, maybe Legacy record
   'child.gender': (data: BirthCsvRecord) => toGender(data.CHILDS_GENDER),
   'child.placeOfBirth': (
@@ -163,13 +145,13 @@ export const birthResolver: BirthResolver = {
 
   'adoptionOrder.registrationNumber': (data: BirthCsvRecord) =>
     data.ADOP_REC_REF,
-  'adoptionOrder.orderDocument': (data: BirthCsvRecord) => data.ADOPT_BOOK_REF,
+  'adoptionOrder.orderDocument': '', //(data: BirthCsvRecord) => data.ADOPT_BOOK_REF,
 
   'mother.detailsUnavailable': '',
   'mother.unavailableReason': '',
   'mother.name': (data: BirthCsvRecord) =>
     toName(data.MOTHERS_NAME, data.MOTHERS_SURNAME),
-  'mother.dob': (data: BirthCsvRecord) => toDate(data.MOTHERS_DOB),
+  'mother.dob': (data: BirthCsvRecord) => toCrvsDate(data.MOTHERS_DOB),
   'mother.dobUnknown': (data: BirthCsvRecord) =>
     Boolean(!data.MOTHERS_DOB && data.MOTHERS_AGE),
   'mother.age': (data: BirthCsvRecord) => toAge(data.MOTHERS_AGE),
@@ -192,7 +174,7 @@ export const birthResolver: BirthResolver = {
   'father.unavailableReason': '',
   'father.name': (data: BirthCsvRecord) =>
     toName(data.FATHERS_NAME, data.FATHERS_SURNAME),
-  'father.dob': (data: BirthCsvRecord) => toDate(data.FATHERS_DOB),
+  'father.dob': (data: BirthCsvRecord) => toCrvsDate(data.FATHERS_DOB),
   'father.dobUnknown': (data: BirthCsvRecord) =>
     Boolean(!data.FATHERS_DOB && data.FATHERS_AGE),
   'father.age': (data: BirthCsvRecord) => toAge(data.FATHERS_AGE),
@@ -240,12 +222,6 @@ export const birthResolver: BirthResolver = {
   'informant.occupation': (data: BirthCsvRecord) => data.INFORMANTS_OCCUPATION,
   'informant.phoneNo': '',
   'informant.email': '',
-}
-
-export type BirthMetaData = {
-  registrationDate: ResolverFunction<string>
-  registrar: ResolverFunction<string>
-  locationCode: ResolverFunction<string | null>
 }
 
 export const birthMetaData: BirthMetaData = {
