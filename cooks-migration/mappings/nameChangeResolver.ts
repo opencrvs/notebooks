@@ -4,10 +4,10 @@ import {
   ResolverFunction,
 } from '../helpers/nameChangeTypes.ts'
 import {
+  deriveName,
   resolveAddress,
   toCrvsDate,
   toISODate,
-  toName,
 } from '../helpers/resolverHelpers.ts'
 import { LocationMap } from '../helpers/types.ts'
 
@@ -26,7 +26,7 @@ export const nameChangeResolver: NameChangeResolver = {
   'subjects.brn': '',
   'subjects.brnText': '',
   'subjects.name': (_: DeedpollCsvRecord, birth: BirthCsvRecord) =>
-    birth.CHILDS_NAME,
+    deriveName(birth.CHILDS_NAME),
   'subjects.dob': (_: DeedpollCsvRecord, birth: BirthCsvRecord) =>
     toCrvsDate(birth.CHILDS_DOB),
   'subjects.address': (
@@ -100,12 +100,7 @@ export const nameChangeResolver: NameChangeResolver = {
   'informant.address.city': '',
   'informant.phone': '',
   'informant.email': '',
-  'witness.name': (data: DeedpollCsvRecord) => {
-    const names = data.WITNESS.split(' ').filter(Boolean)
-    const surname = names.length > 1 ? names.pop() || '' : ''
-    const firstname = names.join(' ')
-    return toName(firstname, surname)
-  },
+  'witness.name': (data: DeedpollCsvRecord) => deriveName(data.WITNESS),
   'witness.occupation': (data: DeedpollCsvRecord) => data.WITNESS_OCCUPATION,
   'witness.address': (data: DeedpollCsvRecord) => data.WITNESS_ADDRESS,
 }

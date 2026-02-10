@@ -1,5 +1,5 @@
 import { Address } from './addressConfig.ts'
-import { LocationMap, Name } from './types.ts'
+import { Gender, LocationMap, Name } from './types.ts'
 
 export const toCrvsDate = (dateString: string): string => {
   const [month, day, year] = dateString.split('/').map(Number)
@@ -12,6 +12,29 @@ export const toName = (firstname: string, surname: string): Name => ({
   firstname,
   surname,
 })
+
+export const deriveName = (name: string): Name => {
+  const names = name.split(' ').filter(Boolean)
+  const surname = names.length > 1 ? names.pop() || '' : ''
+  const firstname = names.join(' ')
+  return toName(firstname, surname)
+}
+
+export const toAge = (ageString: string) => {
+  const age = Number(ageString)
+  return isNaN(age) || age === 0 ? null : age
+}
+
+export const toGender = (genderString: string): Gender => {
+  switch (genderString) {
+    case 'M':
+      return 'male'
+    case 'F':
+      return 'female'
+    default:
+      return 'unknown'
+  }
+}
 
 export const toISODate = (dateString: string): string => {
   const [month, day, year] = dateString.split('/').map(Number)
@@ -43,4 +66,12 @@ export const resolveAddress = (
       },
     }
   }
+}
+
+export const resolveFacility = (
+  name: string,
+  locationMap: LocationMap[],
+): string | null => {
+  const location = locationMap.find((loc) => loc.name === name)
+  return location?.facilityCode ? location.id : null
 }

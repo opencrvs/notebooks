@@ -4,7 +4,7 @@ import {
   BirthInformant,
   BirthMetaData,
 } from '../helpers/birthTypes.ts'
-import { Gender, LocationMap } from '../helpers/types.ts'
+import { LocationMap } from '../helpers/types.ts'
 import { Country } from '../helpers/addressConfig.ts'
 import { birthInformantMap } from '../lookupMappings/informantTypes.ts'
 import { nationalityMap } from '../lookupMappings/nationalities.ts'
@@ -12,8 +12,12 @@ import { raceMap } from '../lookupMappings/races.ts'
 import { twinsMap } from '../lookupMappings/twins.ts'
 import { FALLBACK_ISLAND_PREFIX_MAP } from '../helpers/generators.ts'
 import {
+  deriveName,
   resolveAddress,
+  resolveFacility,
+  toAge,
   toCrvsDate,
+  toGender,
   toISODate,
   toName,
 } from '../helpers/resolverHelpers.ts'
@@ -26,22 +30,6 @@ const lookUpNameChange = (CsvFields: CsvFields, birthRef: string) => {
         new Date(toISODate(a.DATE)).getTime() -
         new Date(toISODate(b.DATE)).getTime(),
     )
-}
-
-const toAge = (ageString: string) => {
-  const age = Number(ageString)
-  return isNaN(age) || age === 0 ? null : age
-}
-
-const toGender = (genderString: string): Gender => {
-  switch (genderString) {
-    case 'M':
-      return 'male'
-    case 'F':
-      return 'female'
-    default:
-      return 'unknown'
-  }
 }
 
 const getLocation = (name: string, locationMap: LocationMap[]) => {
@@ -69,17 +57,14 @@ export const birthResolver: BirthResolver = {
     _: CsvFields,
     locationMap: LocationMap[],
   ) =>
-    getLocation(data.CHILDS_BIRTHPLACE, locationMap)?.facilityCode
+    resolveFacility(data.CHILDS_BIRTHPLACE, locationMap)
       ? 'HEALTH_FACILITY'
       : 'OTHER',
   'child.birthLocation': (
     data: BirthCsvRecord,
     _: CsvFields,
     locationMap: LocationMap[],
-  ) => {
-    const location = getLocation(data.CHILDS_BIRTHPLACE, locationMap)
-    return location?.facilityCode ? location.id : null
-  },
+  ) => resolveFacility(data.CHILDS_BIRTHPLACE, locationMap),
   'child.birthLocation.privateHome': '',
   'child.birthLocation.other': (
     data: BirthCsvRecord,
@@ -124,7 +109,7 @@ export const birthResolver: BirthResolver = {
     lookUpNameChange(all, data.BIRTH_REF)[2]?.NEW_SURNAME,
 
   'adoptionOrder.registrationNumber': (data: BirthCsvRecord) =>
-    data.ADOP_REC_REF,
+    data.ADOP_REC_REF, // Might need to add sdoption suffix
   'adoptionOrder.orderDocument': '', //(data: BirthCsvRecord) => data.ADOPT_BOOK_REF,
 
   'mother.detailsUnavailable': '',
@@ -137,7 +122,11 @@ export const birthResolver: BirthResolver = {
   'mother.age': (data: BirthCsvRecord) => toAge(data.MOTHERS_AGE),
   'mother.maritalStatus': '',
   'mother.maidenName': (data: BirthCsvRecord) => data.MOTHERS_MAIDEN_NAME,
-  'mother.placeOfBirth': (data: BirthCsvRecord) => data.MOTHERS_BIRTHPLACE,
+  'mother.placeOfBirth': (
+    data: BirthCsvRecord,
+    _: CsvFields,
+    locationMap: LocationMap[],
+  ) => resolveAddress(data.MOTHERS_BIRTHPLACE, locationMap),
   'mother.nationality': (data: BirthCsvRecord) =>
     toNationality(data.MOTHERS_NATIONALITY, data.MOTHERS_RACE),
   'mother.idType': '',
@@ -158,7 +147,11 @@ export const birthResolver: BirthResolver = {
   'father.dobUnknown': (data: BirthCsvRecord) =>
     Boolean(!data.FATHERS_DOB && data.FATHERS_AGE),
   'father.age': (data: BirthCsvRecord) => toAge(data.FATHERS_AGE),
-  'father.placeOfBirth': (data: BirthCsvRecord) => data.FATHERS_BIRTHPLACE,
+  'father.placeOfBirth': (
+    data: BirthCsvRecord,
+    _: CsvFields,
+    locationMap: LocationMap[],
+  ) => resolveAddress(data.FATHERS_BIRTHPLACE, locationMap),
   'father.nationality': (data: BirthCsvRecord) =>
     toNationality(data.FATHERS_NATIONALITY, data.FATHERS_RACE),
   'father.idType': '',
@@ -180,12 +173,7 @@ export const birthResolver: BirthResolver = {
     const relation = birthInformantMap[data.INFORMANTS_RELATIONSHIP || '']
     return relation === 'OTHER' ? data.INFORMANTS_RELATIONSHIP : null
   },
-  'informant.name': (data: BirthCsvRecord) => {
-    const names = data.INFORMANTS_NAME.split(' ').filter(Boolean)
-    const surname = names.length > 1 ? names.pop() || '' : ''
-    const firstname = names.join(' ')
-    return toName(firstname, surname)
-  },
+  'informant.name': (data: BirthCsvRecord) => deriveName(data.INFORMANTS_NAME),
   'informant.dob': '',
   'informant.dobUnknown': '',
   'informant.age': '',

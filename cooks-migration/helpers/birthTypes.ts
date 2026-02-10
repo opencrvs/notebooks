@@ -73,7 +73,7 @@ export type BirthResolver = {
   'mother.age': ResolverFunction<number | null>
   'mother.maritalStatus': string
   'mother.maidenName': ResolverFunction<string>
-  'mother.placeOfBirth': ResolverFunction<string>
+  'mother.placeOfBirth': ResolverFunction<Address | undefined>
   'mother.nationality': ResolverFunction<Country | undefined>
   'mother.idType': string
   'mother.passport': string
@@ -87,7 +87,7 @@ export type BirthResolver = {
   'father.dob': ResolverFunction<string>
   'father.dobUnknown': ResolverFunction<boolean>
   'father.age': ResolverFunction<number | null>
-  'father.placeOfBirth': ResolverFunction<string>
+  'father.placeOfBirth': ResolverFunction<Address | undefined>
   'father.nationality': ResolverFunction<Country | undefined>
   'father.idType': string
   'father.passport': string

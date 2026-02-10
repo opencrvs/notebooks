@@ -1,6 +1,6 @@
 import { Address } from './addressConfig.ts'
 import { BirthCsvRecord, DeedpollCsvRecord } from './csvTypes.ts'
-import { LocationMap } from './types.ts'
+import { LocationMap, Name } from './types.ts'
 
 export type ResolverFunction<T> =
   | ((data: DeedpollCsvRecord) => T)
@@ -23,7 +23,7 @@ export type NameChangeResolver = {
   'subjects.nationality': string
   'subjects.brn': string | ((data: DeedpollCsvRecord) => string)
   'subjects.brnText': string
-  'subjects.name': ResolverFunction<string>
+  'subjects.name': ResolverFunction<Name>
   'subjects.dob': ResolverFunction<string>
   'subjects.address': ResolverFunction<Address | undefined>
   'subjects.nameChangedViaDeadPoll': ResolverFunction<boolean>

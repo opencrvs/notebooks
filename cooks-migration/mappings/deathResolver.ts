@@ -1,44 +1,107 @@
-import { CsvFields } from '../helpers/csvTypes.ts'
+import { CsvFields, DeathCsvRecord } from '../helpers/csvTypes.ts'
+import { DeathResolver, DeathMetaData } from '../helpers/deathTypes.ts'
+import { LocationMap } from '../helpers/types.ts'
+import { FALLBACK_ISLAND_PREFIX_MAP } from '../helpers/generators.ts'
+import {
+  deriveName,
+  resolveAddress,
+  resolveFacility,
+  toAge,
+  toCrvsDate,
+  toGender,
+  toISODate,
+} from '../helpers/resolverHelpers.ts'
+import { resolveLengthInCis } from '../lookupMappings/death/lengthInCis.ts'
+import { parseInformantDescription } from '../lookupMappings/death/informantTypeMapping.ts'
 
-export const deathResolver = {
+const getLocation = (name: string, locationMap: LocationMap[]) => {
+  return locationMap.find((loc) => loc.name === name)
+}
+
+export const deathResolver: DeathResolver = {
   'informant.contact': '',
   'reason.option': '',
   'reason.other': '',
-  'deceased.name': (data: CsvFields) => data.death.NAME_OF_DECEASED,
-  'deceased.gender': (data: CsvFields) => data.death.SEX,
+  'deceased.name': (data: DeathCsvRecord) => deriveName(data.NAME_OF_DECEASED),
+  'deceased.gender': (data: DeathCsvRecord) => toGender(data.SEX),
   'deceased.dob': '', // Possibly birth.CHILDS_DOB
   'deceased.dobUnknown': '', // Calculate
-  'deceased.age': (data: CsvFields) => data.death.AGE,
-  'deceased.placeOfBirth': (data: CsvFields) => data.death.WHERE_BORN,
+  'deceased.age': (data: DeathCsvRecord) => toAge(data.AGE),
+  'deceased.placeOfBirth': (data: DeathCsvRecord) => data.WHERE_BORN,
   'deceased.nationality': '',
   'deceased.idType': '',
   'deceased.passport': '',
   'deceased.bc': '',
   'deceased.other': '',
-  'deceased.occupation': (data: CsvFields) => data.death.OCCUPATION,
-  'deceased.residence': (data: CsvFields) => data.death.USUAL_RESIDENCE,
-  'deceased.sincebirth': '',
-  'deceased.noOfyearsLivedInCook': (data: CsvFields) =>
-    data.death.LENGTH_IN_CIS,
+  'deceased.occupation': (data: DeathCsvRecord) => data.OCCUPATION,
+  'deceased.residence': (
+    data: DeathCsvRecord,
+    _: CsvFields,
+    locationMap: LocationMap[],
+  ) => resolveAddress(data.USUAL_RESIDENCE, locationMap),
+  'deceased.sincebirth': (data: DeathCsvRecord) => {
+    const resolved = resolveLengthInCis(
+      data.LENGTH_IN_CIS,
+      toAge(data.AGE),
+      toCrvsDate(data.WHEN_DIED),
+    )
+    return resolved.sinceBirth ?? false
+  },
+  'deceased.noOfyearsLivedInCook': (data: DeathCsvRecord) => {
+    const resolved = resolveLengthInCis(
+      data.LENGTH_IN_CIS,
+      toAge(data.AGE),
+      toCrvsDate(data.WHEN_DIED),
+    )
+    return resolved.years || 0
+  },
   'deceased.wasMarried': '', // Calculate
-  'deceased.dateOfMarriage': (data: CsvFields) => data.death.WHEN_MARRIED,
-  'deceased.placeOfMarriage': (data: CsvFields) => data.death.WHERE_MARRIED,
+  'deceased.dateOfMarriage': (data: DeathCsvRecord) =>
+    toCrvsDate(data.WHEN_MARRIED),
+  'deceased.placeOfMarriage': (
+    data: DeathCsvRecord,
+    _: CsvFields,
+    locationMap: LocationMap[],
+  ) => resolveAddress(data.WHERE_MARRIED, locationMap),
   'deceased.hadLivingChildren': '', // Calculate
-  'eventDetails.dateOfDeath': (data: CsvFields) => data.death.WHEN_DIED,
+  'eventDetails.dateOfDeath': (data: DeathCsvRecord) =>
+    toCrvsDate(data.WHEN_DIED),
   'eventDetails.mannerOfDeath': '',
-  'eventDetails.placeOfDeath': (data: CsvFields) => data.death.WHERE_DIED, // Calculate
-  'eventDetails.deathLocation': (data: CsvFields) => data.death.WHERE_DIED,
-  'eventDetails.deathLocationOther': (data: CsvFields) => data.death.WHERE_DIED,
+  'eventDetails.placeOfDeath': (
+    data: DeathCsvRecord,
+    _: CsvFields,
+    locationMap: LocationMap[],
+  ) => {
+    if (resolveFacility(data.WHERE_DIED, locationMap)) {
+      return 'HEALTH_FACILITY'
+    }
+    const died = resolveAddress(data.WHERE_DIED, locationMap)
+    const lived = resolveAddress(data.USUAL_RESIDENCE, locationMap)
+    if (JSON.stringify(died) === JSON.stringify(lived)) {
+      return 'DECEASED_USUAL_RESIDENCE'
+    }
+    return 'OTHER'
+  },
+  'eventDetails.deathLocation': (
+    data: DeathCsvRecord,
+    _: CsvFields,
+    locationMap: LocationMap[],
+  ) => resolveFacility(data.WHERE_DIED, locationMap),
+  'eventDetails.deathLocationOther': (
+    data: DeathCsvRecord,
+    _: CsvFields,
+    locationMap: LocationMap[],
+  ) => resolveAddress(data.WHERE_DIED, locationMap),
   'eventDetails.referredToCoroner': '',
   'eventDetails.fullNameOfCoroner': '',
   'eventDetails.causeOfDeathDeterminedByCoroner': '',
   'eventDetails.causeOfDeathEstablished': '',
-  'eventDetails.medicalOfficerName': (data: CsvFields) =>
-    data.death.MEDICAL_ATTENDANT,
-  'eventDetails.dateLastSeenAlive': (data: CsvFields) =>
-    data.death.DATE_LAST_ALIVE,
+  'eventDetails.medicalOfficerName': (data: DeathCsvRecord) =>
+    data.MEDICAL_ATTENDANT,
+  'eventDetails.dateLastSeenAlive': (data: DeathCsvRecord) =>
+    toCrvsDate(data.DATE_LAST_ALIVE),
   'eventDetails.notPersonallyAttended': '',
-  'eventDetails.causeOfDeath': (data: CsvFields) => data.death.CAUSE_OF_DEATH,
+  'eventDetails.causeOfDeath': (data: DeathCsvRecord) => data.CAUSE_OF_DEATH,
   'eventDetails.duration': '',
   'eventDetails.ICD10CodeA': '',
   'eventDetails.b.CauseOfDeath': '',
@@ -55,13 +118,17 @@ export const deathResolver = {
   'eventDetails.otherSignificantConditionIfApplicable': '',
   'eventDetails.approximateDuration2': '',
   'burial.burialArrangement': '',
-  'burial.dateOfBurial': (data: CsvFields) => data.death.WHEN_BURIED,
-  'burial.whereburied': (data: CsvFields) => data.death.WHERE_BURIED,
+  'burial.dateOfBurial': (data: DeathCsvRecord) => toCrvsDate(data.WHEN_BURIED),
+  'burial.whereburied': (
+    data: DeathCsvRecord,
+    _: CsvFields,
+    locationMap: LocationMap[],
+  ) => resolveAddress(data.WHERE_BURIED, locationMap),
   'burial.burialPlaceDescription': '',
-  'father.detailsNotAvailable': '', //Calculate
+  'father.detailsNotAvailable': '', // Calculate
   'father.reason': '',
   'father.livingStatus': '',
-  'father.name': (data: CsvFields) => data.death.FATHERS_NAME,
+  'father.name': (data: DeathCsvRecord) => deriveName(data.FATHERS_NAME),
   'father.dob': '',
   'father.dobUnknown': '',
   'father.age': '',
@@ -70,12 +137,12 @@ export const deathResolver = {
   'father.passport': '',
   'father.bc': '',
   'father.other': '',
-  'father.occupation': (data: CsvFields) => data.death.FATHERS_OCCUPATION,
+  'father.occupation': (data: DeathCsvRecord) => data.FATHERS_OCCUPATION,
   'mother.detailsNotAvailable': '',
   'mother.reason': '',
   'mother.livingStatus': '',
-  'mother.name': (data: CsvFields) => data.death.MOTHERS_NAME,
-  'mother.maidenName': (data: CsvFields) => data.death.MOTHERS_MAIDEN_NAME,
+  'mother.name': (data: DeathCsvRecord) => deriveName(data.MOTHERS_NAME),
+  'mother.maidenName': (data: DeathCsvRecord) => data.MOTHERS_MAIDEN_NAME,
   'mother.dob': '',
   'mother.dobUnknown': '',
   'mother.age': '',
@@ -87,11 +154,11 @@ export const deathResolver = {
   'mother.occupation': '',
   'spouse.detailsNotAvailable': '',
   'spouse.reason': '',
-  'spouse.livingStatus': (data: CsvFields) => data.death.AGE_OF_WIDOW,
-  'spouse.name': (data: CsvFields) => data.death.WHOM_MARRIED,
+  'spouse.livingStatus': (data: DeathCsvRecord) => data.AGE_OF_WIDOW, // This is what shez was talking about, how do we do this?
+  'spouse.name': (data: DeathCsvRecord) => data.WHOM_MARRIED, // Another weird format with multiple marriages
   'spouse.dob': '',
   'spouse.dobUnknown': '',
-  'spouse.age': (data: CsvFields) => data.death.AGE_OF_WIDOW,
+  'spouse.age': (data: DeathCsvRecord) => data.AGE_OF_WIDOW, // Another weird format
   'spouse.nationality': '',
   'spouse.idType': '',
   'spouse.passport': '',
@@ -130,9 +197,18 @@ export const deathResolver = {
   'deceased.children.10.sex': '',
   'deceased.children.10.age': '',
   'deceased.additionalChildrenSummary': '',
-  'informant.relation': (data: CsvFields) => data.death.INFORMANT_DESCRIPTION,
-  'informant.other.relation': '',
-  'informant.name': '',
+  'informant.relation': (data: DeathCsvRecord) => {
+    const parsed = parseInformantDescription(data.INFORMANT_DESCRIPTION)
+    return parsed.relationType
+  },
+  'informant.other.relation': (data: DeathCsvRecord) => {
+    const parsed = parseInformantDescription(data.INFORMANT_DESCRIPTION)
+    return parsed.otherRelation
+  },
+  'informant.name': (data: DeathCsvRecord) => {
+    const parsed = parseInformantDescription(data.INFORMANT_DESCRIPTION)
+    return deriveName(parsed.name)
+  },
   'informant.dob': '',
   'informant.nationality': '',
   'informant.idType': '',
@@ -141,14 +217,31 @@ export const deathResolver = {
   'informant.other': '',
   'informant.occupation': '',
   'informant.addressSameAs': '',
-  'informant.address': (data: CsvFields) => data.death.INFORMANT_RESIDENCE,
+  'informant.address': (
+    data: DeathCsvRecord,
+    _: CsvFields,
+    locationMap: LocationMap[],
+  ) => resolveAddress(data.INFORMANT_RESIDENCE, locationMap),
   'informant.phoneNo': '',
   'informant.email': '',
 }
 
-export const deathMetaDataMapping: Record<string, string> = {
-  registrationNumber: 'death.DEATH_NUMBER',
-  dateOfRegistration: 'death.DATE_REGISTERED',
-  placeOfRegistration: 'death.PLACE_OF_REGISTRATION',
-  registrar: 'death.REGISTRAR',
+export const deathMetaData: DeathMetaData = {
+  registrationDate: (data: DeathCsvRecord) => toISODate(data.DATE_REGISTERED),
+  registrar: (data: DeathCsvRecord) => data.REGISTRAR,
+  locationCode: (
+    data: DeathCsvRecord,
+    _: CsvFields,
+    locationMap: LocationMap[],
+  ) => {
+    const location = getLocation(data.WHERE_DIED, locationMap)
+    if (location?.map?.includes('COK')) {
+      return location.map
+    }
+    return (
+      Object.entries(FALLBACK_ISLAND_PREFIX_MAP).find(
+        ([_, value]) => value === data.DEATH_NUMBER.substring(0, 4),
+      )?.[0] || null
+    )
+  },
 }
