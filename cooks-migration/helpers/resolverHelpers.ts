@@ -1,11 +1,39 @@
+import { format, isValid, parse } from 'date-fns'
 import { Address } from './addressConfig.ts'
-import { Gender, LocationMap, Name } from './types.ts'
+import { FALLBACK_ISLAND_PREFIX_MAP } from './generators.ts'
+import {
+  EVENT_TYPE_MAP,
+  EventType,
+  Gender,
+  LocationMap,
+  Name,
+} from './types.ts'
 
-export const toCrvsDate = (dateString: string): string => {
-  const [month, day, year] = dateString.split('/').map(Number)
-  if (!month || !day || !year) return ''
+type DateFormat = 'MM/dd/yyyy' | 'dd/MM/yyyy'
 
-  return `${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`
+export const toCrvsDate = (
+  dateString: string,
+  dateFormat: DateFormat = 'MM/dd/yyyy',
+): string => {
+  const trimmedDate = dateString.trim()
+
+  if (!trimmedDate) {
+    return ''
+  }
+
+  let parsedDate = parse(trimmedDate, dateFormat, new Date())
+
+  if (!isValid(parsedDate)) {
+    const alternativeFormat =
+      dateFormat === 'MM/dd/yyyy' ? 'dd/MM/yyyy' : 'MM/dd/yyyy'
+    parsedDate = parse(trimmedDate, alternativeFormat, new Date())
+
+    if (!isValid(parsedDate)) {
+      return ''
+    }
+  }
+
+  return format(parsedDate, 'yyyy-MM-dd')
 }
 
 export const toName = (firstname: string, surname: string): Name => ({
@@ -68,10 +96,35 @@ export const resolveAddress = (
   }
 }
 
+export const getLocation = (name: string, locationMap: LocationMap[]) => {
+  return locationMap.find((loc) => loc.name === name)
+}
+
+export const getLocationCode = (
+  name: string,
+  locationMap: LocationMap[],
+): string | null => {
+  const location = getLocation(name, locationMap)
+  if (location?.map?.includes('COK')) {
+    return location.map
+  }
+  return null
+}
+
+export const getLocationFromRegNum = (data: string): string | null =>
+  Object.entries(FALLBACK_ISLAND_PREFIX_MAP).find(
+    ([_, value]) => value === data.substring(0, 4),
+  )?.[0] || null
+
 export const resolveFacility = (
   name: string,
   locationMap: LocationMap[],
 ): string | null => {
-  const location = locationMap.find((loc) => loc.name === name)
+  const location = getLocation(name, locationMap)
   return location?.facilityCode ? location.id : null
+}
+
+export const toLegacy = (registration: string, eventType: EventType) => {
+  const suffix = EVENT_TYPE_MAP[eventType]
+  return `${registration}${suffix}`
 }

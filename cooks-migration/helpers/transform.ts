@@ -1,6 +1,6 @@
-import { v4 as uuidv4 } from 'npm:uuid'
+import { v4 as uuidv4, v5 as uuidv5 } from 'npm:uuid'
 import { ActionType, CrvsEvent, EventType } from './types.ts'
-import { deterministicUuid, hashToTrackingId } from './generators.ts'
+import { deterministicHash, UUID_NAMESPACE } from './generators.ts'
 
 export const transform = (
   declaration: Record<string, unknown>,
@@ -12,12 +12,12 @@ export const transform = (
   trackingId: string,
   registrationNumber: string,
 ): CrvsEvent => ({
-  id: uuidv4(), //deterministicUuid(trackingId),
+  id: uuidv5(registrationNumber, UUID_NAMESPACE),
   type: eventType,
   createdAt: date,
   updatedAt: date,
   updatedAtLocation: location, // Need location Id
-  trackingId: hashToTrackingId(trackingId),
+  trackingId: deterministicHash(trackingId, 6),
   actions: [
     {
       type: 'CREATE' as ActionType,
@@ -29,11 +29,11 @@ export const transform = (
       updatedAtLocation: location,
       status: 'Accepted',
       declaration: {},
-      id: uuidv4(),
+      id: uuidv5(registrationNumber + 'CREATE', UUID_NAMESPACE),
       transactionId: uuidv4(),
     },
     {
-      id: uuidv4(),
+      id: uuidv5(registrationNumber + 'REGISTER', UUID_NAMESPACE),
       type: 'REGISTER' as ActionType,
       transactionId: uuidv4(),
       createdAt: date,

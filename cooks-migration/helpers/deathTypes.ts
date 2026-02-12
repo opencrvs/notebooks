@@ -32,7 +32,7 @@ export type DeathResolver = {
   'deceased.noOfyearsLivedInCook': ResolverFunction<number>
   'deceased.wasMarried': string
   'deceased.dateOfMarriage': ResolverFunction<string>
-  'deceased.placeOfMarriage': ResolverFunction<Address | undefined>
+  'deceased.placeOfMarriage': ResolverFunction<string>
   'deceased.hadLivingChildren': string
   'eventDetails.dateOfDeath': ResolverFunction<string>
   'eventDetails.mannerOfDeath': string
@@ -139,6 +139,7 @@ export type DeathResolver = {
   'deceased.children.10.age': string
   'deceased.additionalChildrenSummary': string
   'informant.relation': ResolverFunction<DeathInformant>
+  'informant.other.relation': ResolverFunction<string | undefined>
   'informant.name': ResolverFunction<Name>
   'informant.dob': string
   'informant.nationality': string

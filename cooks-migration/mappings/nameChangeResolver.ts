@@ -5,6 +5,8 @@ import {
 } from '../helpers/nameChangeTypes.ts'
 import {
   deriveName,
+  getLocation,
+  getLocationCode,
   resolveAddress,
   toCrvsDate,
   toISODate,
@@ -102,7 +104,12 @@ export const nameChangeResolver: NameChangeResolver = {
   'informant.email': '',
   'witness.name': (data: DeedpollCsvRecord) => deriveName(data.WITNESS),
   'witness.occupation': (data: DeedpollCsvRecord) => data.WITNESS_OCCUPATION,
-  'witness.address': (data: DeedpollCsvRecord) => data.WITNESS_ADDRESS,
+  'witness.address': (
+    data: DeedpollCsvRecord,
+    _: BirthCsvRecord,
+    __: DeedpollCsvRecord[],
+    locationMap: LocationMap[],
+  ) => resolveAddress(data.WITNESS_ADDRESS, locationMap),
 }
 
 export const nameChangeMetaDataMapping: Record<string, string> = {
@@ -121,17 +128,8 @@ export const nameChangeMetaData: NameChangeMetaData = {
   registrar: (data: DeedpollCsvRecord) => data.REGISTRAR, // TODO Create from island?
   locationCode: (
     data: DeedpollCsvRecord,
-    _: CsvFields,
+    _: BirthCsvRecord,
+    __: DeedpollCsvRecord[],
     locationMap: LocationMap[],
-  ) => {
-    const location = getLocation(data.CHILDS_BIRTHPLACE, locationMap)
-    if (location?.map?.includes('COK')) {
-      return location.map
-    }
-    return (
-      Object.entries(FALLBACK_ISLAND_PREFIX_MAP).find(
-        ([_, value]) => value === data.BIRTH_REF.substring(0, 4),
-      )?.[0] || null
-    )
-  },
+  ) => getLocationCode(data.ISLAND, locationMap),
 }

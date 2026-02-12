@@ -13,6 +13,9 @@ import { twinsMap } from '../lookupMappings/twins.ts'
 import { FALLBACK_ISLAND_PREFIX_MAP } from '../helpers/generators.ts'
 import {
   deriveName,
+  getLocation,
+  getLocationCode,
+  getLocationFromRegNum,
   resolveAddress,
   resolveFacility,
   toAge,
@@ -30,10 +33,6 @@ const lookUpNameChange = (CsvFields: CsvFields, birthRef: string) => {
         new Date(toISODate(a.DATE)).getTime() -
         new Date(toISODate(b.DATE)).getTime(),
     )
-}
-
-const getLocation = (name: string, locationMap: LocationMap[]) => {
-  return locationMap.find((loc) => loc.name === name)
 }
 
 const toNationality = (
@@ -122,11 +121,7 @@ export const birthResolver: BirthResolver = {
   'mother.age': (data: BirthCsvRecord) => toAge(data.MOTHERS_AGE),
   'mother.maritalStatus': '',
   'mother.maidenName': (data: BirthCsvRecord) => data.MOTHERS_MAIDEN_NAME,
-  'mother.placeOfBirth': (
-    data: BirthCsvRecord,
-    _: CsvFields,
-    locationMap: LocationMap[],
-  ) => resolveAddress(data.MOTHERS_BIRTHPLACE, locationMap),
+  'mother.placeOfBirth': (data: BirthCsvRecord) => data.MOTHERS_BIRTHPLACE,
   'mother.nationality': (data: BirthCsvRecord) =>
     toNationality(data.MOTHERS_NATIONALITY, data.MOTHERS_RACE),
   'mother.idType': '',
@@ -147,11 +142,7 @@ export const birthResolver: BirthResolver = {
   'father.dobUnknown': (data: BirthCsvRecord) =>
     Boolean(!data.FATHERS_DOB && data.FATHERS_AGE),
   'father.age': (data: BirthCsvRecord) => toAge(data.FATHERS_AGE),
-  'father.placeOfBirth': (
-    data: BirthCsvRecord,
-    _: CsvFields,
-    locationMap: LocationMap[],
-  ) => resolveAddress(data.FATHERS_BIRTHPLACE, locationMap),
+  'father.placeOfBirth': (data: BirthCsvRecord) => data.FATHERS_BIRTHPLACE,
   'father.nationality': (data: BirthCsvRecord) =>
     toNationality(data.FATHERS_NATIONALITY, data.FATHERS_RACE),
   'father.idType': '',
@@ -199,15 +190,7 @@ export const birthMetaData: BirthMetaData = {
     data: BirthCsvRecord,
     _: CsvFields,
     locationMap: LocationMap[],
-  ) => {
-    const location = getLocation(data.CHILDS_BIRTHPLACE, locationMap)
-    if (location?.map?.includes('COK')) {
-      return location.map
-    }
-    return (
-      Object.entries(FALLBACK_ISLAND_PREFIX_MAP).find(
-        ([_, value]) => value === data.BIRTH_REF.substring(0, 4),
-      )?.[0] || null
-    )
-  },
+  ) =>
+    getLocationCode(data.CHILDS_BIRTHPLACE, locationMap) ||
+    getLocationFromRegNum(data.BIRTH_REF),
 }

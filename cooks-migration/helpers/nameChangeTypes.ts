@@ -57,5 +57,5 @@ export type NameChangeResolver = {
   'informant.email': string
   'witness.name': ResolverFunction<Name>
   'witness.occupation': ResolverFunction<string>
-  'witness.address': ResolverFunction<string>
+  'witness.address': ResolverFunction<Address | undefined>
 }

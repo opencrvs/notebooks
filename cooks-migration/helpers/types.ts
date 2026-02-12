@@ -48,3 +48,13 @@ export type CrvsEvent = {
 }
 
 export type Name = { firstname: string; surname: string }
+
+export const EVENT_TYPE_MAP: Record<EventType, string> = {
+  birth: 'BR',
+  death: 'DR',
+  'marriage-licence': 'ML',
+  'marriage-registration': 'MR',
+  divorce: 'DV',
+  adoption: 'AD',
+  'name-change': 'DP',
+}

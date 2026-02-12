@@ -1,9 +1,10 @@
 import { CsvFields, DeathCsvRecord } from '../helpers/csvTypes.ts'
 import { DeathResolver, DeathMetaData } from '../helpers/deathTypes.ts'
 import { LocationMap } from '../helpers/types.ts'
-import { FALLBACK_ISLAND_PREFIX_MAP } from '../helpers/generators.ts'
 import {
   deriveName,
+  getLocationCode,
+  getLocationFromRegNum,
   resolveAddress,
   resolveFacility,
   toAge,
@@ -13,10 +14,7 @@ import {
 } from '../helpers/resolverHelpers.ts'
 import { resolveLengthInCis } from '../lookupMappings/death/lengthInCis.ts'
 import { parseInformantDescription } from '../lookupMappings/death/informantTypeMapping.ts'
-
-const getLocation = (name: string, locationMap: LocationMap[]) => {
-  return locationMap.find((loc) => loc.name === name)
-}
+import { ageMapping } from '../lookupMappings/death/ageMapping.ts'
 
 export const deathResolver: DeathResolver = {
   'informant.contact': '',
@@ -26,7 +24,7 @@ export const deathResolver: DeathResolver = {
   'deceased.gender': (data: DeathCsvRecord) => toGender(data.SEX),
   'deceased.dob': '', // Possibly birth.CHILDS_DOB
   'deceased.dobUnknown': '', // Calculate
-  'deceased.age': (data: DeathCsvRecord) => toAge(data.AGE),
+  'deceased.age': (data: DeathCsvRecord) => ageMapping[data.AGE],
   'deceased.placeOfBirth': (data: DeathCsvRecord) => data.WHERE_BORN,
   'deceased.nationality': '',
   'deceased.idType': '',
@@ -58,11 +56,7 @@ export const deathResolver: DeathResolver = {
   'deceased.wasMarried': '', // Calculate
   'deceased.dateOfMarriage': (data: DeathCsvRecord) =>
     toCrvsDate(data.WHEN_MARRIED),
-  'deceased.placeOfMarriage': (
-    data: DeathCsvRecord,
-    _: CsvFields,
-    locationMap: LocationMap[],
-  ) => resolveAddress(data.WHERE_MARRIED, locationMap),
+  'deceased.placeOfMarriage': (data: DeathCsvRecord) => data.WHERE_MARRIED,
   'deceased.hadLivingChildren': '', // Calculate
   'eventDetails.dateOfDeath': (data: DeathCsvRecord) =>
     toCrvsDate(data.WHEN_DIED),
@@ -99,7 +93,7 @@ export const deathResolver: DeathResolver = {
   'eventDetails.medicalOfficerName': (data: DeathCsvRecord) =>
     data.MEDICAL_ATTENDANT,
   'eventDetails.dateLastSeenAlive': (data: DeathCsvRecord) =>
-    toCrvsDate(data.DATE_LAST_ALIVE),
+    toCrvsDate(data.DATE_LAST_ALIVE, 'dd/MM/yyyy'),
   'eventDetails.notPersonallyAttended': '',
   'eventDetails.causeOfDeath': (data: DeathCsvRecord) => data.CAUSE_OF_DEATH,
   'eventDetails.duration': '',
@@ -233,15 +227,7 @@ export const deathMetaData: DeathMetaData = {
     data: DeathCsvRecord,
     _: CsvFields,
     locationMap: LocationMap[],
-  ) => {
-    const location = getLocation(data.WHERE_DIED, locationMap)
-    if (location?.map?.includes('COK')) {
-      return location.map
-    }
-    return (
-      Object.entries(FALLBACK_ISLAND_PREFIX_MAP).find(
-        ([_, value]) => value === data.DEATH_NUMBER.substring(0, 4),
-      )?.[0] || null
-    )
-  },
+  ) =>
+    getLocationCode(data.WHERE_DIED, locationMap) ||
+    getLocationFromRegNum(data.DEATH_NUMBER),
 }
