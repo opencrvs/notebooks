@@ -71,7 +71,14 @@ Deno.test('transform - basic action type mappings', async (t) => {
   await t.step(
     'should map WAITING_VALIDATION regStatus to REGISTER action with Requested status',
     () => {
-      const history = [buildHistoryItem({ regStatus: 'WAITING_VALIDATION' })]
+      const acceptedRegisterAction = buildHistoryItem({
+        regStatus: 'REGISTERED'
+      })
+
+      const history = [
+        buildHistoryItem({ regStatus: 'WAITING_VALIDATION' }),
+        acceptedRegisterAction
+      ]
       const registration = buildEventRegistration({ history })
 
       const result = transform(registration, {}, 'birth')
