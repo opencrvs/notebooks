@@ -137,10 +137,11 @@ export const defaultDeathResolver: ResolverMap = {
   'deceased.dob': (data: EventRegistration) => data.deceased?.birthDate,
   'deceased.dobUnknown': (data: EventRegistration) =>
     data.deceased?.exactDateOfBirthUnknown,
-  'deceased.age': (data: EventRegistration) => ({
-    age: data.deceased?.ageOfIndividualInYears,
-    asOfDateRef: 'eventDetails.date',
-  }),
+  'deceased.age': (data: EventRegistration) =>
+    data.deceased?.ageOfIndividualInYears && {
+      age: data.deceased?.ageOfIndividualInYears,
+      asOfDateRef: 'eventDetails.date',
+    },
   'deceased.nationality': (data: EventRegistration) =>
     data.deceased?.nationality?.[0],
   'deceased.idType': (data: EventRegistration) =>
@@ -205,10 +206,11 @@ export const defaultDeathResolver: ResolverMap = {
   'spouse.dob': (data: EventRegistration) => data.spouse?.birthDate,
   'spouse.dobUnknown': (data: EventRegistration) =>
     data.spouse?.exactDateOfBirthUnknown,
-  'spouse.age': (data: EventRegistration) => ({
-    age: data.spouse?.ageOfIndividualInYears,
-    asOfDateRef: 'eventDetails.date',
-  }),
+  'spouse.age': (data: EventRegistration) =>
+    data.spouse?.ageOfIndividualInYears && {
+      age: data.spouse?.ageOfIndividualInYears,
+      asOfDateRef: 'eventDetails.date',
+    },
   'spouse.nationality': (data: EventRegistration) =>
     data.spouse?.nationality?.[0],
   'spouse.idType': (data: EventRegistration) =>
