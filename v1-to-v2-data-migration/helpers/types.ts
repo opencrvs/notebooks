@@ -266,6 +266,7 @@ export interface Action {
   registrationNumber?: string
   assignedTo?: string
   requestId?: string
+  originalActionId?: string
 }
 
 // Document output types

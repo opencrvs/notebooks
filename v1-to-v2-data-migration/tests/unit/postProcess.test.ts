@@ -968,7 +968,7 @@ Deno.test('PostProcess - Multiple Corrections', async (t) => {
   const birthResolver = buildBirthResolver()
 
   await t.step(
-    'should set annotation to previous declaration and reverse enngineer the original declaration',
+    'should set annotation to previous declaration and reverse engineer the original declaration',
     () => {
       const registration = buildBirthEventRegistration({
         child: {
