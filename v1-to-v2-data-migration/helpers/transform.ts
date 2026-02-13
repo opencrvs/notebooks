@@ -4,7 +4,7 @@ import {
   DEFAULT_FIELD_MAPPINGS,
   CUSTOM_FIELD_MAPPINGS,
   AGE_MAPPINGS,
-  VERIFIED_MAPPINGS,
+  VERIFIED_MAPPINGS
 } from './defaultMappings.ts'
 import { normalizeDateString, isDateField } from './dateUtils.ts'
 import { COUNTRY_FIELD_MAPPINGS } from '../countryData/countryMappings.ts'
@@ -13,7 +13,7 @@ import { ADDRESS_MAPPINGS } from '../countryData/addressMappings.ts'
 import {
   collectorResolver,
   correctionResolver,
-  declareResolver,
+  declareResolver
 } from './historyResolver.ts'
 import {
   EventRegistration,
@@ -21,19 +21,19 @@ import {
   ResolverMap,
   TransformedDocument,
   Action,
-  ActionType,
+  ActionType
 } from './types.ts'
 import {
   BIRTH_LOCATION_OTHER_HOME_KEY,
   BIRTH_LOCATION_PRIVATE_HOME_KEY,
-  COUNTRY_CODE,
+  COUNTRY_CODE
 } from '../countryData/addressResolver.ts'
 import { documentsResolver } from './defaultResolvers.ts'
 
 const mappings = {
   ...DEFAULT_FIELD_MAPPINGS,
   ...CUSTOM_FIELD_MAPPINGS,
-  ...COUNTRY_FIELD_MAPPINGS,
+  ...COUNTRY_FIELD_MAPPINGS
 }
 
 function patternMatch(
@@ -83,7 +83,7 @@ function patternMatch(
       const mergedAddress = {
         ...currentAddress,
         ...transformedWithSameKey,
-        ...addressData,
+        ...addressData
       }
 
       transformedData[saveAddressKey] = {
@@ -96,8 +96,8 @@ function patternMatch(
         streetLevelDetails: {
           ...(currentAddress.streetLevelDetails || {}),
           ...(transformedWithSameKey.streetLevelDetails || {}),
-          ...addressData.streetLevelDetails,
-        },
+          ...addressData.streetLevelDetails
+        }
       }
     } else {
       const parts = key.split('.')
@@ -139,7 +139,7 @@ export function transformCorrection(
 
   return {
     input: patternMatch(v1InputDeclaration, declaration),
-    output: patternMatch(v1OutputDeclaration, declaration),
+    output: patternMatch(v1OutputDeclaration, declaration)
   }
 }
 
@@ -159,8 +159,8 @@ function legacyHistoryItemToV2ActionType(
           declaration: declaration,
           annotation: {
             'review.signature': declareResolver['review.signature'](uri),
-            'review.comment': declareResolver['review.comment'](historyItem),
-          },
+            'review.comment': declareResolver['review.comment'](historyItem)
+          }
         }
       case 'REGISTERED':
         return {
@@ -169,14 +169,14 @@ function legacyHistoryItemToV2ActionType(
           registrationNumber: record.registration.registrationNumber,
           annotation: {
             'review.signature': declareResolver['review.signature'](uri),
-            'review.comment': declareResolver['review.comment'](historyItem),
-          },
+            'review.comment': declareResolver['review.comment'](historyItem)
+          }
         }
       case 'WAITING_VALIDATION':
         return {
           type: 'REGISTER' as ActionType,
           declaration: {},
-          status: 'Requested',
+          status: 'Requested'
         }
       case 'VALIDATED':
         return {
@@ -204,10 +204,10 @@ function legacyHistoryItemToV2ActionType(
           content: {
             templateId:
               historyItem.certificateTemplateId ||
-              historyItem.certificates?.[0]?.certificateTemplateId,
+              historyItem.certificates?.[0]?.certificateTemplateId
           },
           declaration: {},
-          annotation: annotation,
+          annotation: annotation
         }
       case 'REJECTED':
         return {
@@ -215,16 +215,16 @@ function legacyHistoryItemToV2ActionType(
           type: 'REJECT' as ActionType,
           declaration: {},
           content: {
-            reason: historyItem.statusReason?.text,
-          },
+            reason: historyItem.statusReason?.text
+          }
         }
       case 'ARCHIVED':
         return {
           type: 'ARCHIVE' as ActionType,
           declaration: {},
           content: {
-            reason: historyItem.statusReason?.text || 'None',
-          },
+            reason: historyItem.statusReason?.text || 'None'
+          }
         }
       case 'IN_PROGRESS':
         return {
@@ -232,15 +232,15 @@ function legacyHistoryItemToV2ActionType(
           declaration: declaration,
           annotation: {
             'review.signature': declareResolver['review.signature'](uri),
-            'review.comment': declareResolver['review.comment'](historyItem),
-          },
+            'review.comment': declareResolver['review.comment'](historyItem)
+          }
         }
       case 'DECLARATION_UPDATED': //TODO - check if this is correct
         const update = transformCorrection(historyItem, eventType, declaration)
         return {
           type: 'DECLARE' as ActionType,
           declaration: update.output,
-          annotation: update.input,
+          annotation: update.input
         }
       default:
         break
@@ -258,7 +258,7 @@ function legacyHistoryItemToV2ActionType(
       const annotation = Object.fromEntries(
         Object.entries(correctionResolver).map(([key, resolver]) => [
           key,
-          resolver(historyItem),
+          resolver(historyItem)
         ])
       )
 
@@ -267,7 +267,7 @@ function legacyHistoryItemToV2ActionType(
         type: 'REQUEST_CORRECTION' as ActionType,
         declaration: correction.output,
         annotation: deepMerge(annotation, correction.input),
-        requestId: historyItem.id,
+        requestId: historyItem.id
       }
     case 'APPROVED_CORRECTION':
       return {
@@ -275,13 +275,13 @@ function legacyHistoryItemToV2ActionType(
         type: 'APPROVE_CORRECTION' as ActionType,
         requestId: historyItem.requestId,
         declaration: {},
-        annotation: historyItem.annotation,
+        annotation: historyItem.annotation
       }
     case 'ASSIGNED':
       return {
         type: 'ASSIGN' as ActionType,
         assignedTo: historyItem.user?.id,
-        declaration: {},
+        declaration: {}
       }
     case 'REJECTED_CORRECTION':
       return {
@@ -290,8 +290,8 @@ function legacyHistoryItemToV2ActionType(
         requestId: historyItem.requestId,
         declaration: {},
         content: {
-          reason: historyItem.reason,
-        },
+          reason: historyItem.reason
+        }
       }
     case 'FLAGGED_AS_POTENTIAL_DUPLICATE':
       return {
@@ -301,9 +301,9 @@ function legacyHistoryItemToV2ActionType(
           duplicates:
             record.registration.duplicates?.map((x: any) => ({
               id: x.compositionId,
-              trackingId: x.trackingId,
-            })) || [],
-        },
+              trackingId: x.trackingId
+            })) || []
+        }
       }
 
     default:
@@ -317,7 +317,7 @@ function legacyHistoryItemToV2ActionType(
     UNASSIGNED: 'UNASSIGN',
     VIEWED: 'READ',
     VERIFIED: 'VALIDATE',
-    REINSTATED: 'REINSTATE',
+    REINSTATED: 'REINSTATE'
   }
 
   const type = historyItem.action ? actionMap[historyItem.action] : undefined
@@ -353,7 +353,7 @@ const preProcessHistory = (eventRegistration: EventRegistration) => {
       processedHistory.push({
         ...historyItem,
         action: 'REQUESTED_CORRECTION',
-        id: requestCorrectionId,
+        id: requestCorrectionId
       })
 
       // Second item: APPROVE_CORRECTION
@@ -365,8 +365,8 @@ const preProcessHistory = (eventRegistration: EventRegistration) => {
         action: 'APPROVED_CORRECTION',
         requestId: requestCorrectionId,
         annotation: {
-          isImmediateCorrection: true,
-        },
+          isImmediateCorrection: true
+        }
       })
     } else if (historyItem.action === 'REQUESTED_CORRECTION') {
       historyItem.id = uuidv4()
@@ -388,20 +388,26 @@ const preProcessHistory = (eventRegistration: EventRegistration) => {
         ? nonNullObjectKeys(matchingIssue)
         : { certificates: [{}] }
 
-      const cert = historyItem.certificates?.reverse()?.[issuances]
+      const cert = historyItem.certificates
+        ?.filter((c) => c !== null)
+        .reverse()?.[issuances]
 
       processedHistory.push({
         ...historyItem,
         ...issuedNotNull,
         certificates: [
-          { ...cert, ...nonNullObjectKeys(issuedNotNull.certificates[0]) },
-        ],
+          { ...cert, ...nonNullObjectKeys(issuedNotNull.certificates[0]) }
+        ]
       })
       issuances++
     } else if (!historyItem.action && historyItem.regStatus === 'ISSUED') {
       issued.push({
         ...historyItem,
-        certificates: [historyItem.certificates?.reverse()?.[issuances]],
+        certificates: [
+          historyItem.certificates?.filter((c) => c !== null).reverse()?.[
+            issuances
+          ]
+        ]
       })
       issuances++
     } else if (historyItem.action === 'REINSTATED') {
@@ -460,7 +466,7 @@ export function transform(
         status: 'Accepted',
         declaration: {},
         id: uuidv4(),
-        transactionId: uuidv4(),
+        transactionId: uuidv4()
       },
       ...historyAsc.map((history) => {
         return {
@@ -480,10 +486,10 @@ export function transform(
             declaration,
             history,
             eventType
-          ),
+          )
         } as Action
-      }),
-    ],
+      })
+    ]
   }
 
   return postProcess(documents, declaration)
@@ -526,7 +532,7 @@ function postProcess(
 ): TransformedDocument {
   const resolverKeys = Object.keys({
     ...correctionResolver,
-    ...declareResolver,
+    ...declareResolver
   })
   const hasKeys = (declaration: {} | null | undefined) =>
     Object.keys(declaration || {}).length > 0
@@ -543,7 +549,7 @@ function postProcess(
       if (action.registrationNumber) {
         if (firstRegisterAction) {
           console.warn(
-            `Multiple REGISTER actions found for document ${document.id}`,
+            `Multiple REGISTER actions found for document ${document.id}`
           )
           action.registrationNumber = undefined
           action.status = 'Requested'

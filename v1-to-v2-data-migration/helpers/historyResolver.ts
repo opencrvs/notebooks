@@ -47,7 +47,7 @@ export const collectorResolver = {
   ) => data.x, // TODO
   'collector.collect.payment.data.afterRegistrationTarget': (
     data: Certificate
-  ) => data.x, // TODO
+  ) => data.x // TODO
 }
 
 export const correctionResolver = {
@@ -58,7 +58,7 @@ export const correctionResolver = {
     historyItem.hasShowedVerifiedDocument,
   'requester.type': (historyItem: HistoryItem) =>
     historyItem.requester === 'REGISTRAR' ? 'ME' : historyItem.requester,
-  'requester.other': (historyItem: HistoryItem) => historyItem.requesterOther,
+  'requester.other': (historyItem: HistoryItem) => historyItem.requesterOther
 }
 
 export const declareResolver = {
@@ -67,10 +67,10 @@ export const declareResolver = {
     typeof uri !== 'string' && {
       path: uri.pathname,
       originalFilename: uri.pathname.replace('/ocrvs/', ''),
-      type: 'image/png',
+      type: 'image/png'
     },
   'review.comment': (historyItem: HistoryItem) =>
-    historyItem.comments?.map(({ comment }: any) => comment).join('\n'),
+    historyItem.comments?.map(({ comment }: any) => comment).join('\n')
 }
 
 function getIdForType(data: any, type: string) {
@@ -88,5 +88,5 @@ function other(data: any) {
 export default {
   ...collectorResolver,
   ...correctionResolver,
-  ...declareResolver,
+  ...declareResolver
 }
