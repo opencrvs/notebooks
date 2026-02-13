@@ -1,4 +1,4 @@
-name: Migrate all records of an event from v1 to v2
+name: Migrate v1 to v2
 
 on:
   workflow_dispatch:
@@ -20,7 +20,15 @@ on:
         description: 'System Client Secret'
         required: false
         type: string
-
+      skip:
+        description: 'Number of records to skip'
+        required: false
+        type: number
+        default: 0
+      single_record:
+        description: 'ID of a single record to migrate (for testing)'
+        required: false
+        type: string
 jobs:
   fetch-and-transform:
     name: Migrate ${{ github.event.inputs.event }} in ${{ github.event.inputs.domain }}
@@ -52,6 +60,8 @@ jobs:
           OPENCRVS_DOMAIN: ${{ github.event.inputs.domain }}
           OPENCRVS_CLIENT_ID: ${{ github.event.inputs.client_id }}
           OPENCRVS_CLIENT_SECRET: ${{ github.event.inputs.client_secret }}
+          SINGLE_RECORD: ${{ github.event.inputs.single_record }}
+          RECORD_SKIP: ${{ github.event.inputs.skip }}
         run: |
           set -o pipefail
           echo "script_output<<EOF" >> $GITHUB_OUTPUT
