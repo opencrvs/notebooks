@@ -184,16 +184,16 @@ function legacyHistoryItemToV2ActionType(
           declaration,
           annotation: {
             'review.signature': declareResolver['review.signature'](uri),
-            'review.comment': declareResolver['review.comment'](historyItem),
-          },
+            'review.comment': declareResolver['review.comment'](historyItem)
+          }
         }
       case 'ISSUED':
         const annotation = {}
+        const firstCert = historyItem.certificates?.filter((c) => c !== null)[0]
         Object.keys(collectorResolver).forEach((key) => {
           const resolver =
             collectorResolver[key as keyof typeof collectorResolver]
-          const value =
-            historyItem.certificates && resolver(historyItem.certificates[0])
+          const value = firstCert && resolver(firstCert)
           if (value) {
             ;(annotation as any)[key] = value
           }
