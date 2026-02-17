@@ -65,3 +65,8 @@ type Day = `${number}${number}`
 
 // Define a type for a specific YYYY-MM-DD format
 export type CrvsDate = `${Year}-${Month}-${Day}` | undefined
+
+export type Age = {
+  age: number
+  asOfDateRef: string
+}

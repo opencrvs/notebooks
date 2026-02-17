@@ -1,14 +1,46 @@
-import { CsvFields } from '../helpers/csvTypes.ts'
+import { AdoptionCsvRecord, CsvFields } from '../helpers/csvTypes.ts'
+import { AdoptionResolver, AdoptionMetaData } from '../helpers/adoptionTypes.ts'
+import { LocationMap } from '../helpers/types.ts'
+import { Country } from '../helpers/addressConfig.ts'
+import { nationalityMap } from '../lookupMappings/nationalities.ts'
+import { raceMap } from '../lookupMappings/races.ts'
+import {
+  deriveName,
+  getLocationCode,
+  getLocationFromRegNum,
+  resolveAddress,
+  resolveFacility,
+  toAge,
+  toAgeObject,
+  toCrvsDate,
+  toGender,
+  toISODate,
+  toName
+} from '../helpers/resolverHelpers.ts'
 
-export const adoptionResolver = {
+const toNationality = (
+  nationality: string,
+  race: string
+): Country | undefined => {
+  return nationalityMap[nationality] || raceMap[race] || undefined
+}
+
+export const adoptionResolver: AdoptionResolver = {
   'reason.option': '',
   'reason.other': '',
   'child.brnSearch': '',
-  'child.brn': (data: CsvFields) => data.adoption.BIRTH_REF,
-  'child.name': (data: CsvFields) => data.adoption.CHILDS_NAME,
-  'child.dob': (data: CsvFields) => data.adoption.CHILDS_DOB,
-  'child.gender': (data: CsvFields) => data.adoption.CHILDS_GENDER,
-  'child.birthLocation': (data: CsvFields) => data.adoption.CHILDS_BIRTHPLACE,
+  'child.brn': (data: AdoptionCsvRecord) => data.BIRTH_REF, // Does this need to be convertedf to legaccy format
+  'child.name': (data: AdoptionCsvRecord) => deriveName(data.CHILDS_NAME),
+  'child.dob': (data: AdoptionCsvRecord) => toCrvsDate(data.CHILDS_DOB),
+  'child.gender': (data: AdoptionCsvRecord) => toGender(data.CHILDS_GENDER),
+  'child.birthLocation': (
+    data: AdoptionCsvRecord,
+    _: CsvFields,
+    locationMap: LocationMap[]
+  ) =>
+    resolveFacility(data.CHILDS_BIRTHPLACE, locationMap)
+      ? 'HEALTH_FACILITY'
+      : 'OTHER',
   'consent.notProvidedOrWaived': '',
   'consent.numberOfParties': '',
   'consenter.cp1.name': '',
@@ -27,59 +59,75 @@ export const adoptionResolver = {
   'consenter.cp2.age': '',
   'consenter.cp2.residence': '',
   'consenter.cp2.occupation': '',
-  'adoptiveMother.detailsUnavailable': '',
+  'adoptiveMother.detailsUnavailable': '', // Can calculate this
   'adoptiveMother.unavailableReason': '',
-  'adoptiveMother.name': (data: CsvFields) => data.adoption.MOTHERS_NAME,
-  'adoptiveMother.dob': (data: CsvFields) => data.adoption.MOTHERS_DOB,
-  'adoptiveMother.dobUnknown': '', // Calculate
-  'adoptiveMother.age': (data: CsvFields) => data.adoption.MOTHERS_AGE,
+  'adoptiveMother.name': (data: AdoptionCsvRecord) =>
+    toName(data.MOTHERS_NAME, data.MOTHERS_SURNAME),
+  'adoptiveMother.dob': (data: AdoptionCsvRecord) =>
+    toCrvsDate(data.MOTHERS_DOB),
+  'adoptiveMother.dobUnknown': (data: AdoptionCsvRecord) =>
+    Boolean(!data.MOTHERS_DOB && data.MOTHERS_AGE),
+  'adoptiveMother.age': (data: AdoptionCsvRecord) =>
+    toAgeObject(data.MOTHERS_AGE, 'eventDetails.date'),
   'adoptiveMother.maritalStatus': '',
-  'adoptiveMother.maidenName': (data: CsvFields) =>
-    data.adoption.MOTHERS_MAIDEN_NAME,
-  'adoptiveMother.placeOfBirth': (data: CsvFields) =>
-    data.adoption.MOTHERS_BIRTHPLACE,
-  'adoptiveMother.nationality': (data: CsvFields) =>
-    data.adoption.MOTHERS_NATIONALITY,
+  'adoptiveMother.maidenName': (data: AdoptionCsvRecord) =>
+    data.MOTHERS_MAIDEN_NAME,
+  'adoptiveMother.placeOfBirth': (data: AdoptionCsvRecord) =>
+    data.MOTHERS_BIRTHPLACE,
+  'adoptiveMother.nationality': (data: AdoptionCsvRecord) =>
+    toNationality(data.MOTHERS_NATIONALITY, data.MOTHERS_RACE),
   'adoptiveMother.idType': '',
   'adoptiveMother.idTypeOther': '',
   'adoptiveMother.idNumber': '',
-  'adoptiveMother.residence': (data: CsvFields) =>
-    data.adoption.MOTHERS_ADDRESS,
+  'adoptiveMother.residence': (
+    data: AdoptionCsvRecord,
+    _: CsvFields,
+    locationMap: LocationMap[]
+  ) => resolveAddress(data.MOTHERS_ADDRESS, locationMap),
   'adoptiveMother.occupation': '',
-  'adoptiveFather.detailsUnavailable': '',
+  'adoptiveFather.detailsUnavailable': '', // Calculate
   'adoptiveFather.unavailableReason': '',
-  'adoptiveFather.name': (data: CsvFields) => data.adoption.FATHERS_NAME,
-  'adoptiveFather.dob': (data: CsvFields) => data.adoption.FATHERS_DOB,
-  'adoptiveFather.dobUnknown': '', // Calculate
-  'adoptiveFather.age': (data: CsvFields) => data.adoption.FATHERS_AGE,
-  'adoptiveFather.placeOfBirth': (data: CsvFields) =>
-    data.adoption.FATHERS_BIRTHPLACE,
-  'adoptiveFather.nationality': (data: CsvFields) =>
-    data.adoption.FATHERS_NATIONALITY,
+  'adoptiveFather.name': (data: AdoptionCsvRecord) =>
+    toName(data.FATHERS_NAME, data.FATHERS_SURNAME),
+  'adoptiveFather.dob': (data: AdoptionCsvRecord) =>
+    toCrvsDate(data.FATHERS_DOB),
+  'adoptiveFather.dobUnknown': (data: AdoptionCsvRecord) =>
+    Boolean(!data.FATHERS_DOB && data.FATHERS_AGE),
+  'adoptiveFather.age': (data: AdoptionCsvRecord) =>
+    toAgeObject(data.FATHERS_AGE, 'eventDetails.date'),
+  'adoptiveFather.placeOfBirth': (data: AdoptionCsvRecord) =>
+    data.FATHERS_BIRTHPLACE,
+  'adoptiveFather.nationality': (data: AdoptionCsvRecord) =>
+    toNationality(data.FATHERS_NATIONALITY, data.FATHERS_RACE),
   'adoptiveFather.idType': '',
   'adoptiveFather.idTypeOther': '',
   'adoptiveFather.idNumber': '',
-  'adoptiveFather.residence': (data: CsvFields) =>
-    data.adoption.FATHERS_ADDRESS,
-  'adoptiveFather.occupation': (data: CsvFields) =>
-    data.adoption.FATHERS_OCCUPATION,
-  'adoptionOrder.number': (data: CsvFields) => data.adoption.ADOPTION_REF,
-  'adoptionOrder.issuingAuthority': () => 'High Court of the Cook Islands',
-  'adoptionOrder.date': (data: CsvFields) => data.adoption.DATE_REGISTERED,
-  'adoptionOrder.changesChildLegalName': '', // Calculate
-  'adoptionOrder.childNewName': (data: CsvFields) =>
-    data.adoption.CHILDS_NEW_NAME,
+  'adoptiveFather.residence': (
+    data: AdoptionCsvRecord,
+    _: CsvFields,
+    locationMap: LocationMap[]
+  ) => resolveAddress(data.FATHERS_ADDRESS, locationMap),
+  'adoptiveFather.occupation': (data: AdoptionCsvRecord) =>
+    data.FATHERS_OCCUPATION,
+  'adoptionOrder.number': (data: AdoptionCsvRecord) => data.ADOPTION_REF,
+  'adoptionOrder.issuingAuthority': () => 'high-court-of-the-cook-islands',
+  'adoptionOrder.date': (data: AdoptionCsvRecord) =>
+    toCrvsDate(data.DATE_REGISTERED),
+  'adoptionOrder.changesChildLegalName': (data: AdoptionCsvRecord) =>
+    !!data.CHILDS_NEW_NAME,
+  'adoptionOrder.childNewName': (data: AdoptionCsvRecord) =>
+    data.CHILDS_NEW_NAME ? toName(data.CHILDS_NEW_NAME, '') : undefined // Need tp parse
 }
 
-export const adoptionMetaDataMapping: Record<string, string> = {
-  registrationNumber: 'adoption.ADOPTION_REF',
-  dateOfRegistration: 'adoption.DATE_REGISTERED',
-  registrar: 'adoption.REGISTRAR',
-}
-
-export const adoptionNameMapping: Record<string, string> = {
-  'adoptiveMother.name.firstname': 'adoption.MOTHERS_NAME',
-  'adoptiveMother.name.surname': 'adoption.MOTHERS_SURNAME',
-  'adoptiveFather.name.firstname': 'adoption.FATHERS_NAME',
-  'adoptiveFather.name.surname': 'adoption.FATHERS_SURNAME',
+export const adoptionMetaData: AdoptionMetaData = {
+  registrationDate: (data: AdoptionCsvRecord) =>
+    toISODate(data.DATE_REGISTERED),
+  registrar: (data: AdoptionCsvRecord) => data.REGISTRAR,
+  locationCode: (
+    data: AdoptionCsvRecord,
+    _: CsvFields,
+    locationMap: LocationMap[]
+  ) =>
+    getLocationCode(data.CHILDS_BIRTHPLACE, locationMap) ||
+    getLocationFromRegNum(data.ADOPTION_REF)
 }

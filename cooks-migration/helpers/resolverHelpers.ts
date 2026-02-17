@@ -2,6 +2,7 @@ import { format, isValid, parse } from 'date-fns'
 import { Address } from './addressConfig.ts'
 import { FALLBACK_ISLAND_PREFIX_MAP } from './generators.ts'
 import {
+  Age,
   CrvsDate,
   EVENT_TYPE_MAP,
   EventType,
@@ -52,6 +53,14 @@ export const deriveName = (name: string): Name => {
 export const toAge = (ageString: string) => {
   const age = Number(ageString)
   return isNaN(age) || age === 0 ? null : age
+}
+
+export const toAgeObject = (
+  age: string,
+  asOfDateRef: string
+): Age | undefined => {
+  const ageNumber = toAge(age)
+  return ageNumber !== null ? { age: ageNumber, asOfDateRef } : undefined
 }
 
 export const toGender = (genderString: string): Gender => {
