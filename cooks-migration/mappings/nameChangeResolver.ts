@@ -5,7 +5,6 @@ import {
 } from '../helpers/nameChangeTypes.ts'
 import {
   deriveName,
-  getLocation,
   getLocationCode,
   resolveAddress,
   toCrvsDate,

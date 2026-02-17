@@ -1,3 +1,5 @@
+import { CrvsDate } from '../../helpers/types.ts'
+
 export type LengthInCisValue =
   | { years: number }
   | { sinceBirth: true }
@@ -577,7 +579,7 @@ export const lengthInCis: Record<string, LengthInCisValue> = {
   'SINGLE BIRTH': { years: 0 },
   'STILL BIRTH': { years: 0 },
   'STILL BORN': { years: 0 },
-  STILLBIRTH: { years: 0 },
+  STILLBIRTH: { years: 0 }
 }
 
 function dateDiff(date: string, targetYear: number): number {
@@ -590,13 +592,13 @@ function dateDiff(date: string, targetYear: number): number {
 export function resolveLengthInCis(
   key: string,
   age: number | null,
-  date: string,
+  date: CrvsDate
 ): { years?: number; sinceBirth?: boolean } {
   const value = lengthInCis[key]
   if (!value) return { years: 0 }
 
   if (typeof value === 'function') {
-    return value(age, date) as { years: number }
+    return value(age, date as string) as { years: number }
   }
 
   return value

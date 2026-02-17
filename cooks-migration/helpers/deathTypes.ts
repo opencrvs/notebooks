@@ -1,6 +1,6 @@
 import { Address } from './addressConfig.ts'
 import { CsvFields, DeathCsvRecord } from './csvTypes.ts'
-import { Gender, LocationMap, Name } from './types.ts'
+import { CrvsDate, Gender, LocationMap, Name } from './types.ts'
 
 export type ResolverFunction<T> =
   | ((data: DeathCsvRecord) => T)
@@ -31,10 +31,10 @@ export type DeathResolver = {
   'deceased.sincebirth': ResolverFunction<boolean>
   'deceased.noOfyearsLivedInCook': ResolverFunction<number>
   'deceased.wasMarried': string
-  'deceased.dateOfMarriage': ResolverFunction<string>
+  'deceased.dateOfMarriage': ResolverFunction<CrvsDate>
   'deceased.placeOfMarriage': ResolverFunction<string>
   'deceased.hadLivingChildren': string
-  'eventDetails.dateOfDeath': ResolverFunction<string>
+  'eventDetails.dateOfDeath': ResolverFunction<CrvsDate>
   'eventDetails.mannerOfDeath': string
   'eventDetails.placeOfDeath': ResolverFunction<PlaceOfDeath | null>
   'eventDetails.deathLocation': ResolverFunction<string | null>
@@ -44,7 +44,7 @@ export type DeathResolver = {
   'eventDetails.causeOfDeathDeterminedByCoroner': string
   'eventDetails.causeOfDeathEstablished': string
   'eventDetails.medicalOfficerName': ResolverFunction<string>
-  'eventDetails.dateLastSeenAlive': ResolverFunction<string>
+  'eventDetails.dateLastSeenAlive': ResolverFunction<CrvsDate>
   'eventDetails.notPersonallyAttended': string
   'eventDetails.causeOfDeath': ResolverFunction<string>
   'eventDetails.duration': string
@@ -63,7 +63,7 @@ export type DeathResolver = {
   'eventDetails.otherSignificantConditionIfApplicable': string
   'eventDetails.approximateDuration2': string
   'burial.burialArrangement': string
-  'burial.dateOfBurial': ResolverFunction<string>
+  'burial.dateOfBurial': ResolverFunction<CrvsDate>
   'burial.whereburied': ResolverFunction<Address | undefined>
   'burial.burialPlaceDescription': string
   'father.detailsNotAvailable': string

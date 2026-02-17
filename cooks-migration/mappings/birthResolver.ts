@@ -2,7 +2,7 @@ import { BirthCsvRecord, CsvFields } from '../helpers/csvTypes.ts'
 import {
   BirthResolver,
   BirthInformant,
-  BirthMetaData,
+  BirthMetaData
 } from '../helpers/birthTypes.ts'
 import { LocationMap } from '../helpers/types.ts'
 import { Country } from '../helpers/addressConfig.ts'
@@ -10,10 +10,8 @@ import { birthInformantMap } from '../lookupMappings/informantTypes.ts'
 import { nationalityMap } from '../lookupMappings/nationalities.ts'
 import { raceMap } from '../lookupMappings/races.ts'
 import { twinsMap } from '../lookupMappings/twins.ts'
-import { FALLBACK_ISLAND_PREFIX_MAP } from '../helpers/generators.ts'
 import {
   deriveName,
-  getLocation,
   getLocationCode,
   getLocationFromRegNum,
   resolveAddress,
@@ -22,7 +20,7 @@ import {
   toCrvsDate,
   toGender,
   toISODate,
-  toName,
+  toName
 } from '../helpers/resolverHelpers.ts'
 
 const lookUpNameChange = (CsvFields: CsvFields, birthRef: string) => {
@@ -31,13 +29,13 @@ const lookUpNameChange = (CsvFields: CsvFields, birthRef: string) => {
     .sort(
       (a, b) =>
         new Date(toISODate(a.DATE)).getTime() -
-        new Date(toISODate(b.DATE)).getTime(),
+        new Date(toISODate(b.DATE)).getTime()
     )
 }
 
 const toNationality = (
   nationality: string,
-  race: string,
+  race: string
 ): Country | undefined => {
   return nationalityMap[nationality] || raceMap[race] || undefined
 }
@@ -54,7 +52,7 @@ export const birthResolver: BirthResolver = {
   'child.placeOfBirth': (
     data: BirthCsvRecord,
     _: CsvFields,
-    locationMap: LocationMap[],
+    locationMap: LocationMap[]
   ) =>
     resolveFacility(data.CHILDS_BIRTHPLACE, locationMap)
       ? 'HEALTH_FACILITY'
@@ -62,13 +60,13 @@ export const birthResolver: BirthResolver = {
   'child.birthLocation': (
     data: BirthCsvRecord,
     _: CsvFields,
-    locationMap: LocationMap[],
+    locationMap: LocationMap[]
   ) => resolveFacility(data.CHILDS_BIRTHPLACE, locationMap),
   'child.birthLocation.privateHome': '',
   'child.birthLocation.other': (
     data: BirthCsvRecord,
     _: CsvFields,
-    locationMap: LocationMap[],
+    locationMap: LocationMap[]
   ) => resolveAddress(data.CHILDS_BIRTHPLACE, locationMap),
   'child.birthType': (data: BirthCsvRecord) =>
     twinsMap[data.CHILDS_TWIN]?.type || 'SINGLE',
@@ -131,7 +129,7 @@ export const birthResolver: BirthResolver = {
   'mother.address': (
     data: BirthCsvRecord,
     _: CsvFields,
-    locationMap: LocationMap[],
+    locationMap: LocationMap[]
   ) => resolveAddress(data.MOTHERS_ADDRESS, locationMap),
   'mother.occupation': '',
   'father.detailsUnavailable': '',
@@ -153,7 +151,7 @@ export const birthResolver: BirthResolver = {
   'father.address': (
     data: BirthCsvRecord,
     _: CsvFields,
-    locationMap: LocationMap[],
+    locationMap: LocationMap[]
   ) => resolveAddress(data.FATHERS_ADDRESS, locationMap),
   'father.occupation': (data: BirthCsvRecord) => data.FATHERS_OCCUPATION,
   'informant.relation': (data: BirthCsvRecord): BirthInformant => {
@@ -176,11 +174,11 @@ export const birthResolver: BirthResolver = {
   'informant.address': (
     data: BirthCsvRecord,
     _: CsvFields,
-    locationMap: LocationMap[],
+    locationMap: LocationMap[]
   ) => resolveAddress(data.INFORMANTS_ADDRESS, locationMap),
   'informant.occupation': (data: BirthCsvRecord) => data.INFORMANTS_OCCUPATION,
   'informant.phoneNo': '',
-  'informant.email': '',
+  'informant.email': ''
 }
 
 export const birthMetaData: BirthMetaData = {
@@ -189,8 +187,8 @@ export const birthMetaData: BirthMetaData = {
   locationCode: (
     data: BirthCsvRecord,
     _: CsvFields,
-    locationMap: LocationMap[],
+    locationMap: LocationMap[]
   ) =>
     getLocationCode(data.CHILDS_BIRTHPLACE, locationMap) ||
-    getLocationFromRegNum(data.BIRTH_REF),
+    getLocationFromRegNum(data.BIRTH_REF)
 }

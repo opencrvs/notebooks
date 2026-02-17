@@ -1,68 +1,116 @@
-import { CsvFields } from '../helpers/csvTypes.ts'
+import { CsvFields, MarriageCsvRecord } from '../helpers/csvTypes.ts'
+import {
+  BrideConjugalStatus,
+  GroomConjugalStatus,
+  MarriageMetaData,
+  MarriageResolver
+} from '../helpers/marriageTypes.ts'
+import { LocationMap } from '../helpers/types.ts'
+import {
+  getLocationCode,
+  getLocationFromRegNum,
+  resolveAddress,
+  toCrvsDate,
+  toISODate,
+  toName
+} from '../helpers/resolverHelpers.ts'
 
-export const marriageResolver = {
+const getBrideStatus = (status: string): BrideConjugalStatus | undefined =>
+  status === 'SEPARATED'
+    ? 'DIVORCED'
+    : (
+        {
+          S: 'SPINSTER',
+          D: 'DIVORCED',
+          W: 'WIDOW'
+        } as Record<string, BrideConjugalStatus>
+      )[status[0]]
+
+const getGroomStatus = (status: string): GroomConjugalStatus | undefined =>
+  status === 'S' || status === 'SINGLE'
+    ? 'BACHELOR'
+    : (
+        {
+          B: 'BACHELOR',
+          D: 'DIVORCED',
+          W: 'WIDOWER'
+        } as Record<string, GroomConjugalStatus>
+      )[status[0]]
+
+export const marriageResolver: MarriageResolver = {
   'informant.contact': '',
   'reason.option': '',
   'reason.other': '',
-  'marriageDetails.licenceNumber': (data: CsvFields) =>
-    data.marriage.NOTICE_NUMBER,
-  'marriageDetails.expiryDate': (data: CsvFields) =>
-    data.marriage.LICENCE_EXPIRY_DATE,
-  'marriageDetails.dateOfMarriage': (data: CsvFields) =>
-    data.marriage.MARRIAGE_DATE,
-  'marriageDetails.address': (data: CsvFields) => data.marriage.MARRIAGE_PLACE,
-  'marriageDetails.venueName': (data: CsvFields) => data.marriage.CHURCH_NAME,
+  'marriageDetails.licenceNumber': '',
+  'marriageDetails.expiryDate': (data: MarriageCsvRecord) =>
+    toCrvsDate(data.LICENCE_EXPIRY_DATE),
+  'marriageDetails.dateOfMarriage': (data: MarriageCsvRecord) =>
+    toCrvsDate(data.MARRIAGE_DATE),
+  'marriageDetails.address': (
+    data: MarriageCsvRecord,
+    _: CsvFields,
+    locationMap: LocationMap[]
+  ) => resolveAddress(data.MARRIAGE_PLACE, locationMap),
+  'marriageDetails.venueName': (data: MarriageCsvRecord) => data.CHURCH_NAME,
   'marriageDetails.officiantType': '',
-  'marriageDetails.officiantFullName': (data: CsvFields) =>
-    data.marriage.PASTOR_NAME,
-  'marriageDetails.officiantAffiliation': (data: CsvFields) =>
-    data.marriage.DENOMINATION,
-  'marriageDetails.bridegroomName': (data: CsvFields) =>
-    data.marriage.GROOM_FIRSTNAME,
-  'marriageDetails.bridegroomDob': (data: CsvFields) => data.marriage.GROOM_DOB,
-  'marriageDetails.bridegroomPlaceOfBirth': (data: CsvFields) =>
-    data.marriage.GROOM_BIRTHPLACE,
-  'marriageDetails.bridegroomOccupation': (data: CsvFields) =>
-    data.marriage.GROOM_OCCUPATION,
-  'marriageDetails.bridegroomConjugalStatus': (data: CsvFields) =>
-    data.marriage.GROOM_STATUS,
+  'marriageDetails.officiantFullName': (data: MarriageCsvRecord) =>
+    data.PASTOR_NAME,
+  'marriageDetails.officiantAffiliation': (data: MarriageCsvRecord) =>
+    data.DENOMINATION,
+  'marriageDetails.bridegroomName': (data: MarriageCsvRecord) =>
+    toName(data.GROOM_FIRSTNAME, data.GROOM_LASTNAME),
+  'marriageDetails.bridegroomDob': (data: MarriageCsvRecord) =>
+    toCrvsDate(data.GROOM_DOB),
+  'marriageDetails.bridegroomPlaceOfBirth': (data: MarriageCsvRecord) =>
+    data.GROOM_BIRTHPLACE,
+  'marriageDetails.bridegroomOccupation': (data: MarriageCsvRecord) =>
+    data.GROOM_OCCUPATION,
+  'marriageDetails.bridegroomConjugalStatus': (data: MarriageCsvRecord) =>
+    getGroomStatus(data.GROOM_STATUS),
   'marriageDetails.bridegroomDateOfDecreeAbsolute': '',
-  'marriageDetails.bridegroomDateOfDeathFormerWife': (data: CsvFields) =>
-    data.marriage.GROOM_DOD_WIDOW,
-  'marriageDetails.bridegroomAddress': (data: CsvFields) =>
-    data.marriage.GROOM_RESIDENCE,
-  'marriageDetails.brideName': (data: CsvFields) =>
-    data.marriage.BRIDE_FIRSTNAME,
-  'marriageDetails.brideDob': (data: CsvFields) => data.marriage.BRIDE_DOB,
-  'marriageDetails.bridePlaceOfBirth': (data: CsvFields) =>
-    data.marriage.BRIDE_BIRTHPLACE,
-  'marriageDetails.brideOccupation': (data: CsvFields) =>
-    data.marriage.BRIDE_OCCUPATION,
-  'marriageDetails.brideConjugalStatus': (data: CsvFields) =>
-    data.marriage.BRIDE_STATUS,
+  'marriageDetails.bridegroomDateOfDeathFormerWife': (
+    data: MarriageCsvRecord
+  ) => toCrvsDate(data.GROOM_DOD_WIDOW),
+  'marriageDetails.bridegroomAddress': (
+    data: MarriageCsvRecord,
+    _: CsvFields,
+    locationMap: LocationMap[]
+  ) => resolveAddress(data.GROOM_RESIDENCE, locationMap),
+  'marriageDetails.brideName': (data: MarriageCsvRecord) =>
+    toName(data.BRIDE_FIRSTNAME, data.BRIDE_LASTNAME),
+  'marriageDetails.brideDob': (data: MarriageCsvRecord) =>
+    toCrvsDate(data.BRIDE_DOB),
+  'marriageDetails.bridePlaceOfBirth': (data: MarriageCsvRecord) =>
+    data.BRIDE_BIRTHPLACE,
+  'marriageDetails.brideOccupation': (data: MarriageCsvRecord) =>
+    data.BRIDE_OCCUPATION,
+  'marriageDetails.brideConjugalStatus': (data: MarriageCsvRecord) =>
+    getBrideStatus(data.BRIDE_STATUS),
   'marriageDetails.brideDateOfDecreeAbsolute': '',
-  'marriageDetails.brideDateOfDeathFormerHusband': (data: CsvFields) =>
-    data.marriage.BRIDE_DOD_WIDOWER,
-  'marriageDetails.brideAddress': (data: CsvFields) =>
-    data.marriage.BRIDE_RESIDENCE,
+  'marriageDetails.brideDateOfDeathFormerHusband': (data: MarriageCsvRecord) =>
+    toCrvsDate(data.BRIDE_DOD_WIDOWER),
+  'marriageDetails.brideAddress': (
+    data: MarriageCsvRecord,
+    _: CsvFields,
+    locationMap: LocationMap[]
+  ) => resolveAddress(data.BRIDE_RESIDENCE, locationMap),
   'informantDetails.informantType': '',
   'informantDetails.relationshipToOfficiantOrCouple': '',
   'informantDetails.name': '',
   'informantDetails.phoneNumber': '',
   'informantDetails.email': '',
   'supportingDocuments.marriageRegisterForm': '',
-  'supportingDocuments.authorisationLetter': '',
+  'supportingDocuments.authorisationLetter': ''
 }
 
-export const marriageMetaDataMapping: Record<string, string> = {
-  registrationNumber: 'marriage.NOTICE_NUMBER',
-  dateOfRegistration: 'marriage.MARRIAGE_DATE',
-  registrar: 'marriage.REGISTRAR',
-}
-
-export const marriageNameMapping: Record<string, string> = {
-  'marriageDetails.bridegroomName.firstname': 'marriage.GROOM_FIRSTNAME',
-  'marriageDetails.bridegroomName.surname': 'marriage.GROOM_LASTNAME',
-  'marriageDetails.brideName.firstname': 'marriage.BRIDE_FIRSTNAME',
-  'marriageDetails.brideName.surname': 'marriage.BRIDE_LASTNAME',
+export const marriageMetaData: MarriageMetaData = {
+  registrationDate: (data: MarriageCsvRecord) => toISODate(data.MARRIAGE_DATE),
+  registrar: (data: MarriageCsvRecord) => data.REGISTRAR,
+  locationCode: (
+    data: MarriageCsvRecord,
+    _: CsvFields,
+    locationMap: LocationMap[]
+  ) =>
+    getLocationCode(data.MARRIAGE_PLACE, locationMap) ||
+    getLocationFromRegNum(data.NOTICE_NUMBER)
 }

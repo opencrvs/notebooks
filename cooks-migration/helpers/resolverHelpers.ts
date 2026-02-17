@@ -2,23 +2,24 @@ import { format, isValid, parse } from 'date-fns'
 import { Address } from './addressConfig.ts'
 import { FALLBACK_ISLAND_PREFIX_MAP } from './generators.ts'
 import {
+  CrvsDate,
   EVENT_TYPE_MAP,
   EventType,
   Gender,
   LocationMap,
-  Name,
+  Name
 } from './types.ts'
 
 type DateFormat = 'MM/dd/yyyy' | 'dd/MM/yyyy'
 
 export const toCrvsDate = (
   dateString: string,
-  dateFormat: DateFormat = 'MM/dd/yyyy',
-): string => {
+  dateFormat: DateFormat = 'MM/dd/yyyy'
+): CrvsDate => {
   const trimmedDate = dateString.trim()
 
   if (!trimmedDate) {
-    return ''
+    return undefined
   }
 
   let parsedDate = parse(trimmedDate, dateFormat, new Date())
@@ -29,16 +30,16 @@ export const toCrvsDate = (
     parsedDate = parse(trimmedDate, alternativeFormat, new Date())
 
     if (!isValid(parsedDate)) {
-      return ''
+      return undefined
     }
   }
 
-  return format(parsedDate, 'yyyy-MM-dd')
+  return format(parsedDate, 'yyyy-MM-dd') as CrvsDate
 }
 
 export const toName = (firstname: string, surname: string): Name => ({
   firstname,
-  surname,
+  surname
 })
 
 export const deriveName = (name: string): Name => {
@@ -74,7 +75,7 @@ export const toISODate = (dateString: string): string => {
 
 export const resolveAddress = (
   addressString: string,
-  locationMap: LocationMap[],
+  locationMap: LocationMap[]
 ): Address | undefined => {
   const location = locationMap.find((loc) => loc.name === addressString)
   if (location?.map && location?.id) {
@@ -82,7 +83,7 @@ export const resolveAddress = (
       addressType: 'DOMESTIC',
       country: 'COK',
       administrativeArea: location.id,
-      streetLevelDetails: {},
+      streetLevelDetails: {}
     }
   }
   if (location?.intlTown) {
@@ -90,8 +91,8 @@ export const resolveAddress = (
       addressType: 'INTERNATIONAL',
       country: location.country,
       streetLevelDetails: {
-        town: location.intlTown,
-      },
+        town: location.intlTown
+      }
     }
   }
 }
@@ -102,7 +103,7 @@ export const getLocation = (name: string, locationMap: LocationMap[]) => {
 
 export const getLocationCode = (
   name: string,
-  locationMap: LocationMap[],
+  locationMap: LocationMap[]
 ): string | null => {
   const location = getLocation(name, locationMap)
   if (location?.map?.includes('COK')) {
@@ -113,12 +114,12 @@ export const getLocationCode = (
 
 export const getLocationFromRegNum = (data: string): string | null =>
   Object.entries(FALLBACK_ISLAND_PREFIX_MAP).find(
-    ([_, value]) => value === data.substring(0, 4),
+    ([_, value]) => value === data.substring(0, 4)
   )?.[0] || null
 
 export const resolveFacility = (
   name: string,
-  locationMap: LocationMap[],
+  locationMap: LocationMap[]
 ): string | null => {
   const location = getLocation(name, locationMap)
   return location?.facilityCode ? location.id : null
@@ -127,4 +128,12 @@ export const resolveFacility = (
 export const toLegacy = (registration: string, eventType: EventType) => {
   const suffix = EVENT_TYPE_MAP[eventType]
   return `${registration}${suffix}`
+}
+
+export function nonNullObjectKeys(obj: Record<string, any>) {
+  return Object.fromEntries(
+    Object.entries(obj).filter(
+      ([_, value]) => value !== null && value !== undefined && value !== ''
+    )
+  )
 }

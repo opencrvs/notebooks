@@ -56,5 +56,12 @@ export const EVENT_TYPE_MAP: Record<EventType, string> = {
   'marriage-registration': 'MR',
   divorce: 'DV',
   adoption: 'AD',
-  'name-change': 'DP',
+  'name-change': 'DP'
 }
+
+type Year = `${number}${number}${number}${number}`
+type Month = `${number}${number}`
+type Day = `${number}${number}`
+
+// Define a type for a specific YYYY-MM-DD format
+export type CrvsDate = `${Year}-${Month}-${Day}` | undefined

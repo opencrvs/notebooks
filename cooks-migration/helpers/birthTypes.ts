@@ -1,6 +1,6 @@
 import { Address, Country } from './addressConfig.ts'
 import { BirthCsvRecord, CsvFields } from './csvTypes.ts'
-import { Gender, LocationMap, Name } from './types.ts'
+import { CrvsDate, Gender, LocationMap, Name } from './types.ts'
 
 export type BirthInformant = 'MOTHER' | 'FATHER' | 'MOTHER_AND_FATHER' | 'OTHER'
 
@@ -34,7 +34,7 @@ export type BirthResolver = {
   'reason.option': string
   'reason.other': string
   'child.name': ResolverFunction<Name>
-  'child.dob': ResolverFunction<string>
+  'child.dob': ResolverFunction<CrvsDate>
   'child.reason': ResolverFunction<string>
   'child.gender': ResolverFunction<Gender>
   'child.placeOfBirth': ResolverFunction<PlaceOfBirth>
@@ -68,7 +68,7 @@ export type BirthResolver = {
   'mother.detailsUnavailable': string
   'mother.unavailableReason': string
   'mother.name': ResolverFunction<Name>
-  'mother.dob': ResolverFunction<string>
+  'mother.dob': ResolverFunction<CrvsDate>
   'mother.dobUnknown': ResolverFunction<boolean>
   'mother.age': ResolverFunction<number | null>
   'mother.maritalStatus': string
@@ -84,7 +84,7 @@ export type BirthResolver = {
   'father.detailsUnavailable': string
   'father.unavailableReason': string
   'father.name': ResolverFunction<Name>
-  'father.dob': ResolverFunction<string>
+  'father.dob': ResolverFunction<CrvsDate>
   'father.dobUnknown': ResolverFunction<boolean>
   'father.age': ResolverFunction<number | null>
   'father.placeOfBirth': ResolverFunction<string | undefined>
