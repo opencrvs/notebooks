@@ -19,6 +19,9 @@ export const ADDRESS_MAPPINGS: Record<string, AddressConfigFunction> = {
   'birth.child.privateHome': (data: string) => ({
     'child.birthLocation.privateHome': { streetLevelDetails: { fokontany: data } },
   }),
+  'birth.child.birthLocation.other': (data: string) => ({
+    'child.birthLocation.other': { streetLevelDetails: { otherPlaceOfBirth: data } },
+  }),
   'birth.child.districtPlaceofbirth': (data: string) => ({
     'child.birthLocation.privateHome': { administrativeArea: data },
   }),
