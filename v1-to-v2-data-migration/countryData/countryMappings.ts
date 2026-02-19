@@ -29,14 +29,14 @@ const INITIAL_COUNTRY_FIELD_MAPPINGS = {
 'birth.mother.mother-view-group.yearOfBirth' : 'mother.yearOfBirth',
 'birth.mother.iD' : 'mother.iD',
 'birth.mother.mother-view-group.birthPlace' : 'mother.birthPlace',      
-'birth.mother.mother-view-group.fokontanyCustomAddress' : 'mother.address',
+/* 'birth.mother.mother-view-group.fokontanyCustomAddress' : 'mother.address', */
 'birth.father.father-view-group.fatherIsDeceased' : 'father.fatherIsDeceased',
 'birth.father.father-view-group.fatherHasFormallyRecognisedChild' : 'father.fatherHasFormallyRecognisedChild',
 'birth.father.father-view-group.customizedExactDateOfBirthUnknown' : 'father.customizedExactDateOfBirthUnknown',
 'birth.father.father-view-group.yearOfBirth' : 'father.yearOfBirth',
 'birth.father.iD' : 'father.iD',
 'birth.father.father-view-group.birthPlace' : 'father.birthPlace',
-'birth.father.father-view-group.fokontanyCustomAddress' : 'father.address'
+/* 'birth.father.father-view-group.fokontanyCustomAddress' : 'father.address' */
 }
 
 // Mention fields

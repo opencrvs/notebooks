@@ -191,6 +191,9 @@ export const ADDRESS_MAPPINGS: Record<string, AddressConfigFunction> = {
       /* Ignore: Only map leaf level */
     },
   }),
+  'birth.mother.address': (data: string) => ({
+    'mother.address': { streetLevelDetails: { fokontany: data } },
+  }),
   'birth.mother.districtPrimaryMother': (data: string) => ({
     'mother.address': { administrativeArea: data },
   }),
@@ -259,6 +262,9 @@ export const ADDRESS_MAPPINGS: Record<string, AddressConfigFunction> = {
     'father.address': {
       /* Ignore: Only map leaf level */
     },
+  }),
+  'birth.father.address': (data: string) => ({
+    'father.address': { streetLevelDetails: { fokontany: data } },
   }),
   'birth.father.districtPrimaryFather': (data: string) => ({
     'father.address': { administrativeArea: data },
