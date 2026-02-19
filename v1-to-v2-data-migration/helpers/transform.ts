@@ -338,6 +338,7 @@ function legacyHistoryItemToV2ActionType(
     UNASSIGNED: 'UNASSIGN',
     VIEWED: 'READ',
     VERIFIED: 'VALIDATE',
+    REINSTATED: 'REINSTATE',
   }
 
   const type = historyItem.action ? actionMap[historyItem.action] : undefined
@@ -361,6 +362,7 @@ const preProcessHistory = (eventRegistration: EventRegistration) => {
   const processedHistory: any[] = []
   const issued: any[] = []
   const corrections: any[] = []
+  const reinstated: any[] = []
   let issuances = 0
   for (const historyItem of eventRegistration.history.sort(
     (a, b) => new Date(b.date).valueOf() - new Date(a.date).valueOf()
@@ -423,6 +425,13 @@ const preProcessHistory = (eventRegistration: EventRegistration) => {
         certificates: [historyItem.certificates?.reverse()?.[issuances]],
       })
       issuances++
+    } else if (historyItem.action === 'REINSTATED') {
+      reinstated.push(historyItem)
+    } else if (!historyItem.action && historyItem.regStatus === 'ARCHIVED') {
+      const wasReinstate = reinstated.pop()
+      if (!wasReinstate) {
+        processedHistory.push(historyItem)
+      }
     } else {
       processedHistory.push(historyItem)
     }
