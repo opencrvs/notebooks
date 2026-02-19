@@ -1,28 +1,26 @@
 import { BirthCsvRecord, DeedpollCsvRecord } from '../helpers/csvTypes.ts'
 import {
   NameChangeResolver,
-  ResolverFunction,
+  ResolverFunction
 } from '../helpers/nameChangeTypes.ts'
 import {
   deriveName,
   getLocationCode,
   resolveAddress,
   toCrvsDate,
-  toISODate,
+  toISODate
 } from '../helpers/resolverHelpers.ts'
 import { LocationMap } from '../helpers/types.ts'
 
 const getPreviousChanges = (
   current: DeedpollCsvRecord,
-  all: DeedpollCsvRecord[],
+  all: DeedpollCsvRecord[]
 ) => {
   const currentIndex = all.indexOf(current)
   return all.slice(0, currentIndex)
 }
 
 export const nameChangeResolver: NameChangeResolver = {
-  'reason.option': '',
-  'reason.other': '',
   'subjects.nationality': '',
   'subjects.brn': '',
   'subjects.brnText': '',
@@ -34,55 +32,55 @@ export const nameChangeResolver: NameChangeResolver = {
     data: DeedpollCsvRecord,
     _: BirthCsvRecord,
     __: DeedpollCsvRecord[],
-    locationMap: LocationMap[],
+    locationMap: LocationMap[]
   ) => resolveAddress(data.ISLAND, locationMap), // Not so sure about this
   'subjects.nameChangedViaDeadPoll': () => true,
   'subjects.nameChange1.deedPollNumber': (
     data: DeedpollCsvRecord,
     _: BirthCsvRecord,
-    changes: DeedpollCsvRecord[],
+    changes: DeedpollCsvRecord[]
   ) => getPreviousChanges(data, changes)[0]?.DP_REF,
   'subjects.nameChange1.firstname': (
     data: DeedpollCsvRecord,
     _: BirthCsvRecord,
-    changes: DeedpollCsvRecord[],
+    changes: DeedpollCsvRecord[]
   ) => getPreviousChanges(data, changes)[0]?.NEW_FIRSTNAMES,
   'subjects.nameChange1.surname': (
     data: DeedpollCsvRecord,
     _: BirthCsvRecord,
-    changes: DeedpollCsvRecord[],
+    changes: DeedpollCsvRecord[]
   ) => getPreviousChanges(data, changes)[0]?.NEW_SURNAME,
   'subjects.nameChange1.addAnother': '',
   'subjects.nameChange2.deedPollNumber': (
     data: DeedpollCsvRecord,
     _: BirthCsvRecord,
-    changes: DeedpollCsvRecord[],
+    changes: DeedpollCsvRecord[]
   ) => getPreviousChanges(data, changes)[1]?.DP_REF,
   'subjects.nameChange2.firstname': (
     data: DeedpollCsvRecord,
     _: BirthCsvRecord,
-    changes: DeedpollCsvRecord[],
+    changes: DeedpollCsvRecord[]
   ) => getPreviousChanges(data, changes)[1]?.NEW_FIRSTNAMES,
   'subjects.nameChange2.surname': (
     data: DeedpollCsvRecord,
     _: BirthCsvRecord,
-    changes: DeedpollCsvRecord[],
+    changes: DeedpollCsvRecord[]
   ) => getPreviousChanges(data, changes)[1]?.NEW_SURNAME,
   'subjects.nameChange2.addAnother': '',
   'subjects.nameChange3.deedPollNumber': (
     data: DeedpollCsvRecord,
     _: BirthCsvRecord,
-    changes: DeedpollCsvRecord[],
+    changes: DeedpollCsvRecord[]
   ) => getPreviousChanges(data, changes)[2]?.DP_REF,
   'subjects.nameChange3.firstname': (
     data: DeedpollCsvRecord,
     _: BirthCsvRecord,
-    changes: DeedpollCsvRecord[],
+    changes: DeedpollCsvRecord[]
   ) => getPreviousChanges(data, changes)[2]?.NEW_FIRSTNAMES,
   'subjects.nameChange3.surname': (
     data: DeedpollCsvRecord,
     _: BirthCsvRecord,
-    changes: DeedpollCsvRecord[],
+    changes: DeedpollCsvRecord[]
   ) => getPreviousChanges(data, changes)[2]?.NEW_SURNAME,
   'newName.name.firstname': (data: DeedpollCsvRecord) => data.NEW_FIRSTNAMES,
   'newName.name.surname': (data: DeedpollCsvRecord) => data.NEW_SURNAME,
@@ -107,13 +105,13 @@ export const nameChangeResolver: NameChangeResolver = {
     data: DeedpollCsvRecord,
     _: BirthCsvRecord,
     __: DeedpollCsvRecord[],
-    locationMap: LocationMap[],
-  ) => resolveAddress(data.WITNESS_ADDRESS, locationMap),
+    locationMap: LocationMap[]
+  ) => resolveAddress(data.WITNESS_ADDRESS, locationMap)
 }
 
 export const nameChangeMetaDataMapping: Record<string, string> = {
   registrationNumber: 'deedpoll.DP_REF', //doesn't look unique
-  dateOfRegistration: 'deedpoll.DATE',
+  dateOfRegistration: 'deedpoll.DATE'
 }
 
 export type NameChangeMetaData = {
@@ -129,6 +127,6 @@ export const nameChangeMetaData: NameChangeMetaData = {
     data: DeedpollCsvRecord,
     _: BirthCsvRecord,
     __: DeedpollCsvRecord[],
-    locationMap: LocationMap[],
-  ) => getLocationCode(data.ISLAND, locationMap),
+    locationMap: LocationMap[]
+  ) => getLocationCode(data.ISLAND, locationMap)
 }

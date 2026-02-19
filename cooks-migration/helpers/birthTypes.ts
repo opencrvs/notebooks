@@ -1,5 +1,6 @@
 import { Address, Country } from './addressConfig.ts'
 import { BirthCsvRecord, CsvFields } from './csvTypes.ts'
+import { FacilityId } from './resolverHelpers.ts'
 import { CrvsDate, Gender, LocationMap, Name } from './types.ts'
 
 export type BirthInformant = 'MOTHER' | 'FATHER' | 'MOTHER_AND_FATHER' | 'OTHER'
@@ -30,15 +31,12 @@ export type OrderOfBirthHigherMultiple =
   | 'SEVENTH_BORN'
 
 export type BirthResolver = {
-  'informant.contact': string
-  'reason.option': string
-  'reason.other': string
   'child.name': ResolverFunction<Name>
   'child.dob': ResolverFunction<CrvsDate>
   'child.reason': ResolverFunction<string>
   'child.gender': ResolverFunction<Gender>
   'child.placeOfBirth': ResolverFunction<PlaceOfBirth>
-  'child.birthLocation': ResolverFunction<string | null>
+  'child.birthLocation': ResolverFunction<FacilityId | null>
   'child.birthLocation.privateHome': string
   'child.birthLocation.other': ResolverFunction<Address | undefined>
   'child.birthType': ResolverFunction<BirthType>
@@ -46,7 +44,7 @@ export type BirthResolver = {
   'child.orderOfBirth.triplets': ResolverFunction<OrderOfBirthTriplets | null>
   'child.orderOfBirth.higherMultiple': ResolverFunction<OrderOfBirthHigherMultiple | null>
   'child.weightAtBirth': string
-  'child.attendantAtBirth': string
+  'child.attendantAtBirth': string // NONE ?
   'child.attendantAtBirth.other': string
   'child.attendantAtBirth.givenNames': string
   'child.attendantAtBirth.surname': string

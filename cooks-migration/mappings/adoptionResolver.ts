@@ -10,7 +10,6 @@ import {
   getLocationFromRegNum,
   resolveAddress,
   resolveFacility,
-  toAge,
   toAgeObject,
   toCrvsDate,
   toGender,
@@ -26,8 +25,6 @@ const toNationality = (
 }
 
 export const adoptionResolver: AdoptionResolver = {
-  'reason.option': '',
-  'reason.other': '',
   'child.brnSearch': '',
   'child.brn': (data: AdoptionCsvRecord) => data.BIRTH_REF, // Does this need to be convertedf to legaccy format
   'child.name': (data: AdoptionCsvRecord) => deriveName(data.CHILDS_NAME),

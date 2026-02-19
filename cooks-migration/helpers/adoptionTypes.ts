@@ -8,8 +8,6 @@ export type ResolverFunction<T> =
   | ((data: AdoptionCsvRecord, all: CsvFields, locationMap: LocationMap[]) => T)
 
 export type AdoptionResolver = {
-  'reason.option': string
-  'reason.other': string
   'child.brnSearch': string
   'child.brn': ResolverFunction<string>
   'child.name': ResolverFunction<Name>

@@ -126,10 +126,12 @@ export const getLocationFromRegNum = (data: string): string | null =>
     ([_, value]) => value === data.substring(0, 4)
   )?.[0] || null
 
+export type FacilityId = string
+
 export const resolveFacility = (
   name: string,
   locationMap: LocationMap[]
-): string | null => {
+): FacilityId | null => {
   const location = getLocation(name, locationMap)
   return location?.facilityCode ? location.id : null
 }

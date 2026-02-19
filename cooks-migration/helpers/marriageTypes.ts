@@ -11,9 +11,6 @@ export type GroomConjugalStatus = 'BACHELOR' | 'DIVORCED' | 'WIDOWER'
 export type BrideConjugalStatus = 'SPINSTER' | 'DIVORCED' | 'WIDOW'
 
 export type MarriageResolver = {
-  'informant.contact': string
-  'reason.option': string
-  'reason.other': string
   'marriageDetails.licenceNumber': string
   'marriageDetails.expiryDate': MarriageResolverFunction<CrvsDate>
   'marriageDetails.dateOfMarriage': MarriageResolverFunction<CrvsDate>
@@ -29,7 +26,7 @@ export type MarriageResolver = {
   'marriageDetails.bridegroomConjugalStatus': MarriageResolverFunction<
     GroomConjugalStatus | undefined
   >
-  'marriageDetails.bridegroomDateOfDecreeAbsolute': string
+  'marriageDetails.bridegroomDateOfDecreeAbsolute': MarriageResolverFunction<CrvsDate>
   'marriageDetails.bridegroomDateOfDeathFormerWife': MarriageResolverFunction<CrvsDate>
   'marriageDetails.bridegroomAddress': MarriageResolverFunction<
     Address | undefined
@@ -41,7 +38,7 @@ export type MarriageResolver = {
   'marriageDetails.brideConjugalStatus': MarriageResolverFunction<
     BrideConjugalStatus | undefined
   >
-  'marriageDetails.brideDateOfDecreeAbsolute': string
+  'marriageDetails.brideDateOfDecreeAbsolute': MarriageResolverFunction<CrvsDate>
   'marriageDetails.brideDateOfDeathFormerHusband': MarriageResolverFunction<CrvsDate>
   'marriageDetails.brideAddress': MarriageResolverFunction<Address | undefined>
   'informantDetails.informantType': string
@@ -49,8 +46,6 @@ export type MarriageResolver = {
   'informantDetails.name': string
   'informantDetails.phoneNumber': string
   'informantDetails.email': string
-  'supportingDocuments.marriageRegisterForm': string
-  'supportingDocuments.authorisationLetter': string
 }
 
 export type MarriageMetaData = {

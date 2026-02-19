@@ -10,16 +10,13 @@ import {
   toAge,
   toCrvsDate,
   toGender,
-  toISODate,
+  toISODate
 } from '../helpers/resolverHelpers.ts'
 import { resolveLengthInCis } from '../lookupMappings/death/lengthInCis.ts'
 import { parseInformantDescription } from '../lookupMappings/death/informantTypeMapping.ts'
 import { ageMapping } from '../lookupMappings/death/ageMapping.ts'
 
 export const deathResolver: DeathResolver = {
-  'informant.contact': '',
-  'reason.option': '',
-  'reason.other': '',
   'deceased.name': (data: DeathCsvRecord) => deriveName(data.NAME_OF_DECEASED),
   'deceased.gender': (data: DeathCsvRecord) => toGender(data.SEX),
   'deceased.dob': '', // Possibly birth.CHILDS_DOB
@@ -35,13 +32,13 @@ export const deathResolver: DeathResolver = {
   'deceased.residence': (
     data: DeathCsvRecord,
     _: CsvFields,
-    locationMap: LocationMap[],
+    locationMap: LocationMap[]
   ) => resolveAddress(data.USUAL_RESIDENCE, locationMap),
   'deceased.sincebirth': (data: DeathCsvRecord) => {
     const resolved = resolveLengthInCis(
       data.LENGTH_IN_CIS,
       toAge(data.AGE),
-      toCrvsDate(data.WHEN_DIED),
+      toCrvsDate(data.WHEN_DIED)
     )
     return resolved.sinceBirth ?? false
   },
@@ -49,7 +46,7 @@ export const deathResolver: DeathResolver = {
     const resolved = resolveLengthInCis(
       data.LENGTH_IN_CIS,
       toAge(data.AGE),
-      toCrvsDate(data.WHEN_DIED),
+      toCrvsDate(data.WHEN_DIED)
     )
     return resolved.years || 0
   },
@@ -64,7 +61,7 @@ export const deathResolver: DeathResolver = {
   'eventDetails.placeOfDeath': (
     data: DeathCsvRecord,
     _: CsvFields,
-    locationMap: LocationMap[],
+    locationMap: LocationMap[]
   ) => {
     if (resolveFacility(data.WHERE_DIED, locationMap)) {
       return 'HEALTH_FACILITY'
@@ -79,12 +76,12 @@ export const deathResolver: DeathResolver = {
   'eventDetails.deathLocation': (
     data: DeathCsvRecord,
     _: CsvFields,
-    locationMap: LocationMap[],
+    locationMap: LocationMap[]
   ) => resolveFacility(data.WHERE_DIED, locationMap),
   'eventDetails.deathLocationOther': (
     data: DeathCsvRecord,
     _: CsvFields,
-    locationMap: LocationMap[],
+    locationMap: LocationMap[]
   ) => resolveAddress(data.WHERE_DIED, locationMap),
   'eventDetails.referredToCoroner': '',
   'eventDetails.fullNameOfCoroner': '',
@@ -116,7 +113,7 @@ export const deathResolver: DeathResolver = {
   'burial.whereburied': (
     data: DeathCsvRecord,
     _: CsvFields,
-    locationMap: LocationMap[],
+    locationMap: LocationMap[]
   ) => resolveAddress(data.WHERE_BURIED, locationMap),
   'burial.burialPlaceDescription': '',
   'father.detailsNotAvailable': '', // Calculate
@@ -152,7 +149,7 @@ export const deathResolver: DeathResolver = {
   'spouse.name': (data: DeathCsvRecord) => data.WHOM_MARRIED, // Another weird format with multiple marriages
   'spouse.dob': '',
   'spouse.dobUnknown': '',
-  'spouse.age': (data: DeathCsvRecord) => data.AGE_OF_WIDOW, // Another weird format
+  'spouse.age': (data: DeathCsvRecord) => toAge(data.AGE_OF_WIDOW), // Another weird format
   'spouse.nationality': '',
   'spouse.idType': '',
   'spouse.passport': '',
@@ -214,10 +211,10 @@ export const deathResolver: DeathResolver = {
   'informant.address': (
     data: DeathCsvRecord,
     _: CsvFields,
-    locationMap: LocationMap[],
+    locationMap: LocationMap[]
   ) => resolveAddress(data.INFORMANT_RESIDENCE, locationMap),
   'informant.phoneNo': '',
-  'informant.email': '',
+  'informant.email': ''
 }
 
 export const deathMetaData: DeathMetaData = {
@@ -226,8 +223,8 @@ export const deathMetaData: DeathMetaData = {
   locationCode: (
     data: DeathCsvRecord,
     _: CsvFields,
-    locationMap: LocationMap[],
+    locationMap: LocationMap[]
   ) =>
     getLocationCode(data.WHERE_DIED, locationMap) ||
-    getLocationFromRegNum(data.DEATH_NUMBER),
+    getLocationFromRegNum(data.DEATH_NUMBER)
 }

@@ -15,7 +15,9 @@ import {
   toName
 } from '../helpers/resolverHelpers.ts'
 
-const getBrideStatus = (status: string): BrideConjugalStatus | undefined =>
+export const getBrideStatus = (
+  status: string
+): BrideConjugalStatus | undefined =>
   status === 'SEPARATED'
     ? 'DIVORCED'
     : (
@@ -26,7 +28,9 @@ const getBrideStatus = (status: string): BrideConjugalStatus | undefined =>
         } as Record<string, BrideConjugalStatus>
       )[status[0]]
 
-const getGroomStatus = (status: string): GroomConjugalStatus | undefined =>
+export const getGroomStatus = (
+  status: string
+): GroomConjugalStatus | undefined =>
   status === 'S' || status === 'SINGLE'
     ? 'BACHELOR'
     : (
@@ -38,9 +42,6 @@ const getGroomStatus = (status: string): GroomConjugalStatus | undefined =>
       )[status[0]]
 
 export const marriageResolver: MarriageResolver = {
-  'informant.contact': '',
-  'reason.option': '',
-  'reason.other': '',
   'marriageDetails.licenceNumber': '',
   'marriageDetails.expiryDate': (data: MarriageCsvRecord) =>
     toCrvsDate(data.LICENCE_EXPIRY_DATE),
@@ -52,7 +53,7 @@ export const marriageResolver: MarriageResolver = {
     locationMap: LocationMap[]
   ) => resolveAddress(data.MARRIAGE_PLACE, locationMap),
   'marriageDetails.venueName': (data: MarriageCsvRecord) => data.CHURCH_NAME,
-  'marriageDetails.officiantType': '',
+  'marriageDetails.officiantType': '', // Can I default to registrar
   'marriageDetails.officiantFullName': (data: MarriageCsvRecord) =>
     data.PASTOR_NAME,
   'marriageDetails.officiantAffiliation': (data: MarriageCsvRecord) =>
@@ -98,9 +99,7 @@ export const marriageResolver: MarriageResolver = {
   'informantDetails.relationshipToOfficiantOrCouple': '',
   'informantDetails.name': '',
   'informantDetails.phoneNumber': '',
-  'informantDetails.email': '',
-  'supportingDocuments.marriageRegisterForm': '',
-  'supportingDocuments.authorisationLetter': ''
+  'informantDetails.email': ''
 }
 
 export const marriageMetaData: MarriageMetaData = {

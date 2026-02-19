@@ -20,6 +20,7 @@ import {
   toCrvsDate,
   toGender,
   toISODate,
+  toLegacy,
   toName
 } from '../helpers/resolverHelpers.ts'
 
@@ -41,9 +42,6 @@ const toNationality = (
 }
 
 export const birthResolver: BirthResolver = {
-  'informant.contact': '',
-  'reason.option': '',
-  'reason.other': '',
   'child.name': (data: BirthCsvRecord) =>
     toName(data.CHILDS_NAME, data.FATHERS_SURNAME || data.MOTHERS_SURNAME),
   'child.dob': (data: BirthCsvRecord) => toCrvsDate(data.CHILDS_DOB),
@@ -105,8 +103,22 @@ export const birthResolver: BirthResolver = {
   'nameChange.newSurname3': (data: BirthCsvRecord, all: CsvFields) =>
     lookUpNameChange(all, data.BIRTH_REF)[2]?.NEW_SURNAME,
 
-  'adoptionOrder.registrationNumber': (data: BirthCsvRecord) =>
-    data.ADOP_REC_REF, // Might need to add sdoption suffix
+  'adoptionOrder.registrationNumber': (
+    data: BirthCsvRecord,
+    all: CsvFields
+  ) => {
+    if (!data.ADOP_REC_REF) return undefined
+    const match = all.adoption.find(
+      (record) => record.ADOPTION_REF === data.ADOP_REC_REF
+    )
+    if (match) {
+      console.log('Found matching adoption record for', data.ADOP_REC_REF)
+      return toLegacy(match.ADOPTION_REF, 'adoption')
+    }
+    console.log('No matching record found for', data.ADOP_REC_REF)
+    return data.ADOP_REC_REF
+  },
+
   'adoptionOrder.orderDocument': '', //(data: BirthCsvRecord) => data.ADOPT_BOOK_REF,
 
   'mother.detailsUnavailable': '',
@@ -132,7 +144,7 @@ export const birthResolver: BirthResolver = {
     locationMap: LocationMap[]
   ) => resolveAddress(data.MOTHERS_ADDRESS, locationMap),
   'mother.occupation': '',
-  'father.detailsUnavailable': '',
+  'father.detailsUnavailable': '', // Calucalte
   'father.unavailableReason': '',
   'father.name': (data: BirthCsvRecord) =>
     toName(data.FATHERS_NAME, data.FATHERS_SURNAME),

@@ -1,5 +1,6 @@
 import { Address } from './addressConfig.ts'
 import { CsvFields, DeathCsvRecord } from './csvTypes.ts'
+import { FacilityId } from './resolverHelpers.ts'
 import { CrvsDate, Gender, LocationMap, Name } from './types.ts'
 
 export type ResolverFunction<T> =
@@ -12,9 +13,6 @@ type PlaceOfDeath = 'DECEASED_USUAL_RESIDENCE' | 'HEALTH_FACILITY' | 'OTHER'
 export type DeathInformant = 'SPOUSE' | 'MOTHER' | 'FATHER' | 'OTHER'
 
 export type DeathResolver = {
-  'informant.contact': string
-  'reason.option': string
-  'reason.other': string
   'deceased.name': ResolverFunction<Name>
   'deceased.gender': ResolverFunction<Gender>
   'deceased.dob': string
@@ -37,7 +35,7 @@ export type DeathResolver = {
   'eventDetails.dateOfDeath': ResolverFunction<CrvsDate>
   'eventDetails.mannerOfDeath': string
   'eventDetails.placeOfDeath': ResolverFunction<PlaceOfDeath | null>
-  'eventDetails.deathLocation': ResolverFunction<string | null>
+  'eventDetails.deathLocation': ResolverFunction<FacilityId | null>
   'eventDetails.deathLocationOther': ResolverFunction<Address | undefined>
   'eventDetails.referredToCoroner': string
   'eventDetails.fullNameOfCoroner': string
@@ -99,7 +97,7 @@ export type DeathResolver = {
   'spouse.name': ResolverFunction<string>
   'spouse.dob': string
   'spouse.dobUnknown': string
-  'spouse.age': ResolverFunction<string>
+  'spouse.age': ResolverFunction<number | null>
   'spouse.nationality': string
   'spouse.idType': string
   'spouse.passport': string
