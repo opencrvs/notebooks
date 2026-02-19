@@ -232,6 +232,7 @@ export type ActionType =
   | 'MARK_AS_DUPLICATE'
   | 'MARK_AS_NOT_DUPLICATE'
   | 'READ'
+  | 'REINSTATE'
 
 export interface ActionContent {
   templateId?: string
