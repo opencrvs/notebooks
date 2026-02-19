@@ -5,16 +5,16 @@ export const declareEvent = async (document: any, token: string) => {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
-      Authorization: `Bearer ${token}`,
+      Authorization: `Bearer ${token}`
     },
     body: JSON.stringify({
       json: document,
       meta: {
         values: {
-          declaration: ['undefined'],
-        },
-      },
-    }),
+          declaration: ['undefined']
+        }
+      }
+    })
   })
 
   if (!response.ok) {
@@ -32,15 +32,17 @@ export const bulkImport = async (documents: any[], token: string) => {
     headers: {
       'Content-Type': 'application/json',
       Authorization: `Bearer ${token}`,
+      Connection: 'close'
     },
     body: JSON.stringify({
       json: documents,
       meta: {
         values: {
-          declaration: ['undefined'],
-        },
-      },
+          declaration: ['undefined']
+        }
+      }
     }),
+    keepalive: false
   })
 
   if (!response.ok) {
@@ -57,15 +59,15 @@ export const registerSystem = async (token: string) => {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
-      Authorization: `Bearer ${token}`,
+      Authorization: `Bearer ${token}`
     },
     body: JSON.stringify({
       operationName: 'registerSystem',
       variables: {
         system: {
           type: 'IMPORT_EXPORT',
-          name: 'Migration',
-        },
+          name: 'Migration'
+        }
       },
       query: `mutation registerSystem($system: SystemInput) {
         registerSystem(system: $system) {
@@ -90,8 +92,8 @@ export const registerSystem = async (token: string) => {
           }
           __typename
         }
-      }`,
-    }),
+      }`
+    })
   })
 
   if (!response.ok) {
@@ -113,7 +115,7 @@ const GetRegistrationsList = async (
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
-      Authorization: `Bearer ${token}`,
+      Authorization: `Bearer ${token}`
     },
     body: JSON.stringify({
       operationName: 'GetRegistrationsListByFilter',
@@ -126,8 +128,8 @@ const GetRegistrationsList = async (
             }
           }
         }
-      }`,
-    }),
+      }`
+    })
   })
   if (!response.ok) {
     throw new Error(`GraphQL request failed: ${response.statusText}`)
@@ -159,12 +161,12 @@ export const fetchBirthRegistration = async (
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
-      Authorization: `Bearer ${token}`,
+      Authorization: `Bearer ${token}`
     },
     body: JSON.stringify({
       operationName: 'fetchBirthRegistrationForReview',
       variables: {
-        id: recordId,
+        id: recordId
       },
       query: `query fetchBirthRegistrationForReview($id: ID!) {
         fetchBirthRegistration(id: $id) {
@@ -586,8 +588,8 @@ export const fetchBirthRegistration = async (
           }
           __typename
         }
-      }`,
-    }),
+      }`
+    })
   })
 
   if (!response.ok) {
@@ -604,12 +606,12 @@ export const fetchDeathRegistration = async (
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
-      Authorization: `Bearer ${token}`,
+      Authorization: `Bearer ${token}`
     },
     body: JSON.stringify({
       operationName: 'fetchDeathRegistrationForReview',
       variables: {
-        id: recordId,
+        id: recordId
       },
       query: `query fetchDeathRegistrationForReview($id: ID!) {
         fetchDeathRegistration(id: $id) {
@@ -1109,8 +1111,8 @@ export const fetchDeathRegistration = async (
           }
           __typename
         }
-      }`,
-    }),
+      }`
+    })
   })
 
   if (!response.ok) {
@@ -1124,8 +1126,8 @@ export const syncLocations = async (token: string) => {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
-      Authorization: `Bearer ${token}`,
-    },
+      Authorization: `Bearer ${token}`
+    }
   })
   if (!response.ok) {
     throw new Error(`Sync Locations failed: ${response.statusText}`)
@@ -1138,8 +1140,8 @@ export const reindex = async (token: string) => {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
-      Authorization: `Bearer ${token}`,
-    },
+      Authorization: `Bearer ${token}`
+    }
   })
   if (!response.ok) {
     throw new Error(`Reindex failed: ${response.statusText}`)

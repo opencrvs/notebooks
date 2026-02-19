@@ -7,7 +7,7 @@ export async function authenticate(
   const response = await fetch(`${GATEWAY}/auth/authenticate`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ username, password }),
+    body: JSON.stringify({ username, password })
   })
   if (!response.ok) {
     throw new Error(`Authentication failed: ${response.statusText}`)
@@ -19,7 +19,7 @@ export async function authenticate(
     const response = await fetch(`${GATEWAY}/auth/verifyCode`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ code, nonce }),
+      body: JSON.stringify({ code, nonce })
     })
     if (!response.ok) {
       throw new Error(`Code verification failed: ${response.statusText}`)
@@ -41,7 +41,9 @@ export async function getTokenForSystemClient(
       headers: {
         'Content-Type': 'application/json',
         'x-correlation-id': clientId + '-' + Date.now(),
+        Connection: 'close'
       },
+      keepalive: false
     }
   )
   const res = await authenticateResponse.json()
