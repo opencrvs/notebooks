@@ -22,7 +22,7 @@ const INITIAL_COUNTRY_FIELD_MAPPINGS = {
 'birth.informant.informant-view-group.yearOfBirth' : 'informant.yearOfBirth',
 'birth.informant.iD' : 'informant.iD',
 'birth.informant.informant-view-group.birthPlace' : 'informant.birthPlace',
-'birth.informant.informant-view-group.fokontanyCustomAddress' : 'informant.address',
+/* 'birth.informant.informant-view-group.fokontanyCustomAddress' : 'informant.address', */
 'birth.informant.occupation' : 'informant.occupation',
 'birth.mother.mother-view-group.motherIsDeceased' : 'mother.motherIsDeceased',
 'birth.mother.mother-view-group.customizedExactDateOfBirthUnknown' : 'mother.customizedExactDateOfBirthUnknown',

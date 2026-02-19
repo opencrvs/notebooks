@@ -103,6 +103,9 @@ export const ADDRESS_MAPPINGS: Record<string, AddressConfigFunction> = {
   'birth.informant.countryPrimaryInformant': (data: string) => ({
     'informant.address': { country: data },
   }),
+  'birth.informant.address': (data: string) => ({
+    'informant.address': { streetLevelDetails: { fokontany: data } },
+  }),
   'birth.informant.statePrimaryInformant': (data: string) => ({
     'informant.address': { streetLevelDetails: { state: data } },
   }),
