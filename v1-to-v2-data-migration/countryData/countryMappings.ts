@@ -8,7 +8,7 @@
 
 const INITIAL_COUNTRY_FIELD_MAPPINGS = {
 'birth.child.child-view-group.birthTime' : 'child.birthTime',
-'birth.child.child-view-group.fokontanyCustomAddress' : 'child.birthLocation.privateHome',
+/* 'birth.child.child-view-group.fokontanyCustomAddress' : 'child.birthLocation.privateHome', */
 'birth.child.child-view-group.otherPlaceOfBirthAddress' : 'child.birthLocation.other',
 /* 'birth.child-view-group.createNUI' : 'child.createNUI', */
 /* 'birth.child-view-group.nuiGeneratorError' : '', */
