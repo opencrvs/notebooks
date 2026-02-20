@@ -16,10 +16,10 @@ export const ADDRESS_MAPPINGS: Record<string, AddressConfigFunction> = {
       /* Ignore: Only map leaf level */
     },
   }),
-  'birth.child.privateHome': (data: string) => ({
+  'birth.child.child-view-group.fokontanyCustomAddress': (data: string) => ({
     'child.birthLocation.privateHome': { streetLevelDetails: { fokontany: data } },
   }),
-  'birth.child.birthLocation.other': (data: string) => ({
+  'birth.child.child-view-group.otherPlaceOfBirthAddress': (data: string) => ({
     'child.birthLocation.other': { streetLevelDetails: { otherPlaceOfBirth: data } },
   }),
   'birth.child.districtPlaceofbirth': (data: string) => ({
@@ -106,7 +106,7 @@ export const ADDRESS_MAPPINGS: Record<string, AddressConfigFunction> = {
   'birth.informant.countryPrimaryInformant': (data: string) => ({
     'informant.address': { country: data },
   }),
-  'birth.informant.address': (data: string) => ({
+  'birth.informant.informant-view-group.fokontanyCustomAddress': (data: string) => ({
     'informant.address': { streetLevelDetails: { fokontany: data } },
   }),
   'birth.informant.statePrimaryInformant': (data: string) => ({
@@ -197,7 +197,7 @@ export const ADDRESS_MAPPINGS: Record<string, AddressConfigFunction> = {
       /* Ignore: Only map leaf level */
     },
   }),
-  'birth.mother.address': (data: string) => ({
+  'birth.mother.mother-view-group.fokontanyCustomAddress': (data: string) => ({
     'mother.address': { streetLevelDetails: { fokontany: data } },
   }),
   'birth.mother.districtPrimaryMother': (data: string) => ({
@@ -269,7 +269,7 @@ export const ADDRESS_MAPPINGS: Record<string, AddressConfigFunction> = {
       /* Ignore: Only map leaf level */
     },
   }),
-  'birth.father.address': (data: string) => ({
+  'birth.father.father-view-group.fokontanyCustomAddress': (data: string) => ({
     'father.address': { streetLevelDetails: { fokontany: data } },
   }),
   'birth.father.districtPrimaryFather': (data: string) => ({
