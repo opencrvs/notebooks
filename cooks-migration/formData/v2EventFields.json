@@ -1,8 +1,5 @@
 {
   "birth": [
-    "informant.contact",
-    "reason.option",
-    "reason.other",
     "child.name",
     "child.dob",
     "child.reason",
@@ -83,10 +80,7 @@
     "informant.email"
   ],
   "death": [
-    "informant.contact",
     "noticeToFuneralDirector",
-    "reason.option",
-    "reason.other",
     "deceased.name",
     "deceased.gender",
     "deceased.dob",
@@ -291,9 +285,6 @@
     "informant.email"
   ],
   "marriage-licence": [
-    "informant.contact",
-    "reason.option",
-    "reason.other",
     "noticeOfIntendedMarriageDetails.dateOfNoticeLodgement",
     "noticeOfIntendedMarriageDetails.dateOfMarriage",
     "noticeOfIntendedMarriageDetails.placeOfMarriage",
@@ -330,26 +321,10 @@
     "bride.motherName",
     "bride.motherMaidenSurname",
     "bride.motherOccupation",
-    "informantDetails.informantType",
-    "informantDetails.relationshipToCouple",
-    "informantDetails.name",
-    "informantDetails.dob",
-    "informantDetails.dobUnknown",
-    "informantDetails.age",
-    "informantDetails.nationality",
-    "informantDetails.idType",
-    "informantDetails.passport",
-    "informantDetails.bc",
-    "informantDetails.other",
-    "informantDetails.address",
-    "informantDetails.occupation",
     "informantDetails.phoneNumber",
     "informantDetails.email"
   ],
   "marriage-registration": [
-    "informant.contact",
-    "reason.option",
-    "reason.other",
     "marriageDetails.licenceNumber",
     "marriageDetails.expiryDate",
     "marriageDetails.dateOfMarriage",
@@ -383,9 +358,6 @@
     "supportingDocuments.authorisationLetter"
   ],
   "divorce": [
-    "informant.contact",
-    "reason.option",
-    "reason.other",
     "applicationDetails.typeOfApplication",
     "applicationDetails.applicantParty",
     "marriageDetails.marriageRegistrationNumber",
@@ -412,8 +384,6 @@
     "divorceOrderDetails.orderDate"
   ],
   "adoption": [
-    "reason.option",
-    "reason.other",
     "child.brnSearch",
     "child.brn",
     "child.name",
@@ -473,8 +443,6 @@
     "adoptionOrder.childNewName"
   ],
   "name-change": [
-    "reason.option",
-    "reason.other",
     "subjects.nationality",
     "subjects.brn",
     "subjects.brnText",
@@ -513,10 +481,6 @@
     "witness.name",
     "witness.occupation",
     "witness.address",
-    "feeCollection.serviceLessThan4",
-    "feeCollection.feeLessThan4",
-    "feeCollection.service4AndOver",
-    "feeCollection.fee4AndOver",
     "feeCollection.feeWaived",
     "feeCollection.amountCollected",
     "feeCollection.receiptNumber",

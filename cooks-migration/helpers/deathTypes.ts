@@ -1,4 +1,4 @@
-import { Address } from './addressConfig.ts'
+import { Address, Country } from './addressConfig.ts'
 import { CsvFields, DeathCsvRecord } from './csvTypes.ts'
 import { FacilityId } from './resolverHelpers.ts'
 import { CrvsDate, Gender, LocationMap, Name } from './types.ts'
@@ -12,14 +12,18 @@ type PlaceOfDeath = 'DECEASED_USUAL_RESIDENCE' | 'HEALTH_FACILITY' | 'OTHER'
 
 export type DeathInformant = 'SPOUSE' | 'MOTHER' | 'FATHER' | 'OTHER'
 
+type LivingStatus = 'ALIVE' | 'DECEASED'
+
+type MannerOfDeath = 'MANNER_UNDETERMINED' | 'NATURAL_CAUSES'
+
 export type DeathResolver = {
   'deceased.name': ResolverFunction<Name>
   'deceased.gender': ResolverFunction<Gender>
-  'deceased.dob': string
-  'deceased.dobUnknown': string
+  'deceased.dob': ResolverFunction<CrvsDate>
+  'deceased.dobUnknown': ResolverFunction<boolean>
   'deceased.age': ResolverFunction<number | null>
   'deceased.placeOfBirth': ResolverFunction<string>
-  'deceased.nationality': string
+  'deceased.nationality': ResolverFunction<Country | undefined>
   'deceased.idType': string
   'deceased.passport': string
   'deceased.bc': string
@@ -28,19 +32,21 @@ export type DeathResolver = {
   'deceased.residence': ResolverFunction<Address | undefined>
   'deceased.sincebirth': ResolverFunction<boolean>
   'deceased.noOfyearsLivedInCook': ResolverFunction<number>
-  'deceased.wasMarried': string
+  'deceased.wasMarried': ResolverFunction<boolean>
   'deceased.dateOfMarriage': ResolverFunction<CrvsDate>
   'deceased.placeOfMarriage': ResolverFunction<string>
-  'deceased.hadLivingChildren': string
+  'deceased.hadLivingChildren': ResolverFunction<boolean>
   'eventDetails.dateOfDeath': ResolverFunction<CrvsDate>
-  'eventDetails.mannerOfDeath': string
+  'eventDetails.mannerOfDeath': ResolverFunction<MannerOfDeath>
   'eventDetails.placeOfDeath': ResolverFunction<PlaceOfDeath | null>
   'eventDetails.deathLocation': ResolverFunction<FacilityId | null>
   'eventDetails.deathLocationOther': ResolverFunction<Address | undefined>
-  'eventDetails.referredToCoroner': string
-  'eventDetails.fullNameOfCoroner': string
-  'eventDetails.causeOfDeathDeterminedByCoroner': string
-  'eventDetails.causeOfDeathEstablished': string
+  'eventDetails.referredToCoroner': ResolverFunction<boolean>
+  'eventDetails.fullNameOfCoroner': ResolverFunction<string | undefined>
+  'eventDetails.causeOfDeathDeterminedByCoroner': ResolverFunction<
+    string | undefined
+  >
+  'eventDetails.causeOfDeathEstablished': ResolverFunction<boolean>
   'eventDetails.medicalOfficerName': ResolverFunction<string>
   'eventDetails.dateLastSeenAlive': ResolverFunction<CrvsDate>
   'eventDetails.notPersonallyAttended': string
@@ -66,7 +72,7 @@ export type DeathResolver = {
   'burial.burialPlaceDescription': string
   'father.detailsNotAvailable': string
   'father.reason': string
-  'father.livingStatus': string
+  'father.livingStatus': ResolverFunction<LivingStatus | undefined>
   'father.name': ResolverFunction<Name>
   'father.dob': string
   'father.dobUnknown': string
@@ -93,7 +99,7 @@ export type DeathResolver = {
   'mother.occupation': string
   'spouse.detailsNotAvailable': string
   'spouse.reason': string
-  'spouse.livingStatus': ResolverFunction<string>
+  'spouse.livingStatus': ResolverFunction<LivingStatus | undefined>
   'spouse.name': ResolverFunction<string>
   'spouse.dob': string
   'spouse.dobUnknown': string
@@ -104,37 +110,37 @@ export type DeathResolver = {
   'spouse.bc': string
   'spouse.other': string
   'spouse.occupation': string
-  'deceased.childrenCount': string
+  'deceased.childrenCount': ResolverFunction<number>
   'deceased.children.1.name': string
-  'deceased.children.1.sex': string
-  'deceased.children.1.age': string
+  'deceased.children.1.sex': ResolverFunction<Gender>
+  'deceased.children.1.age': ResolverFunction<number>
   'deceased.children.2.name': string
-  'deceased.children.2.sex': string
-  'deceased.children.2.age': string
+  'deceased.children.2.sex': ResolverFunction<Gender>
+  'deceased.children.2.age': ResolverFunction<number>
   'deceased.children.3.name': string
-  'deceased.children.3.sex': string
-  'deceased.children.3.age': string
+  'deceased.children.3.sex': ResolverFunction<Gender>
+  'deceased.children.3.age': ResolverFunction<number>
   'deceased.children.4.name': string
-  'deceased.children.4.sex': string
-  'deceased.children.4.age': string
+  'deceased.children.4.sex': ResolverFunction<Gender>
+  'deceased.children.4.age': ResolverFunction<number>
   'deceased.children.5.name': string
-  'deceased.children.5.sex': string
-  'deceased.children.5.age': string
+  'deceased.children.5.sex': ResolverFunction<Gender>
+  'deceased.children.5.age': ResolverFunction<number>
   'deceased.children.6.name': string
-  'deceased.children.6.sex': string
-  'deceased.children.6.age': string
+  'deceased.children.6.sex': ResolverFunction<Gender>
+  'deceased.children.6.age': ResolverFunction<number>
   'deceased.children.7.name': string
-  'deceased.children.7.sex': string
-  'deceased.children.7.age': string
+  'deceased.children.7.sex': ResolverFunction<Gender>
+  'deceased.children.7.age': ResolverFunction<number>
   'deceased.children.8.name': string
-  'deceased.children.8.sex': string
-  'deceased.children.8.age': string
+  'deceased.children.8.sex': ResolverFunction<Gender>
+  'deceased.children.8.age': ResolverFunction<number>
   'deceased.children.9.name': string
-  'deceased.children.9.sex': string
-  'deceased.children.9.age': string
+  'deceased.children.9.sex': ResolverFunction<Gender>
+  'deceased.children.9.age': ResolverFunction<number>
   'deceased.children.10.name': string
-  'deceased.children.10.sex': string
-  'deceased.children.10.age': string
+  'deceased.children.10.sex': ResolverFunction<Gender>
+  'deceased.children.10.age': ResolverFunction<number>
   'deceased.additionalChildrenSummary': string
   'informant.relation': ResolverFunction<DeathInformant>
   'informant.other.relation': ResolverFunction<string | undefined>

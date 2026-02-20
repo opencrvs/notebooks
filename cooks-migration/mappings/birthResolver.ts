@@ -79,9 +79,9 @@ export const birthResolver: BirthResolver = {
   'child.attendantAtBirth.other': '',
   'child.attendantAtBirth.givenNames': '',
   'child.attendantAtBirth.surname': '',
-  'child.isRenamed': (data: BirthCsvRecord) => !!data.CHILDS_NEW_NAME, // Calculate !!birth.CHILDS_NEW_NAME
+  'child.isRenamed': (data: BirthCsvRecord, all: CsvFields) =>
+    all.deedpoll.some((record) => record.BIRTH_REF === data.BIRTH_REF),
   'child.isAdoptionOrder': (data: BirthCsvRecord) => !!data.ADOP_REC_REF,
-
   'nameChange.deedPollNumber1': (data: BirthCsvRecord, all: CsvFields) =>
     lookUpNameChange(all, data.BIRTH_REF)[0]?.DP_REF,
   'nameChange.newGivenNames1': (data: BirthCsvRecord, all: CsvFields) =>
@@ -112,10 +112,10 @@ export const birthResolver: BirthResolver = {
       (record) => record.ADOPTION_REF === data.ADOP_REC_REF
     )
     if (match) {
-      console.log('Found matching adoption record for', data.ADOP_REC_REF)
+      //console.log('Found matching adoption record for', data.ADOP_REC_REF)
       return toLegacy(match.ADOPTION_REF, 'adoption')
     }
-    console.log('No matching record found for', data.ADOP_REC_REF)
+    //console.log('No matching record found for', data.ADOP_REC_REF)
     return data.ADOP_REC_REF
   },
 
