@@ -14,7 +14,24 @@ const initialCountryResolver = {
     ),
   'child.legacyBirthRegistrationDate': (data: EventRegistration) =>
     /* IGNORE all legacyBirthRegistrationDate data temporarily */
-    undefined
+    {
+    const field = data?.questionnaire?.find(
+      ({ fieldId }: { fieldId: string }) => fieldId === 'birth.child.child-view-group.legacyBirthRegistrationDate'
+    )
+
+    if (!field) return undefined
+
+    console.log('legacyBirthRegistrationDate.value :>> ', field?.value);
+
+    const dateStr = field?.value
+
+    if (isValidDate(dateStr)) {
+      const normalized = normalizeDateString(dateStr);
+      return normalized
+    }
+
+    return undefined
+  }
     /* getCustomField(
       data,
       'birth.child.child-view-group.legacyBirthRegistrationDate'

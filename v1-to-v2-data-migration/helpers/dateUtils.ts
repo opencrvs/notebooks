@@ -24,6 +24,30 @@ export function normalizeDateString(
   return `${year}-${paddedMonth}-${paddedDay}`
 }
 
+export function isValidDate(dateStr: string): boolean {
+  // Allow yyyy-m-d OR yyyy-mm-dd
+  const regex = /^(\d{4})-(\d{1,2})-(\d{1,2})$/;
+  const match = dateStr.match(regex);
+
+  if (!match) return false;
+
+  const [, yearStr, monthStr, dayStr] = match;
+
+  const year = Number(yearStr);
+  const month = Number(monthStr);
+  const day = Number(dayStr);
+
+  // Month must be 1–12
+  if (month < 1 || month > 12) return false;
+
+  // Get correct number of days in the month (handles leap years)
+  const daysInMonth = new Date(year, month, 0).getDate();
+
+  return day >= 1 && day <= daysInMonth;
+}
+
+
+
 export function isDateField(fieldId: string): boolean {
   const dateFieldPatterns = ['BirthDate', 'birthDate', 'Date', 'deathDate']
   return dateFieldPatterns.some((pattern) => fieldId.includes(pattern))
