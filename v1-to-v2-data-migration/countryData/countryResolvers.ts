@@ -1,3 +1,4 @@
+import { isValidDate, normalizeDateString } from '../helpers/dateUtils.ts';
 import { getCustomField, getDocuments } from '../helpers/resolverUtils.ts'
 import { EventRegistration } from '../helpers/types.ts'
 import pairs from './unResolvedBirthFields.json' with { type: 'json' };
@@ -12,10 +13,12 @@ const initialCountryResolver = {
       'birth.child.child-view-group.legacyBirthRegistrationNumber'
     ),
   'child.legacyBirthRegistrationDate': (data: EventRegistration) =>
-    getCustomField(
+    /* IGNORE all legacyBirthRegistrationDate data temporarily */
+    undefined
+    /* getCustomField(
       data,
       'birth.child.child-view-group.legacyBirthRegistrationDate'
-    ),
+    ) */,
   'child.legacyBirthRegistrationTime': (data: EventRegistration) =>
     getCustomField(
       data,
