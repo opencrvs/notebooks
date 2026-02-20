@@ -1,5 +1,10 @@
 import { CsvFields, DeathCsvRecord } from '../helpers/csvTypes.ts'
-import { DeathResolver, DeathMetaData } from '../helpers/deathTypes.ts'
+import {
+  DeathResolver,
+  DeathMetaData,
+  IdType,
+  ChildrenCount
+} from '../helpers/deathTypes.ts'
 import { CrvsDate, Gender, LocationMap } from '../helpers/types.ts'
 import {
   deriveName,
@@ -202,7 +207,7 @@ export const deathResolver: DeathResolver = {
     _: CsvFields,
     locationMap: LocationMap[]
   ) => resolveAddress(data.WHERE_BORN, locationMap)?.country,
-  'deceased.idType': '',
+  'deceased.idType': (_: DeathCsvRecord) => 'NONE' as IdType,
   'deceased.passport': '',
   'deceased.bc': '',
   'deceased.other': '',
@@ -281,7 +286,7 @@ export const deathResolver: DeathResolver = {
     locationMap: LocationMap[]
   ) => resolveAddress(data.WHERE_DIED, locationMap),
   'eventDetails.referredToCoroner': (data: DeathCsvRecord) =>
-    referredToCoroner(data),
+    referredToCoroner(data) ? 'Yes' : 'No',
   'eventDetails.fullNameOfCoroner': (data: DeathCsvRecord) =>
     referredToCoroner(data) ? data.MEDICAL_ATTENDANT : undefined,
   'eventDetails.causeOfDeathDeterminedByCoroner': (data: DeathCsvRecord) =>
@@ -292,7 +297,7 @@ export const deathResolver: DeathResolver = {
     data.MEDICAL_ATTENDANT,
   'eventDetails.dateLastSeenAlive': (data: DeathCsvRecord) =>
     toCrvsDate(data.DATE_LAST_ALIVE, 'dd/MM/yyyy'),
-  'eventDetails.notPersonallyAttended': '',
+  'eventDetails.notPersonallyAttended': (_: DeathCsvRecord) => false,
   'eventDetails.causeOfDeath': (data: DeathCsvRecord) => data.CAUSE_OF_DEATH,
   'eventDetails.duration': '',
   'eventDetails.ICD10CodeA': '',
@@ -309,14 +314,31 @@ export const deathResolver: DeathResolver = {
   'eventDetails.approximateDuration': '',
   'eventDetails.otherSignificantConditionIfApplicable': '',
   'eventDetails.approximateDuration2': '',
-  'burial.burialArrangement': '',
+  'burial.burialArrangement': (
+    data: DeathCsvRecord,
+    _: CsvFields,
+    locationMap: LocationMap[]
+  ) => {
+    const whereBuried = resolveAddress(data.WHERE_BURIED, locationMap)?.country
+    if (whereBuried === 'COK') {
+      return 'BURIAL_IN_COOK_ISLANDS'
+    } else if (
+      whereBuried ||
+      data.WHERE_BURIED.toUpperCase().includes('OVERSEAS')
+    ) {
+      return 'BURIAL_OUTSIDE_COOK_ISLANDS'
+    } else if (data.WHERE_BURIED.toUpperCase().includes('SEA')) {
+      return 'BURIAL_AT_SEA'
+    }
+    return 'BURIAL_IN_COOK_ISLANDS'
+  },
   'burial.dateOfBurial': (data: DeathCsvRecord) => toCrvsDate(data.WHEN_BURIED),
   'burial.whereburied': (
     data: DeathCsvRecord,
     _: CsvFields,
     locationMap: LocationMap[]
   ) => resolveAddress(data.WHERE_BURIED, locationMap),
-  'burial.burialPlaceDescription': '',
+  'burial.burialPlaceDescription': (data: DeathCsvRecord) => data.WHERE_BURIED,
   'father.detailsNotAvailable': '', // Calculate
   'father.reason': '',
   'father.livingStatus': (data: DeathCsvRecord) => {
@@ -372,7 +394,8 @@ export const deathResolver: DeathResolver = {
   'spouse.bc': '',
   'spouse.other': '',
   'spouse.occupation': '',
-  'deceased.childrenCount': (data: DeathCsvRecord) => getChildren(data).length,
+  'deceased.childrenCount': (data: DeathCsvRecord) =>
+    getChildren(data).length.toString() as ChildrenCount,
   'deceased.children.1.name': '',
   'deceased.children.1.sex': (data: DeathCsvRecord) =>
     getChildren(data)[0]?.sex,

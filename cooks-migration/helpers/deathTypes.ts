@@ -16,6 +16,27 @@ type LivingStatus = 'ALIVE' | 'DECEASED'
 
 type MannerOfDeath = 'MANNER_UNDETERMINED' | 'NATURAL_CAUSES'
 
+export type IdType = 'NONE'
+
+type YesNo = 'Yes' | 'No'
+
+export type ChildrenCount =
+  | '1'
+  | '2'
+  | '3'
+  | '4'
+  | '5'
+  | '6'
+  | '7'
+  | '8'
+  | '9'
+  | '10+'
+
+type BurialArrangement =
+  | 'BURIAL_IN_COOK_ISLANDS'
+  | 'BURIAL_OUTSIDE_COOK_ISLANDS'
+  | 'BURIAL_AT_SEA'
+
 export type DeathResolver = {
   'deceased.name': ResolverFunction<Name>
   'deceased.gender': ResolverFunction<Gender>
@@ -24,7 +45,7 @@ export type DeathResolver = {
   'deceased.age': ResolverFunction<number | null>
   'deceased.placeOfBirth': ResolverFunction<string>
   'deceased.nationality': ResolverFunction<Country | undefined>
-  'deceased.idType': string
+  'deceased.idType': ResolverFunction<IdType>
   'deceased.passport': string
   'deceased.bc': string
   'deceased.other': string
@@ -41,7 +62,7 @@ export type DeathResolver = {
   'eventDetails.placeOfDeath': ResolverFunction<PlaceOfDeath | null>
   'eventDetails.deathLocation': ResolverFunction<FacilityId | null>
   'eventDetails.deathLocationOther': ResolverFunction<Address | undefined>
-  'eventDetails.referredToCoroner': ResolverFunction<boolean>
+  'eventDetails.referredToCoroner': ResolverFunction<YesNo>
   'eventDetails.fullNameOfCoroner': ResolverFunction<string | undefined>
   'eventDetails.causeOfDeathDeterminedByCoroner': ResolverFunction<
     string | undefined
@@ -49,7 +70,7 @@ export type DeathResolver = {
   'eventDetails.causeOfDeathEstablished': ResolverFunction<boolean>
   'eventDetails.medicalOfficerName': ResolverFunction<string>
   'eventDetails.dateLastSeenAlive': ResolverFunction<CrvsDate>
-  'eventDetails.notPersonallyAttended': string
+  'eventDetails.notPersonallyAttended': ResolverFunction<boolean>
   'eventDetails.causeOfDeath': ResolverFunction<string>
   'eventDetails.duration': string
   'eventDetails.ICD10CodeA': string
@@ -66,10 +87,10 @@ export type DeathResolver = {
   'eventDetails.approximateDuration': string
   'eventDetails.otherSignificantConditionIfApplicable': string
   'eventDetails.approximateDuration2': string
-  'burial.burialArrangement': string
+  'burial.burialArrangement': ResolverFunction<BurialArrangement>
   'burial.dateOfBurial': ResolverFunction<CrvsDate>
   'burial.whereburied': ResolverFunction<Address | undefined>
-  'burial.burialPlaceDescription': string
+  'burial.burialPlaceDescription': ResolverFunction<string>
   'father.detailsNotAvailable': string
   'father.reason': string
   'father.livingStatus': ResolverFunction<LivingStatus | undefined>
@@ -110,7 +131,7 @@ export type DeathResolver = {
   'spouse.bc': string
   'spouse.other': string
   'spouse.occupation': string
-  'deceased.childrenCount': ResolverFunction<number>
+  'deceased.childrenCount': ResolverFunction<ChildrenCount>
   'deceased.children.1.name': string
   'deceased.children.1.sex': ResolverFunction<Gender>
   'deceased.children.1.age': ResolverFunction<number>
