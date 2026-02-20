@@ -13,15 +13,12 @@ const initialCountryResolver = {
       'birth.child.child-view-group.legacyBirthRegistrationNumber'
     ),
   'child.legacyBirthRegistrationDate': (data: EventRegistration) =>
-    /* IGNORE all legacyBirthRegistrationDate data temporarily */
     {
     const field = data?.questionnaire?.find(
       ({ fieldId }: { fieldId: string }) => fieldId === 'birth.child.child-view-group.legacyBirthRegistrationDate'
     )
 
     if (!field) return undefined
-
-    console.log('legacyBirthRegistrationDate.value :>> ', field?.value);
 
     const dateStr = field?.value
 
