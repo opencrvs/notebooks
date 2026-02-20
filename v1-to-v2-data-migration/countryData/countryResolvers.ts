@@ -26,8 +26,7 @@ const initialCountryResolver = {
       const normalized = normalizeDateString(dateStr);
       return normalized
     }
-
-    return undefined
+    return '2026-01-01'
   }
     /* getCustomField(
       data,
