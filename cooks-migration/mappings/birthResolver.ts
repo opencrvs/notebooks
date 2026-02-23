@@ -2,9 +2,10 @@ import { BirthCsvRecord, CsvFields } from '../helpers/csvTypes.ts'
 import {
   BirthResolver,
   BirthInformant,
-  BirthMetaData
+  BirthMetaData,
+  AttendantAtBirth
 } from '../helpers/birthTypes.ts'
-import { LocationMap } from '../helpers/types.ts'
+import { IdType, LocationMap } from '../helpers/types.ts'
 import { Country } from '../helpers/addressConfig.ts'
 import { birthInformantMap } from '../lookupMappings/informantTypes.ts'
 import { nationalityMap } from '../lookupMappings/nationalities.ts'
@@ -41,11 +42,33 @@ const toNationality = (
   return nationalityMap[nationality] || raceMap[race] || undefined
 }
 
+const fatherDetailsUnavailable = (data: BirthCsvRecord) =>
+  Boolean(
+    !data.FATHERS_NAME &&
+    !data.FATHERS_SURNAME &&
+    !data.FATHERS_DOB &&
+    !data.FATHERS_AGE &&
+    !data.FATHERS_BIRTHPLACE &&
+    !data.FATHERS_NATIONALITY &&
+    !data.FATHERS_RACE
+  )
+
+const motherDetailsUnavailable = (data: BirthCsvRecord) =>
+  Boolean(
+    !data.MOTHERS_NAME &&
+    !data.MOTHERS_SURNAME &&
+    !data.MOTHERS_DOB &&
+    !data.MOTHERS_AGE &&
+    !data.MOTHERS_BIRTHPLACE &&
+    !data.MOTHERS_NATIONALITY &&
+    !data.MOTHERS_RACE
+  )
+
 export const birthResolver: BirthResolver = {
   'child.name': (data: BirthCsvRecord) =>
     toName(data.CHILDS_NAME, data.FATHERS_SURNAME || data.MOTHERS_SURNAME),
   'child.dob': (data: BirthCsvRecord) => toCrvsDate(data.CHILDS_DOB),
-  'child.reason': (_: BirthCsvRecord) => 'Data migration', // Confirm this with Shez, maybe Legacy record
+  'child.reason': (_: BirthCsvRecord) => 'Legacy record', // Confirm this with Shez, maybe Legacy record
   'child.gender': (data: BirthCsvRecord) => toGender(data.CHILDS_GENDER),
   'child.placeOfBirth': (
     data: BirthCsvRecord,
@@ -75,10 +98,10 @@ export const birthResolver: BirthResolver = {
   'child.orderOfBirth.higherMultiple': (data: BirthCsvRecord) =>
     twinsMap[data.CHILDS_TWIN]?.orderHigher,
   'child.weightAtBirth': '',
-  'child.attendantAtBirth': '',
-  'child.attendantAtBirth.other': '',
-  'child.attendantAtBirth.givenNames': '',
-  'child.attendantAtBirth.surname': '',
+  'child.attendantAtBirth': (_: BirthCsvRecord) => 'OTHER' as AttendantAtBirth,
+  'child.attendantAtBirth.other': (_: BirthCsvRecord) => 'Legacy record',
+  'child.attendantAtBirth.givenNames': (_: BirthCsvRecord) => '-',
+  'child.attendantAtBirth.surname': (_: BirthCsvRecord) => '-',
   'child.isRenamed': (data: BirthCsvRecord, all: CsvFields) =>
     all.deedpoll.some((record) => record.BIRTH_REF === data.BIRTH_REF),
   'child.isAdoptionOrder': (data: BirthCsvRecord) => !!data.ADOP_REC_REF,
@@ -121,8 +144,10 @@ export const birthResolver: BirthResolver = {
 
   'adoptionOrder.orderDocument': '', //(data: BirthCsvRecord) => data.ADOPT_BOOK_REF,
 
-  'mother.detailsUnavailable': '',
-  'mother.unavailableReason': '',
+  'mother.detailsUnavailable': (data: BirthCsvRecord) =>
+    motherDetailsUnavailable(data),
+  'mother.unavailableReason': (data: BirthCsvRecord) =>
+    motherDetailsUnavailable(data) ? 'Legacy record' : undefined,
   'mother.name': (data: BirthCsvRecord) =>
     toName(data.MOTHERS_NAME, data.MOTHERS_SURNAME),
   'mother.dob': (data: BirthCsvRecord) => toCrvsDate(data.MOTHERS_DOB),
@@ -134,7 +159,7 @@ export const birthResolver: BirthResolver = {
   'mother.placeOfBirth': (data: BirthCsvRecord) => data.MOTHERS_BIRTHPLACE,
   'mother.nationality': (data: BirthCsvRecord) =>
     toNationality(data.MOTHERS_NATIONALITY, data.MOTHERS_RACE),
-  'mother.idType': '',
+  'mother.idType': (_: BirthCsvRecord) => 'NONE' as IdType,
   'mother.passport': '',
   'mother.bc': '',
   'mother.other': '',
@@ -144,8 +169,10 @@ export const birthResolver: BirthResolver = {
     locationMap: LocationMap[]
   ) => resolveAddress(data.MOTHERS_ADDRESS, locationMap),
   'mother.occupation': '',
-  'father.detailsUnavailable': '', // Calucalte
-  'father.unavailableReason': '',
+  'father.detailsUnavailable': (data: BirthCsvRecord) =>
+    fatherDetailsUnavailable(data),
+  'father.unavailableReason': (data: BirthCsvRecord) =>
+    fatherDetailsUnavailable(data) ? 'Legacy record' : undefined,
   'father.name': (data: BirthCsvRecord) =>
     toName(data.FATHERS_NAME, data.FATHERS_SURNAME),
   'father.dob': (data: BirthCsvRecord) => toCrvsDate(data.FATHERS_DOB),
@@ -155,7 +182,7 @@ export const birthResolver: BirthResolver = {
   'father.placeOfBirth': (data: BirthCsvRecord) => data.FATHERS_BIRTHPLACE,
   'father.nationality': (data: BirthCsvRecord) =>
     toNationality(data.FATHERS_NATIONALITY, data.FATHERS_RACE),
-  'father.idType': '',
+  'father.idType': (_: BirthCsvRecord) => 'NONE' as IdType,
   'father.passport': '',
   'father.bc': '',
   'father.other': '',

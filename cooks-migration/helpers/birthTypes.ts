@@ -1,7 +1,7 @@
 import { Address, Country } from './addressConfig.ts'
 import { BirthCsvRecord, CsvFields } from './csvTypes.ts'
 import { FacilityId } from './resolverHelpers.ts'
-import { CrvsDate, Gender, LocationMap, Name } from './types.ts'
+import { CrvsDate, Gender, IdType, LocationMap, Name } from './types.ts'
 
 export type BirthInformant = 'MOTHER' | 'FATHER' | 'MOTHER_AND_FATHER' | 'OTHER'
 
@@ -30,6 +30,8 @@ export type OrderOfBirthHigherMultiple =
   | 'SIXTH_BORN'
   | 'SEVENTH_BORN'
 
+export type AttendantAtBirth = 'OTHER'
+
 export type BirthResolver = {
   'child.name': ResolverFunction<Name>
   'child.dob': ResolverFunction<CrvsDate>
@@ -44,10 +46,10 @@ export type BirthResolver = {
   'child.orderOfBirth.triplets': ResolverFunction<OrderOfBirthTriplets | null>
   'child.orderOfBirth.higherMultiple': ResolverFunction<OrderOfBirthHigherMultiple | null>
   'child.weightAtBirth': string
-  'child.attendantAtBirth': string // NONE ?
-  'child.attendantAtBirth.other': string
-  'child.attendantAtBirth.givenNames': string
-  'child.attendantAtBirth.surname': string
+  'child.attendantAtBirth': ResolverFunction<AttendantAtBirth>
+  'child.attendantAtBirth.other': ResolverFunction<string>
+  'child.attendantAtBirth.givenNames': ResolverFunction<string>
+  'child.attendantAtBirth.surname': ResolverFunction<string>
   'child.isRenamed': ResolverFunction<boolean>
   'child.isAdoptionOrder': ResolverFunction<boolean>
   'nameChange.deedPollNumber1': ResolverFunction<string | undefined>
@@ -63,8 +65,8 @@ export type BirthResolver = {
   'nameChange.newSurname3': ResolverFunction<string | undefined>
   'adoptionOrder.registrationNumber': ResolverFunction<string | undefined>
   'adoptionOrder.orderDocument': string
-  'mother.detailsUnavailable': string
-  'mother.unavailableReason': string
+  'mother.detailsUnavailable': ResolverFunction<boolean>
+  'mother.unavailableReason': ResolverFunction<string | undefined>
   'mother.name': ResolverFunction<Name>
   'mother.dob': ResolverFunction<CrvsDate>
   'mother.dobUnknown': ResolverFunction<boolean>
@@ -73,21 +75,21 @@ export type BirthResolver = {
   'mother.maidenName': ResolverFunction<string>
   'mother.placeOfBirth': ResolverFunction<string>
   'mother.nationality': ResolverFunction<Country | undefined>
-  'mother.idType': string
+  'mother.idType': ResolverFunction<IdType>
   'mother.passport': string
   'mother.bc': string
   'mother.other': string
   'mother.address': ResolverFunction<Address | undefined>
   'mother.occupation': string
-  'father.detailsUnavailable': string
-  'father.unavailableReason': string
+  'father.detailsUnavailable': ResolverFunction<boolean>
+  'father.unavailableReason': ResolverFunction<string | undefined>
   'father.name': ResolverFunction<Name>
   'father.dob': ResolverFunction<CrvsDate>
   'father.dobUnknown': ResolverFunction<boolean>
   'father.age': ResolverFunction<number | null>
   'father.placeOfBirth': ResolverFunction<string | undefined>
   'father.nationality': ResolverFunction<Country | undefined>
-  'father.idType': string
+  'father.idType': ResolverFunction<IdType>
   'father.passport': string
   'father.bc': string
   'father.other': string

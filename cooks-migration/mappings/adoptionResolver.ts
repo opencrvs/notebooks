@@ -1,6 +1,6 @@
 import { AdoptionCsvRecord, CsvFields } from '../helpers/csvTypes.ts'
 import { AdoptionResolver, AdoptionMetaData } from '../helpers/adoptionTypes.ts'
-import { LocationMap } from '../helpers/types.ts'
+import { IdType, LocationMap } from '../helpers/types.ts'
 import { Country } from '../helpers/addressConfig.ts'
 import { nationalityMap } from '../lookupMappings/nationalities.ts'
 import { raceMap } from '../lookupMappings/races.ts'
@@ -73,7 +73,7 @@ export const adoptionResolver: AdoptionResolver = {
     data.MOTHERS_BIRTHPLACE,
   'adoptiveMother.nationality': (data: AdoptionCsvRecord) =>
     toNationality(data.MOTHERS_NATIONALITY, data.MOTHERS_RACE),
-  'adoptiveMother.idType': '',
+  'adoptiveMother.idType': (_: AdoptionCsvRecord) => 'NONE' as IdType,
   'adoptiveMother.idTypeOther': '',
   'adoptiveMother.idNumber': '',
   'adoptiveMother.residence': (
@@ -96,7 +96,7 @@ export const adoptionResolver: AdoptionResolver = {
     data.FATHERS_BIRTHPLACE,
   'adoptiveFather.nationality': (data: AdoptionCsvRecord) =>
     toNationality(data.FATHERS_NATIONALITY, data.FATHERS_RACE),
-  'adoptiveFather.idType': '',
+  'adoptiveFather.idType': (_: AdoptionCsvRecord) => 'NONE' as IdType,
   'adoptiveFather.idTypeOther': '',
   'adoptiveFather.idNumber': '',
   'adoptiveFather.residence': (

@@ -1,7 +1,7 @@
 import { Address, Country } from './addressConfig.ts'
 import { CsvFields, DeathCsvRecord } from './csvTypes.ts'
 import { FacilityId } from './resolverHelpers.ts'
-import { CrvsDate, Gender, LocationMap, Name } from './types.ts'
+import { CrvsDate, Gender, IdType, LocationMap, Name } from './types.ts'
 
 export type ResolverFunction<T> =
   | ((data: DeathCsvRecord) => T)
@@ -14,9 +14,7 @@ export type DeathInformant = 'SPOUSE' | 'MOTHER' | 'FATHER' | 'OTHER'
 
 type LivingStatus = 'ALIVE' | 'DECEASED'
 
-type MannerOfDeath = 'MANNER_UNDETERMINED' | 'NATURAL_CAUSES'
-
-export type IdType = 'NONE'
+type MannerOfDeath = 'MANNER_UNDETERMINED' | 'MANNER_NATURAL'
 
 type YesNo = 'Yes' | 'No'
 
@@ -91,21 +89,21 @@ export type DeathResolver = {
   'burial.dateOfBurial': ResolverFunction<CrvsDate>
   'burial.whereburied': ResolverFunction<Address | undefined>
   'burial.burialPlaceDescription': ResolverFunction<string>
-  'father.detailsNotAvailable': string
-  'father.reason': string
+  'father.detailsNotAvailable': ResolverFunction<boolean>
+  'father.reason': ResolverFunction<string | undefined>
   'father.livingStatus': ResolverFunction<LivingStatus | undefined>
   'father.name': ResolverFunction<Name>
   'father.dob': string
   'father.dobUnknown': string
   'father.age': string
   'father.nationality': string
-  'father.idType': string
+  'father.idType': ResolverFunction<IdType>
   'father.passport': string
   'father.bc': string
   'father.other': string
   'father.occupation': ResolverFunction<string>
-  'mother.detailsNotAvailable': string
-  'mother.reason': string
+  'mother.detailsNotAvailable': ResolverFunction<boolean>
+  'mother.reason': ResolverFunction<string | undefined>
   'mother.livingStatus': string
   'mother.name': ResolverFunction<Name>
   'mother.maidenName': ResolverFunction<string>
@@ -113,20 +111,20 @@ export type DeathResolver = {
   'mother.dobUnknown': string
   'mother.age': string
   'mother.nationality': string
-  'mother.idType': string
+  'mother.idType': ResolverFunction<IdType>
   'mother.passport': string
   'mother.brn': string
   'mother.other': string
   'mother.occupation': string
-  'spouse.detailsNotAvailable': string
-  'spouse.reason': string
+  'spouse.detailsNotAvailable': ResolverFunction<boolean>
+  'spouse.reason': ResolverFunction<string | undefined>
   'spouse.livingStatus': ResolverFunction<LivingStatus | undefined>
-  'spouse.name': ResolverFunction<string>
+  'spouse.name': ResolverFunction<Name>
   'spouse.dob': string
-  'spouse.dobUnknown': string
+  'spouse.dobUnknown': ResolverFunction<boolean>
   'spouse.age': ResolverFunction<number | null>
   'spouse.nationality': string
-  'spouse.idType': string
+  'spouse.idType': ResolverFunction<IdType>
   'spouse.passport': string
   'spouse.bc': string
   'spouse.other': string
@@ -168,7 +166,7 @@ export type DeathResolver = {
   'informant.name': ResolverFunction<Name>
   'informant.dob': string
   'informant.nationality': string
-  'informant.idType': string
+  'informant.idType': ResolverFunction<IdType>
   'informant.passport': string
   'informant.bc': string
   'informant.other': string

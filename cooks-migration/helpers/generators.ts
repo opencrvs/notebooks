@@ -18,7 +18,7 @@ export const FALLBACK_ISLAND_PREFIX_MAP: Record<string, string> = {
   'COK-012': 'NASS', // Nassau
   'COK-013': 'SUWA', // Suwarrow
   'COK-014': 'TAKU', // Takutea
-  'COK-015': 'MANU', // Manuae
+  'COK-015': 'MANU' // Manuae
 }
 
 const EVENT_TYPE_MAP: Record<EventType, string> = {
@@ -28,35 +28,10 @@ const EVENT_TYPE_MAP: Record<EventType, string> = {
   'marriage-registration': 'MR',
   divorce: 'DV',
   adoption: 'AD',
-  'name-change': 'DP',
+  'name-change': 'DP'
 }
 
 const usedTrackingIds = new Set<string>()
-
-// export function deterministicHash(input: string, length: number): string {
-//   const ALPHABET = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ'
-//   const hash = createHash('sha1').update(input).digest()
-//   Hashes++
-//   let value = BigInt('0x' + hash.toString('hex'))
-
-//   let result = ''
-//   const base = BigInt(36)
-
-//   for (let i = 0; i < length; i++) {
-//     result = ALPHABET[Number(value % base)] + result
-//     value = value / base
-//   }
-
-//   while (usedTrackingIds.has(result)) {
-//     Collisions++
-//     // console.log(
-//     //   `Collision detected for tracking ID: ${result}, input ${input} regenerating...`,
-//     // )
-//     return deterministicHash(input + input, length)
-//   }
-//   usedTrackingIds.add(result)
-//   return result
-// }
 
 export function deterministicHash(input: string, length: number): string {
   const ALPHABET = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ'
@@ -80,7 +55,7 @@ export function generateRegistrationNumber(
   locationCode: string,
   date: string,
   event: EventType,
-  seed: string,
+  seed: string
 ): string {
   const year = new Date(date).getUTCFullYear().toString().slice(-2)
   const eventCode = EVENT_TYPE_MAP[event] || 'XX'

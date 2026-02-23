@@ -1,6 +1,6 @@
 import { Address, Country } from './addressConfig.ts'
 import { AdoptionCsvRecord, CsvFields } from './csvTypes.ts'
-import { Age, CrvsDate, Gender, LocationMap, Name } from './types.ts'
+import { Age, CrvsDate, Gender, IdType, LocationMap, Name } from './types.ts'
 
 export type ResolverFunction<T> =
   | ((data: AdoptionCsvRecord) => T)
@@ -42,7 +42,7 @@ export type AdoptionResolver = {
   'adoptiveMother.maidenName': ResolverFunction<string>
   'adoptiveMother.placeOfBirth': ResolverFunction<string>
   'adoptiveMother.nationality': ResolverFunction<Country | undefined>
-  'adoptiveMother.idType': string
+  'adoptiveMother.idType': ResolverFunction<IdType>
   'adoptiveMother.idTypeOther': string
   'adoptiveMother.idNumber': string
   'adoptiveMother.residence': ResolverFunction<Address | undefined>
@@ -55,7 +55,7 @@ export type AdoptionResolver = {
   'adoptiveFather.age': ResolverFunction<Age | undefined>
   'adoptiveFather.placeOfBirth': ResolverFunction<string>
   'adoptiveFather.nationality': ResolverFunction<Country | undefined>
-  'adoptiveFather.idType': string
+  'adoptiveFather.idType': ResolverFunction<IdType>
   'adoptiveFather.idTypeOther': string
   'adoptiveFather.idNumber': string
   'adoptiveFather.residence': ResolverFunction<Address | undefined>

@@ -70,3 +70,5 @@ export type Age = {
   age: number
   asOfDateRef: string
 }
+
+export type IdType = 'NONE'

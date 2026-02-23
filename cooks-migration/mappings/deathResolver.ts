@@ -2,10 +2,9 @@ import { CsvFields, DeathCsvRecord } from '../helpers/csvTypes.ts'
 import {
   DeathResolver,
   DeathMetaData,
-  IdType,
   ChildrenCount
 } from '../helpers/deathTypes.ts'
-import { CrvsDate, Gender, LocationMap } from '../helpers/types.ts'
+import { CrvsDate, Gender, IdType, LocationMap } from '../helpers/types.ts'
 import {
   deriveName,
   getLocationCode,
@@ -21,7 +20,6 @@ import { resolveLengthInCis } from '../lookupMappings/death/lengthInCis.ts'
 import { parseInformantDescription } from '../lookupMappings/death/informantTypeMapping.ts'
 import { ageMapping } from '../lookupMappings/death/ageMapping.ts'
 
-// Extract all string DIVORCED, DECEASED and any 2 or 3 digit numbers from the field and return them as an array. If the field is empty or contains only whitespace, return an empty array.
 const getAgeOfWidow = (data: string): (number | 'DECEASED' | 'DIVORCED')[] => {
   if (!data || data.trim() === '') {
     return []
@@ -36,16 +34,6 @@ const getAgeOfWidow = (data: string): (number | 'DECEASED' | 'DIVORCED')[] => {
     .reverse()
 }
 
-/*
-May be in the format
-
-dd/MM/yyyy, d/M/yyyy with possible text before or after
-
-may be ages between text
-
-extract the values and output an array of type CrvsDate|number in order 
-*/
-
 const getWhenMarried = (data: string): (CrvsDate | number)[] => {
   if (!data || data.trim() === '') {
     return []
@@ -53,7 +41,6 @@ const getWhenMarried = (data: string): (CrvsDate | number)[] => {
 
   const results: { index: number; value: CrvsDate | number }[] = []
 
-  // Extract dates in d/M/yyyy or dd/MM/yyyy format and track their positions
   const dateRegex = /\b(\d{1,2}\/\d{1,2}\/\d{4})\b/g
   let match: RegExpExecArray | null
   while ((match = dateRegex.exec(data)) !== null) {
@@ -63,12 +50,10 @@ const getWhenMarried = (data: string): (CrvsDate | number)[] => {
     }
   }
 
-  // Replace date patterns with spaces to avoid re-matching their digits as numbers
   const cleaned = data.replace(/\b\d{1,2}\/\d{1,2}\/\d{4}\b/g, (m) =>
     ' '.repeat(m.length)
   )
 
-  // Extract remaining standalone numbers that are at least 2 digits (ages between text)
   const numberRegex = /\b(\d{2,})\b/g
   while ((match = numberRegex.exec(cleaned)) !== null) {
     results.push({ index: match.index, value: parseInt(match[1], 10) })
@@ -77,21 +62,11 @@ const getWhenMarried = (data: string): (CrvsDate | number)[] => {
   return results.sort((a, b) => b.index - a.index).map((r) => r.value)
 }
 
-/* Can be in the form
-64,63,60,59,57,55,54
-1. 35,33  2. 21,18
-(1) - (2) 61 (3) 59,53,49,48,43,40
-1: -     2: 29
-1- / 2. 42
-[1] 47 [2]41,34,32,30,28,27
-
-*/
 const getLivingChildren = (data: string): number[] => {
   if (!data || data.trim() === '' || data.trim() === '-') {
     return []
   }
 
-  // Remove marriage markers: (N), [N], N., N:, N- and group separators /
   const cleaned = data
     .replace(/\(\d+\)/g, '') // (1), (2), ...
     .replace(/\[\d+\]/g, '') // [1], [2], ...
@@ -106,23 +81,11 @@ const getLivingChildren = (data: string): number[] => {
   return numbers.map((n) => parseInt(n, 10))
 }
 
-/*
-can be in the form :
-TOKOROA, NEW ZEALAND
-1.- 2.AITUTAKI 3.AITUTAKI 4.AITUTAKI
-A). AITUTAKI  B). PONSONBY AUCKLAND NEW ZEALAND
-A. RAROTONGA
-B. AITUTAKI
-1) TAUTU AITUTAKI  2) AUCKLAND NEW ZEALAND
-
-
-*/
 const getWhereMarried = (data: string): string[] => {
   if (!data || data.trim() === '') {
     return []
   }
 
-  // Split on list-style prefixes: 1.- , 2. , A). , B. , 1) , etc.
   const separator = /(?:\d+|[A-Z])[.)-]+\s*/g
 
   const hasMarkers = separator.test(data)
@@ -144,7 +107,6 @@ const getWhomMarried = (data: string): string[] => {
     return []
   }
 
-  // Split on list-style prefixes: 1.- , 2. , A). , B. , 1) , etc.
   const separator = /(?:\d+|[A-Z])[.)-]+\s*/g
 
   const hasMarkers = separator.test(data)
@@ -184,6 +146,18 @@ const referredToCoroner = (data: DeathCsvRecord) => {
       field.toUpperCase().includes('INQUEST')
   )
 }
+
+const motherNotAvailable = (data: DeathCsvRecord) =>
+  Boolean(!data.MOTHERS_NAME && !data.MOTHERS_MAIDEN_NAME)
+
+const fatherNotAvailable = (data: DeathCsvRecord) =>
+  Boolean(!data.FATHERS_NAME && !data.FATHERS_OCCUPATION)
+
+const spouseNotAvailable = (data: DeathCsvRecord) =>
+  Boolean(
+    !getAgeOfWidow(data.AGE_OF_WIDOW)[0] &&
+    !getWhomMarried(data.WHOM_MARRIED)[0]
+  )
 
 export const deathResolver: DeathResolver = {
   'deceased.name': (data: DeathCsvRecord) => deriveName(data.NAME_OF_DECEASED),
@@ -259,7 +233,7 @@ export const deathResolver: DeathResolver = {
   'eventDetails.dateOfDeath': (data: DeathCsvRecord) =>
     toCrvsDate(data.WHEN_DIED),
   'eventDetails.mannerOfDeath': (data: DeathCsvRecord) =>
-    referredToCoroner(data) ? 'MANNER_UNDETERMINED' : 'NATURAL_CAUSES',
+    referredToCoroner(data) ? 'MANNER_UNDETERMINED' : 'MANNER_NATURAL',
   'eventDetails.placeOfDeath': (
     data: DeathCsvRecord,
     _: CsvFields,
@@ -339,8 +313,10 @@ export const deathResolver: DeathResolver = {
     locationMap: LocationMap[]
   ) => resolveAddress(data.WHERE_BURIED, locationMap),
   'burial.burialPlaceDescription': (data: DeathCsvRecord) => data.WHERE_BURIED,
-  'father.detailsNotAvailable': '', // Calculate
-  'father.reason': '',
+  'father.detailsNotAvailable': (data: DeathCsvRecord) =>
+    fatherNotAvailable(data),
+  'father.reason': (data: DeathCsvRecord) =>
+    fatherNotAvailable(data) ? 'Legacy record' : '',
   'father.livingStatus': (data: DeathCsvRecord) => {
     const occupation = data.FATHERS_OCCUPATION
     const dead =
@@ -354,13 +330,15 @@ export const deathResolver: DeathResolver = {
   'father.dobUnknown': '',
   'father.age': '',
   'father.nationality': '',
-  'father.idType': '',
+  'father.idType': (_: DeathCsvRecord) => 'NONE' as IdType,
   'father.passport': '',
   'father.bc': '',
   'father.other': '',
   'father.occupation': (data: DeathCsvRecord) => data.FATHERS_OCCUPATION,
-  'mother.detailsNotAvailable': '',
-  'mother.reason': '',
+  'mother.detailsNotAvailable': (data: DeathCsvRecord) =>
+    motherNotAvailable(data),
+  'mother.reason': (data: DeathCsvRecord) =>
+    motherNotAvailable(data) ? 'Legacy record' : '',
   'mother.livingStatus': '',
   'mother.name': (data: DeathCsvRecord) => deriveName(data.MOTHERS_NAME),
   'mother.maidenName': (data: DeathCsvRecord) => data.MOTHERS_MAIDEN_NAME,
@@ -368,28 +346,31 @@ export const deathResolver: DeathResolver = {
   'mother.dobUnknown': '',
   'mother.age': '',
   'mother.nationality': '',
-  'mother.idType': '',
+  'mother.idType': (_: DeathCsvRecord) => 'NONE' as IdType,
   'mother.passport': '',
   'mother.brn': '',
   'mother.other': '',
   'mother.occupation': '',
-  'spouse.detailsNotAvailable': '',
-  'spouse.reason': '',
+  'spouse.detailsNotAvailable': (data: DeathCsvRecord) =>
+    spouseNotAvailable(data),
+  'spouse.reason': (data: DeathCsvRecord) =>
+    spouseNotAvailable(data) ? 'Legacy record' : '',
   'spouse.livingStatus': (data: DeathCsvRecord) => {
     const age = getAgeOfWidow(data.AGE_OF_WIDOW)[0]
     if (age === 'DECEASED') return 'DECEASED'
     if (typeof age === 'number') return 'ALIVE'
   },
-  'spouse.name': (data: DeathCsvRecord) => getWhomMarried(data.WHOM_MARRIED)[0], // Another weird format with multiple marriages
+  'spouse.name': (data: DeathCsvRecord) =>
+    deriveName(getWhomMarried(data.WHOM_MARRIED)[0] || ''), // Another weird format with multiple marriages
   'spouse.dob': '',
-  'spouse.dobUnknown': '',
+  'spouse.dobUnknown': (_: DeathCsvRecord) => true,
   'spouse.age': (data: DeathCsvRecord) => {
     const age = getAgeOfWidow(data.AGE_OF_WIDOW)[0]
     if (typeof age === 'number') return age
     return null
   },
   'spouse.nationality': '',
-  'spouse.idType': '',
+  'spouse.idType': (_: DeathCsvRecord) => 'NONE' as IdType,
   'spouse.passport': '',
   'spouse.bc': '',
   'spouse.other': '',
@@ -461,7 +442,7 @@ export const deathResolver: DeathResolver = {
   },
   'informant.dob': '',
   'informant.nationality': '',
-  'informant.idType': '',
+  'informant.idType': (_: DeathCsvRecord) => 'NONE' as IdType,
   'informant.passport': '',
   'informant.bc': '',
   'informant.other': '',

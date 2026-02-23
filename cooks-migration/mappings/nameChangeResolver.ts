@@ -10,18 +10,35 @@ import {
   toCrvsDate,
   toISODate
 } from '../helpers/resolverHelpers.ts'
-import { LocationMap } from '../helpers/types.ts'
+import { IdType, LocationMap } from '../helpers/types.ts'
 
 const getPreviousChanges = (
   current: DeedpollCsvRecord,
   all: DeedpollCsvRecord[]
 ) => {
   const currentIndex = all.indexOf(current)
-  return all.slice(0, currentIndex)
+  return all
+    .slice(0, currentIndex)
+    .map((record) => ({
+      ...record,
+      NEW_FIRSTNAMES: sanitiseName(record.NEW_FIRSTNAMES),
+      NEW_SURNAME: sanitiseName(record.NEW_SURNAME)
+    }))
+    .reverse()
+}
+
+const sanitiseName = (str: string): string => {
+  const match = str.match(/"([^"]*)"/)
+  return match ? match[1] : str
 }
 
 export const nameChangeResolver: NameChangeResolver = {
-  'subjects.nationality': '',
+  'subjects.nationality': (
+    _: DeedpollCsvRecord,
+    birth: BirthCsvRecord,
+    __: DeedpollCsvRecord[],
+    locationMap: LocationMap[]
+  ) => resolveAddress(birth.CHILDS_BIRTHPLACE, locationMap)?.country,
   'subjects.brn': '',
   'subjects.brnText': '',
   'subjects.name': (_: DeedpollCsvRecord, birth: BirthCsvRecord) =>
@@ -82,8 +99,10 @@ export const nameChangeResolver: NameChangeResolver = {
     _: BirthCsvRecord,
     changes: DeedpollCsvRecord[]
   ) => getPreviousChanges(data, changes)[2]?.NEW_SURNAME,
-  'newName.name.firstname': (data: DeedpollCsvRecord) => data.NEW_FIRSTNAMES,
-  'newName.name.surname': (data: DeedpollCsvRecord) => data.NEW_SURNAME,
+  'newName.name.firstname': (data: DeedpollCsvRecord) =>
+    sanitiseName(data.NEW_FIRSTNAMES),
+  'newName.name.surname': (data: DeedpollCsvRecord) =>
+    sanitiseName(data.NEW_SURNAME),
   'newName.reason': '',
   'informant.informantType': '',
   'informant.relationship': '',
@@ -91,7 +110,7 @@ export const nameChangeResolver: NameChangeResolver = {
   'informant.dob': '',
   'informant.dobUnknown': '',
   'informant.age': '',
-  'informant.idType': '',
+  'informant.idType': (_: DeedpollCsvRecord) => 'NONE' as IdType,
   'informant.passport': '',
   'informant.bc': '',
   'informant.idOther': '',
@@ -116,13 +135,11 @@ export const nameChangeMetaDataMapping: Record<string, string> = {
 
 export type NameChangeMetaData = {
   registrationDate: ResolverFunction<string>
-  registrar: ResolverFunction<string>
   locationCode: ResolverFunction<string | null>
 }
 
 export const nameChangeMetaData: NameChangeMetaData = {
   registrationDate: (data: DeedpollCsvRecord) => toISODate(data.DATE),
-  registrar: (data: DeedpollCsvRecord) => data.REGISTRAR, // TODO Create from island?
   locationCode: (
     data: DeedpollCsvRecord,
     _: BirthCsvRecord,
