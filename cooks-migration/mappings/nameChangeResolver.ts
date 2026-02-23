@@ -50,7 +50,11 @@ export const nameChangeResolver: NameChangeResolver = {
     _: BirthCsvRecord,
     __: DeedpollCsvRecord[],
     locationMap: LocationMap[]
-  ) => resolveAddress(data.ISLAND, locationMap), // Not so sure about this
+  ) => {
+    const address = resolveAddress(data.ISLAND, locationMap)
+    console.log('Resolving address for ', data.ISLAND, ' got ', address)
+    return address
+  }, // Not so sure about this
   'subjects.nameChangedViaDeadPoll': () => true,
   'subjects.nameChange1.deedPollNumber': (
     data: DeedpollCsvRecord,
@@ -115,7 +119,6 @@ export const nameChangeResolver: NameChangeResolver = {
   'informant.bc': '',
   'informant.idOther': '',
   'informant.address': '',
-  'informant.address.city': '',
   'informant.phone': '',
   'informant.email': '',
   'witness.name': (data: DeedpollCsvRecord) => deriveName(data.WITNESS),

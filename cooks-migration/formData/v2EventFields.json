@@ -325,6 +325,7 @@
     "informantDetails.email"
   ],
   "marriage-registration": [
+    "marriageDetails.licenceDetailsSearch",
     "marriageDetails.licenceNumber",
     "marriageDetails.expiryDate",
     "marriageDetails.dateOfMarriage",
@@ -360,6 +361,7 @@
   "divorce": [
     "applicationDetails.typeOfApplication",
     "applicationDetails.applicantParty",
+    "marriageDetails.marriageRegistrationSearch",
     "marriageDetails.marriageRegistrationNumber",
     "marriageDetails.dateOfMarriage",
     "marriageDetails.placeOfMarriage",
@@ -475,7 +477,6 @@
     "informant.bc",
     "informant.idOther",
     "informant.address",
-    "informant.address.city",
     "informant.phone",
     "informant.email",
     "witness.name",

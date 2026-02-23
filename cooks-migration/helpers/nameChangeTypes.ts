@@ -50,7 +50,6 @@ export type NameChangeResolver = {
   'informant.bc': string
   'informant.idOther': string
   'informant.address': string
-  'informant.address.city': string
   'informant.phone': string
   'informant.email': string
   'witness.name': ResolverFunction<Name>
