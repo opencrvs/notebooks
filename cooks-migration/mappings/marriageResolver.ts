@@ -104,7 +104,6 @@ export const marriageResolver: MarriageResolver = {
 
 export const marriageMetaData: MarriageMetaData = {
   registrationDate: (data: MarriageCsvRecord) => toISODate(data.MARRIAGE_DATE),
-  registrar: (data: MarriageCsvRecord) => data.REGISTRAR,
   locationCode: (
     data: MarriageCsvRecord,
     _: CsvFields,

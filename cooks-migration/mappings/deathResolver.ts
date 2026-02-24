@@ -459,7 +459,6 @@ export const deathResolver: DeathResolver = {
 
 export const deathMetaData: DeathMetaData = {
   registrationDate: (data: DeathCsvRecord) => toISODate(data.DATE_REGISTERED),
-  registrar: (data: DeathCsvRecord) => data.REGISTRAR,
   locationCode: (
     data: DeathCsvRecord,
     _: CsvFields,

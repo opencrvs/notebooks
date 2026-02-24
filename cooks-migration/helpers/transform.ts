@@ -10,7 +10,7 @@ export const transform = (
   role: string,
   location: string,
   trackingId: string,
-  registrationNumber: string,
+  registrationNumber: string
 ): CrvsEvent => ({
   id: uuidv5(registrationNumber, UUID_NAMESPACE),
   type: eventType,
@@ -30,7 +30,7 @@ export const transform = (
       status: 'Accepted',
       declaration: {},
       id: uuidv5(registrationNumber + 'CREATE', UUID_NAMESPACE),
-      transactionId: uuidv4(),
+      transactionId: uuidv4()
     },
     {
       id: uuidv5(registrationNumber + 'REGISTER', UUID_NAMESPACE),
@@ -44,7 +44,7 @@ export const transform = (
       updatedAtLocation: location,
       status: 'Accepted',
       declaration,
-      registrationNumber: registrationNumber,
-    },
-  ],
+      registrationNumber
+    }
+  ]
 })

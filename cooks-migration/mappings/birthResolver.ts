@@ -222,7 +222,6 @@ export const birthResolver: BirthResolver = {
 
 export const birthMetaData: BirthMetaData = {
   registrationDate: (data: BirthCsvRecord) => toISODate(data.DATE_REGISTERED),
-  registrar: (data: BirthCsvRecord) => data.REGISTRAR,
   locationCode: (
     data: BirthCsvRecord,
     _: CsvFields,

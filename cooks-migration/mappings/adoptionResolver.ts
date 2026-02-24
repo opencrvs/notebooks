@@ -119,7 +119,6 @@ export const adoptionResolver: AdoptionResolver = {
 export const adoptionMetaData: AdoptionMetaData = {
   registrationDate: (data: AdoptionCsvRecord) =>
     toISODate(data.DATE_REGISTERED),
-  registrar: (data: AdoptionCsvRecord) => data.REGISTRAR,
   locationCode: (
     data: AdoptionCsvRecord,
     _: CsvFields,

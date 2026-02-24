@@ -50,6 +50,5 @@ export type MarriageResolver = {
 
 export type MarriageMetaData = {
   registrationDate: MarriageResolverFunction<string>
-  registrar: MarriageResolverFunction<string>
   locationCode: MarriageResolverFunction<string | null>
 }

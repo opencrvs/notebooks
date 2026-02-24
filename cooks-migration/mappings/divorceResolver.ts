@@ -64,7 +64,6 @@ export const divorceResolver: DivorceResolver = {
 
 export const divorceMetaData: DivorceMetaData = {
   registrationDate: (data: MarriageCsvRecord) => toISODate(data.MARRIAGE_DATE),
-  registrar: (data: MarriageCsvRecord) => data.REGISTRAR,
   locationCode: (
     data: MarriageCsvRecord,
     _: CsvFields,

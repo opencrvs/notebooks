@@ -34,6 +34,10 @@ const EVENT_TYPE_MAP: Record<EventType, string> = {
 const usedTrackingIds = new Set<string>()
 
 export function deterministicHash(input: string, length: number): string {
+  if (usedTrackingIds.size === 0) {
+    readTrackingIdsFromFile()
+  }
+
   const ALPHABET = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ'
   const hash = createHash('sha1').update(input).digest()
   let value = hash.readUInt32BE(0)
@@ -62,4 +66,25 @@ export function generateRegistrationNumber(
   const uniqueId = deterministicHash(seed, 4)
   const islandCode = FALLBACK_ISLAND_PREFIX_MAP[locationCode] || 'XXXX'
   return `${islandCode}${eventCode}${year}${uniqueId}`
+}
+
+const trackingIdPath = 'trackingIds.json'
+
+export const writeTrackingIdsToFile = async () => {
+  console.log(`Writing ${usedTrackingIds.size} used tracking IDs to file...`)
+  await Deno.writeTextFile(
+    trackingIdPath,
+    JSON.stringify(Array.from(usedTrackingIds), null, 2)
+  )
+}
+
+const readTrackingIdsFromFile = () => {
+  try {
+    const data = Deno.readTextFileSync(trackingIdPath)
+    const ids: string[] = JSON.parse(data)
+    ids.forEach((id) => usedTrackingIds.add(id))
+    console.log(`Loaded ${usedTrackingIds.size} used tracking IDs from file.`)
+  } catch (_error) {
+    console.warn('No existing tracking IDs file found, starting fresh.')
+  }
 }

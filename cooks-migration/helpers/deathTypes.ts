@@ -179,6 +179,5 @@ export type DeathResolver = {
 
 export type DeathMetaData = {
   registrationDate: ResolverFunction<string>
-  registrar: ResolverFunction<string>
   locationCode: ResolverFunction<string | null>
 }

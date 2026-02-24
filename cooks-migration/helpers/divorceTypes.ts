@@ -41,6 +41,5 @@ export type DivorceResolver = {
 
 export type DivorceMetaData = {
   registrationDate: DivorceResolverFunction<string>
-  registrar: DivorceResolverFunction<string>
   locationCode: DivorceResolverFunction<string | null>
 }

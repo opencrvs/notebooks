@@ -115,6 +115,5 @@ export type BirthResolver = {
 
 export type BirthMetaData = {
   registrationDate: ResolverFunction<string>
-  registrar: ResolverFunction<string>
   locationCode: ResolverFunction<string | null>
 }

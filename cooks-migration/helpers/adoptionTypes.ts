@@ -69,6 +69,5 @@ export type AdoptionResolver = {
 
 export type AdoptionMetaData = {
   registrationDate: ResolverFunction<string>
-  registrar: ResolverFunction<string>
   locationCode: ResolverFunction<string | null>
 }
