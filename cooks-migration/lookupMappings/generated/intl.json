@@ -343,6 +343,10 @@
     "country": "NZL",
     "town": "16C SANDLEIGH DRIVE, ATHENREE"
   },
+  "17 DERRICK RD, KAWAKAWA, NEW ZEALAND": {
+    "country": "NZL",
+    "town": "17 DERRICK RD, KAWAKAWA"
+  },
   "17 NZ": {
     "country": "NZL",
     "town": "17"
@@ -526,6 +530,10 @@
   "24 PARKER ROAD, ORATIA, AUCKLAND 0604 NEW ZEALAND": {
     "country": "NZL",
     "town": "24 PARKER ROAD, ORATIA, AUCKLAND 0604"
+  },
+  "245B HEPBURN RD, GLENDENE, NEW ZEALAND": {
+    "country": "NZL",
+    "town": "245B HEPBURN RD, GLENDENE"
   },
   "246 DORA ST, DORA CREEK N.S.W, 2264, AUSTRALIA": {
     "country": "AUS",
@@ -1050,6 +1058,10 @@
   "8 JETTY ROAD, GOVERNORS BAY, LYTTELTON, NEW ZEALAN": {
     "country": "NZL",
     "town": "8 JETTY ROAD, GOVERNORS BAY, LYTTELTON"
+  },
+  "82 MONASH RD, LOGANLEA 4131, QUEENSLAND, AUSTRALIA": {
+    "country": "AUS",
+    "town": "82 MONASH RD, LOGANLEA 4131, QUEENSLAND"
   },
   "82A FERNDALE ROAD, MOUNT WELLINGTON AUCKLAND 1060,": {
     "country": "NZL",
@@ -3982,6 +3994,10 @@
   "BATH,ENGLAND": {
     "country": "GBR",
     "town": "BATH"
+  },
+  "BATCHELOR, AUSTRALIA": {
+    "country": "AUS",
+    "town": "BATCHELOR"
   },
   "BATHURST NEW SOUTH WALES AUSTRALIA": {
     "country": "AUS",
@@ -13063,6 +13079,10 @@
     "country": "AUS",
     "town": "GOLD COAST"
   },
+  "GOLD COAST, AUSTTRALIA": {
+    "country": "AUS",
+    "town": "GOLD COAST"
+  },
   "GOLD COAST, NEW ZEALAND": {
     "country": "NZL",
     "town": "GOLD COAST"
@@ -14094,6 +14114,10 @@
   "HAMAR, NORWAY": {
     "country": "NOR",
     "town": "HAMAR"
+  },
+  "HAMBURG": {
+    "country": "DEU",
+    "town": "HAMBURG"
   },
   "HAMBURG GERMANY": {
     "country": "DEU",
@@ -26987,6 +27011,10 @@
     "country": "GBR",
     "town": "OXFORD"
   },
+  "OYSTERBAY, AUSTRALIA": {
+    "country": "AUS",
+    "town": "OYSTERBAY"
+  },
   "OXNARD, CA, U.S.A": {
     "country": "USA",
     "town": "OXNARD, CA"
@@ -28242,6 +28270,10 @@
   "PERTH WESTERN AUSTRALIA": {
     "country": "AUS",
     "town": "PERTH WESTERN"
+  },
+  "PERTH, WA AUSTRALIA": {
+    "country": "AUS",
+    "town": "PERTH, WA"
   },
   "PERTH,  AUSTRALIA": {
     "country": "AUS",
@@ -31182,6 +31214,10 @@
   "RUAPUKE, NEW ZEALAND": {
     "country": "NZL",
     "town": "RUAPUKE"
+  },
+  "RUATORIA, NEW ZEALAND": {
+    "country": "NZL",
+    "town": "RUATORIA"
   },
   "RUATUKI NZ": {
     "country": "NZL",
@@ -35552,6 +35588,10 @@
     "town": "TAHITI"
   },
   "TARAWA KIRIBATI": {
+    "country": "KIR",
+    "town": "TARAWA"
+  },
+  "TARAWA REPUBLIC OF KIRIBATI": {
     "country": "KIR",
     "town": "TARAWA"
   },
