@@ -5,7 +5,7 @@ import {
   MarriageMetaData,
   MarriageResolver
 } from '../helpers/marriageTypes.ts'
-import { LocationMap } from '../helpers/types.ts'
+import { CrvsDate, LocationMap } from '../helpers/types.ts'
 import {
   getLocationCode,
   getLocationFromRegNum,
@@ -14,6 +14,8 @@ import {
   toISODate,
   toName
 } from '../helpers/resolverHelpers.ts'
+import { decreeMap } from '../lookupMappings/marriage/decree.ts'
+import { denominationMap } from '../lookupMappings/marriage/denominations.ts'
 
 export const getBrideStatus = (
   status: string
@@ -41,6 +43,9 @@ export const getGroomStatus = (
         } as Record<string, GroomConjugalStatus>
       )[status[0]]
 
+export const getDateOfDecree = (data: string): CrvsDate | undefined =>
+  decreeMap[data]
+
 export const marriageResolver: MarriageResolver = {
   'marriageDetails.licenceNumber': '',
   'marriageDetails.expiryDate': (data: MarriageCsvRecord) =>
@@ -53,9 +58,10 @@ export const marriageResolver: MarriageResolver = {
     locationMap: LocationMap[]
   ) => resolveAddress(data.MARRIAGE_PLACE, locationMap),
   'marriageDetails.venueName': (data: MarriageCsvRecord) => data.CHURCH_NAME,
-  'marriageDetails.officiantType': '', // Can I default to registrar
+  'marriageDetails.officiantType': (data: MarriageCsvRecord) =>
+    denominationMap[data.DENOMINATION] || 'MARRIAGE_CELEBRANT',
   'marriageDetails.officiantFullName': (data: MarriageCsvRecord) =>
-    data.PASTOR_NAME,
+    data.PASTOR_NAME || 'Legacy record',
   'marriageDetails.officiantAffiliation': (data: MarriageCsvRecord) =>
     data.DENOMINATION,
   'marriageDetails.bridegroomName': (data: MarriageCsvRecord) =>
@@ -68,7 +74,8 @@ export const marriageResolver: MarriageResolver = {
     data.GROOM_OCCUPATION,
   'marriageDetails.bridegroomConjugalStatus': (data: MarriageCsvRecord) =>
     getGroomStatus(data.GROOM_STATUS),
-  'marriageDetails.bridegroomDateOfDecreeAbsolute': '',
+  'marriageDetails.bridegroomDateOfDecreeAbsolute': (data: MarriageCsvRecord) =>
+    getDateOfDecree(data.Extra_info),
   'marriageDetails.bridegroomDateOfDeathFormerWife': (
     data: MarriageCsvRecord
   ) => toCrvsDate(data.GROOM_DOD_WIDOW),
@@ -87,7 +94,8 @@ export const marriageResolver: MarriageResolver = {
     data.BRIDE_OCCUPATION,
   'marriageDetails.brideConjugalStatus': (data: MarriageCsvRecord) =>
     getBrideStatus(data.BRIDE_STATUS),
-  'marriageDetails.brideDateOfDecreeAbsolute': '',
+  'marriageDetails.brideDateOfDecreeAbsolute': (data: MarriageCsvRecord) =>
+    getDateOfDecree(data.Extra_info),
   'marriageDetails.brideDateOfDeathFormerHusband': (data: MarriageCsvRecord) =>
     toCrvsDate(data.BRIDE_DOD_WIDOWER),
   'marriageDetails.brideAddress': (

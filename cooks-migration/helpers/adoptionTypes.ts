@@ -32,8 +32,8 @@ export type AdoptionResolver = {
   'consenter.cp2.age': string
   'consenter.cp2.residence': string
   'consenter.cp2.occupation': string
-  'adoptiveMother.detailsUnavailable': string
-  'adoptiveMother.unavailableReason': string
+  'adoptiveMother.detailsUnavailable': ResolverFunction<boolean>
+  'adoptiveMother.unavailableReason': ResolverFunction<string | undefined>
   'adoptiveMother.name': ResolverFunction<Name>
   'adoptiveMother.dob': ResolverFunction<CrvsDate>
   'adoptiveMother.dobUnknown': ResolverFunction<boolean>
@@ -47,8 +47,8 @@ export type AdoptionResolver = {
   'adoptiveMother.idNumber': string
   'adoptiveMother.residence': ResolverFunction<Address | undefined>
   'adoptiveMother.occupation': string
-  'adoptiveFather.detailsUnavailable': string
-  'adoptiveFather.unavailableReason': string
+  'adoptiveFather.detailsUnavailable': ResolverFunction<boolean>
+  'adoptiveFather.unavailableReason': ResolverFunction<string | undefined>
   'adoptiveFather.name': ResolverFunction<Name>
   'adoptiveFather.dob': ResolverFunction<CrvsDate>
   'adoptiveFather.dobUnknown': ResolverFunction<boolean>

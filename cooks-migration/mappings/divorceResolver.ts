@@ -1,5 +1,9 @@
 import { CsvFields, MarriageCsvRecord } from '../helpers/csvTypes.ts'
-import { DivorceResolver, DivorceMetaData } from '../helpers/divorceTypes.ts'
+import {
+  DivorceResolver,
+  DivorceMetaData,
+  ApplicantType
+} from '../helpers/divorceTypes.ts'
 import { LocationMap } from '../helpers/types.ts'
 import {
   getLocationCode,
@@ -7,15 +11,21 @@ import {
   resolveAddress,
   toCrvsDate,
   toISODate,
+  toLegacy,
   toName
 } from '../helpers/resolverHelpers.ts'
-import { getBrideStatus, getGroomStatus } from './marriageResolver.ts'
+import {
+  getBrideStatus,
+  getDateOfDecree,
+  getGroomStatus
+} from './marriageResolver.ts'
 
-// Note: Divorce mappings use the same legacy field names as marriage registration
 export const divorceResolver: DivorceResolver = {
-  'applicationDetails.typeOfApplication': '',
+  'applicationDetails.typeOfApplication': (_: MarriageCsvRecord) =>
+    'JOINT' as ApplicantType,
   'applicationDetails.applicantParty': '',
-  'marriageDetails.marriageRegistrationNumber': '', // This is search
+  'marriageDetails.marriageRegistrationNumber': (data: MarriageCsvRecord) =>
+    toLegacy(data.NOTICE_NUMBER, 'marriage-registration'),
   'marriageDetails.dateOfMarriage': (data: MarriageCsvRecord) =>
     toCrvsDate(data.MARRIAGE_DATE),
   'marriageDetails.placeOfMarriage': (data: MarriageCsvRecord) =>
@@ -30,7 +40,8 @@ export const divorceResolver: DivorceResolver = {
     data.GROOM_OCCUPATION,
   'marriageDetails.bridegroomConjugalStatus': (data: MarriageCsvRecord) =>
     getGroomStatus(data.GROOM_STATUS),
-  'marriageDetails.bridegroomDecreeAbsoluteDate': '', // Could be in Extra_info
+  'marriageDetails.bridegroomDecreeAbsoluteDate': (data: MarriageCsvRecord) =>
+    getDateOfDecree(data.Extra_info),
   'marriageDetails.bridegroomFormerWifeDeathDate': (data: MarriageCsvRecord) =>
     toCrvsDate(data.GROOM_DOD_WIDOW),
   'marriageDetails.residence': (
@@ -48,7 +59,8 @@ export const divorceResolver: DivorceResolver = {
     data.BRIDE_OCCUPATION,
   'marriageDetails.brideConjugalStatus': (data: MarriageCsvRecord) =>
     getBrideStatus(data.BRIDE_STATUS),
-  'marriageDetails.brideDecreeAbsoluteDate': '',
+  'marriageDetails.brideDecreeAbsoluteDate': (data: MarriageCsvRecord) =>
+    getDateOfDecree(data.Extra_info),
   'marriageDetails.brideFormerHusbandDeathDate': (data: MarriageCsvRecord) =>
     toCrvsDate(data.BRIDE_DOD_WIDOWER),
   'marriageDetails.brideResidence': (
@@ -59,7 +71,8 @@ export const divorceResolver: DivorceResolver = {
   'divorceOrderDetails.orderNumber': '',
   'divorceOrderDetails.issuingAuthority': (_: MarriageCsvRecord) =>
     'HIGH_COURT_COOK_ISLANDS',
-  'divorceOrderDetails.orderDate': '' //Could be in date of decree in extra info
+  'divorceOrderDetails.orderDate': (data: MarriageCsvRecord) =>
+    getDateOfDecree(data.Extra_info)
 }
 
 export const divorceMetaData: DivorceMetaData = {

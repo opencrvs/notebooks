@@ -10,13 +10,15 @@ export type MarriageResolverFunction<T> =
 export type GroomConjugalStatus = 'BACHELOR' | 'DIVORCED' | 'WIDOWER'
 export type BrideConjugalStatus = 'SPINSTER' | 'DIVORCED' | 'WIDOW'
 
+export type OfficiantType = 'REGISTRAR' | 'MINISTER' | 'MARRIAGE_CELEBRANT'
+
 export type MarriageResolver = {
   'marriageDetails.licenceNumber': string
   'marriageDetails.expiryDate': MarriageResolverFunction<CrvsDate>
   'marriageDetails.dateOfMarriage': MarriageResolverFunction<CrvsDate>
   'marriageDetails.address': MarriageResolverFunction<Address | undefined>
   'marriageDetails.venueName': MarriageResolverFunction<string>
-  'marriageDetails.officiantType': string
+  'marriageDetails.officiantType': MarriageResolverFunction<OfficiantType>
   'marriageDetails.officiantFullName': MarriageResolverFunction<string>
   'marriageDetails.officiantAffiliation': MarriageResolverFunction<string>
   'marriageDetails.bridegroomName': MarriageResolverFunction<Name>

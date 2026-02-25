@@ -8,10 +8,12 @@ export type DivorceResolverFunction<T> =
   | ((data: MarriageCsvRecord, all: CsvFields) => T)
   | ((data: MarriageCsvRecord, all: CsvFields, locationMap: LocationMap[]) => T)
 
+export type ApplicantType = 'JOINT'
+
 export type DivorceResolver = {
-  'applicationDetails.typeOfApplication': string
+  'applicationDetails.typeOfApplication': DivorceResolverFunction<ApplicantType>
   'applicationDetails.applicantParty': string
-  'marriageDetails.marriageRegistrationNumber': string
+  'marriageDetails.marriageRegistrationNumber': DivorceResolverFunction<string>
   'marriageDetails.dateOfMarriage': DivorceResolverFunction<CrvsDate>
   'marriageDetails.placeOfMarriage': DivorceResolverFunction<string>
   'marriageDetails.bridegroomGivenNames': DivorceResolverFunction<Name>
@@ -36,7 +38,7 @@ export type DivorceResolver = {
   'marriageDetails.brideResidence': DivorceResolverFunction<Address | undefined>
   'divorceOrderDetails.orderNumber': string
   'divorceOrderDetails.issuingAuthority': DivorceResolverFunction<string>
-  'divorceOrderDetails.orderDate': string
+  'divorceOrderDetails.orderDate': DivorceResolverFunction<CrvsDate>
 }
 
 export type DivorceMetaData = {

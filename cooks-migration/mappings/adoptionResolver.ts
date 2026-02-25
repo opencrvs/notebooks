@@ -1,6 +1,6 @@
 import { AdoptionCsvRecord, CsvFields } from '../helpers/csvTypes.ts'
 import { AdoptionResolver, AdoptionMetaData } from '../helpers/adoptionTypes.ts'
-import { IdType, LocationMap } from '../helpers/types.ts'
+import { IdType, LocationMap, Name } from '../helpers/types.ts'
 import { Country } from '../helpers/addressConfig.ts'
 import { nationalityMap } from '../lookupMappings/nationalities.ts'
 import { raceMap } from '../lookupMappings/races.ts'
@@ -23,6 +23,73 @@ const toNationality = (
 ): Country | undefined => {
   return nationalityMap[nationality] || raceMap[race] || undefined
 }
+
+/*
+ Create regex to extract name and surname
+ Can be in the form:
+ CHRISTIAN NAME "Jim Bob" SURNAME "Smith" D.P NO 178/90 : { firstname: Jim Bob; surname: Smith }
+ CHRISTINA NAME: "Steve" D.P. NO: 109/23 - 15.12.2023 : { firstname: Steve; surname: undefined }
+ CH N: "SALLY JOE" 1098 : { firstname: SALLY JOE; surname: undefined }
+ CHRISTIAN NAME " Jess Benson" D.P : { firstname: Jess Benson; surname: undefined }
+ CHRISTIAN NAMES: "JOHNMARY TEOKOTAI"  D.P. : { firstname: JOHNMARY TEOKOTAI; surname: undefined }
+ CN: "MAY MAUI"  S: "MANI"  D.P : { firstname: MAY MAUI; surname: MANI }
+ SURNAME "HERIA HARETI "D.P : { firstname: undefined; surname: HERIA HARETI }
+ SURNAME:  "LEVI" : { firstname: undefined; surname: LEVI }
+ SURNAME: AUMATANGI D.P. 24/94 : { firstname: undefined; surname: AUMATANGI }
+ SURNAME: HERMAN COURT ORDER DATED 28.4.2003 : { firstname: undefined; surname: HERMAN }
+ SURNAME: RAMANIA D.P. : { firstname: undefined; surname: RAMANIA }
+ SURNAME:"FOSTER-JONASSEN" D.P NO: 7/11   CHRISTIAN NAME:" ARTHUR DAMIEN EDWIN HEZEKIAH" : { firstname: ARTHUR DAMIEN EDWIN HEZEKIAH; surname: FOSTER-JONASSEN }
+
+*/
+const getNewName = (data: string): Name => {
+  // Match firstname from: CHRISTIAN NAME[S], CH N, CN — always quoted
+  const firstnameMatch = data.match(
+    /(?:CHRISTIAN\s+NAMES?|CH\s+N(?:AME)?|CN)\s*:?\s*"\s*([^"]+?)\s*"/i
+  )
+
+  // Match surname — quoted form: SURNAME or S: followed by quoted value
+  const surnameQuotedMatch = data.match(
+    /(?:SURNAME|\bS(?=\s*:))\s*:?\s*"\s*([^"]+?)\s*"/i
+  )
+
+  // Match surname — unquoted form: SURNAME: WORD (no quotes, stops at whitespace/end)
+  const surnameUnquotedMatch = surnameQuotedMatch
+    ? null
+    : data.match(/SURNAME\s*:\s*([A-Z][A-Z-]*)(?=\s|$)/i)
+
+  return {
+    firstname: firstnameMatch ? firstnameMatch[1].trim() : '',
+    surname: surnameQuotedMatch
+      ? surnameQuotedMatch[1].trim()
+      : surnameUnquotedMatch
+        ? surnameUnquotedMatch[1].trim()
+        : ''
+  }
+}
+
+const motherDetailsUnavailable = (data: AdoptionCsvRecord): boolean =>
+  Boolean(
+    !data.MOTHERS_NAME &&
+    !data.MOTHERS_DOB &&
+    !data.MOTHERS_AGE &&
+    !data.MOTHERS_MAIDEN_NAME &&
+    !data.MOTHERS_BIRTHPLACE &&
+    !data.MOTHERS_NATIONALITY &&
+    !data.MOTHERS_RACE &&
+    !data.MOTHERS_ADDRESS
+  )
+
+const fatherDetailsUnavailable = (data: AdoptionCsvRecord): boolean =>
+  Boolean(
+    !data.FATHERS_NAME &&
+    !data.FATHERS_DOB &&
+    !data.FATHERS_AGE &&
+    !data.FATHERS_BIRTHPLACE &&
+    !data.FATHERS_NATIONALITY &&
+    !data.FATHERS_RACE &&
+    !data.FATHERS_ADDRESS &&
+    !data.FATHERS_OCCUPATION
+  )
 
 export const adoptionResolver: AdoptionResolver = {
   'child.brnSearch': '',
@@ -56,8 +123,10 @@ export const adoptionResolver: AdoptionResolver = {
   'consenter.cp2.age': '',
   'consenter.cp2.residence': '',
   'consenter.cp2.occupation': '',
-  'adoptiveMother.detailsUnavailable': '', // Can calculate this
-  'adoptiveMother.unavailableReason': '',
+  'adoptiveMother.detailsUnavailable': (data: AdoptionCsvRecord) =>
+    motherDetailsUnavailable(data),
+  'adoptiveMother.unavailableReason': (data: AdoptionCsvRecord) =>
+    motherDetailsUnavailable(data) ? 'Legacy record' : undefined,
   'adoptiveMother.name': (data: AdoptionCsvRecord) =>
     toName(data.MOTHERS_NAME, data.MOTHERS_SURNAME),
   'adoptiveMother.dob': (data: AdoptionCsvRecord) =>
@@ -82,8 +151,10 @@ export const adoptionResolver: AdoptionResolver = {
     locationMap: LocationMap[]
   ) => resolveAddress(data.MOTHERS_ADDRESS, locationMap),
   'adoptiveMother.occupation': '',
-  'adoptiveFather.detailsUnavailable': '', // Calculate
-  'adoptiveFather.unavailableReason': '',
+  'adoptiveFather.detailsUnavailable': (data: AdoptionCsvRecord) =>
+    fatherDetailsUnavailable(data),
+  'adoptiveFather.unavailableReason': (data: AdoptionCsvRecord) =>
+    fatherDetailsUnavailable(data) ? 'Legacy record' : undefined,
   'adoptiveFather.name': (data: AdoptionCsvRecord) =>
     toName(data.FATHERS_NAME, data.FATHERS_SURNAME),
   'adoptiveFather.dob': (data: AdoptionCsvRecord) =>
@@ -113,7 +184,9 @@ export const adoptionResolver: AdoptionResolver = {
   'adoptionOrder.changesChildLegalName': (data: AdoptionCsvRecord) =>
     !!data.CHILDS_NEW_NAME,
   'adoptionOrder.childNewName': (data: AdoptionCsvRecord) =>
-    data.CHILDS_NEW_NAME ? toName(data.CHILDS_NEW_NAME, '') : undefined // Need tp parse
+    data.CHILDS_NEW_NAME
+      ? { ...deriveName(data.CHILDS_NAME), ...getNewName(data.CHILDS_NEW_NAME) }
+      : undefined
 }
 
 export const adoptionMetaData: AdoptionMetaData = {

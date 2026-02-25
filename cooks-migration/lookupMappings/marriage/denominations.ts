@@ -1,0 +1,32 @@
+import { OfficiantType } from '../../helpers/marriageTypes.ts'
+
+export const denominationMap: Record<string, OfficiantType | undefined> = {
+  'ANI PIRI': undefined,
+  'APOSTOLIC CHURCH': 'MINISTER',
+  CICC: 'MINISTER',
+  'COOK ISLAND CHRISTIAN CHURCH': 'MINISTER',
+  DENOMINATION: undefined,
+  'DEPUTY REGISTRAR': 'REGISTRAR',
+  'Deputy Registrar of Marriages': 'REGISTRAR',
+  FATHER: 'MINISTER',
+  FLETCHER: undefined,
+  JP: undefined,
+  'MARRIAGE CELEBRANT': 'MARRIAGE_CELEBRANT',
+  'MARRIAGE MINISTER': 'MINISTER',
+  'Marriage Celebrant': 'MARRIAGE_CELEBRANT',
+  'Marriage Officer': 'MARRIAGE_CELEBRANT',
+  'NEW HOPE CHURCH': 'MINISTER',
+  'OFFICATING MINISTER': 'MINISTER',
+  'OFFICIATING MINISTER': 'MINISTER',
+  'OFFICIATING MINISTRE': 'MINISTER',
+  OROMETUA: undefined,
+  'OROMETUA C.I.C.C': 'MINISTER',
+  'Offficiating Minister': 'MINISTER',
+  'Officiating Minister': 'MINISTER',
+  'Officiating Ministere': 'MINISTER',
+  'Officiating Minsiter': 'MINISTER',
+  PASTOR: 'MINISTER',
+  PENRHYN: undefined,
+  REGISTRAR: 'REGISTRAR',
+  'Registrar of Marriages': 'REGISTRAR'
+}
