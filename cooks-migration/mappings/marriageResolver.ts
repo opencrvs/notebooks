@@ -59,7 +59,9 @@ export const marriageResolver: MarriageResolver = {
     locationMap: LocationMap[]
   ) => resolveAddress(data.MARRIAGE_PLACE, locationMap),
   'marriageDetails.venueName': (data: MarriageCsvRecord) =>
-    toTitleCase(data.CHURCH_NAME),
+    toTitleCase(
+      data.CHURCH_NAME || data.MARRIAGE_PLACE.split(',').filter(Boolean)[0]
+    ),
   'marriageDetails.officiantType': (data: MarriageCsvRecord) =>
     denominationMap[data.DENOMINATION] || 'MARRIAGE_CELEBRANT',
   'marriageDetails.officiantFullName': (data: MarriageCsvRecord) =>

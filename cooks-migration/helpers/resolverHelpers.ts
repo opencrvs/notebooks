@@ -40,10 +40,14 @@ export const toCrvsDate = (
 
 export const toTitleCase = (str: string): string =>
   str
-    ?.toLowerCase()
-    .split(' ')
+    ?.split(' ')
     .filter(Boolean)
-    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+    .map((word) => {
+      const lower = word.toLowerCase()
+      if (lower === 'cicc') return 'CICC'
+      if (/^[a-z](\.[a-z])+\.?$/.test(lower)) return lower.toUpperCase()
+      return lower.charAt(0).toUpperCase() + lower.slice(1)
+    })
     .join(' ')
 
 export const toName = (firstname: string, surname: string): Name => ({
