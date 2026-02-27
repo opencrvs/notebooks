@@ -14,7 +14,8 @@ import {
   toAge,
   toCrvsDate,
   toGender,
-  toISODate
+  toISODate,
+  toTitleCase
 } from '../helpers/resolverHelpers.ts'
 import { resolveLengthInCis } from '../lookupMappings/death/lengthInCis.ts'
 import { parseInformantDescription } from '../lookupMappings/death/informantTypeMapping.ts'
@@ -175,7 +176,8 @@ export const deathResolver: DeathResolver = {
     return !toCrvsDate(dob)
   },
   'deceased.age': (data: DeathCsvRecord) => ageMapping[data.AGE],
-  'deceased.placeOfBirth': (data: DeathCsvRecord) => data.WHERE_BORN,
+  'deceased.placeOfBirth': (data: DeathCsvRecord) =>
+    toTitleCase(data.WHERE_BORN),
   'deceased.nationality': (
     data: DeathCsvRecord,
     _: CsvFields,
@@ -225,7 +227,7 @@ export const deathResolver: DeathResolver = {
     }
   },
   'deceased.placeOfMarriage': (data: DeathCsvRecord) =>
-    getWhereMarried(data.WHERE_MARRIED)[0],
+    toTitleCase(getWhereMarried(data.WHERE_MARRIED)[0]),
   'deceased.hadLivingChildren': (data: DeathCsvRecord) =>
     getLivingChildren(data.LIVING_FEMALES).concat(
       getLivingChildren(data.LIVING_MALES)
@@ -341,7 +343,8 @@ export const deathResolver: DeathResolver = {
     motherNotAvailable(data) ? 'Legacy record' : '',
   'mother.livingStatus': '',
   'mother.name': (data: DeathCsvRecord) => deriveName(data.MOTHERS_NAME),
-  'mother.maidenName': (data: DeathCsvRecord) => data.MOTHERS_MAIDEN_NAME,
+  'mother.maidenName': (data: DeathCsvRecord) =>
+    toTitleCase(data.MOTHERS_MAIDEN_NAME),
   'mother.dob': '',
   'mother.dobUnknown': '',
   'mother.age': '',

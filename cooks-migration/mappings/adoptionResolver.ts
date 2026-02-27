@@ -14,7 +14,9 @@ import {
   toCrvsDate,
   toGender,
   toISODate,
-  toName
+  toLegacy,
+  toName,
+  toTitleCase
 } from '../helpers/resolverHelpers.ts'
 
 const toNationality = (
@@ -57,14 +59,14 @@ const getNewName = (data: string): Name => {
     ? null
     : data.match(/SURNAME\s*:\s*([A-Z][A-Z-]*)(?=\s|$)/i)
 
-  return {
-    firstname: firstnameMatch ? firstnameMatch[1].trim() : '',
-    surname: surnameQuotedMatch
+  return toName(
+    firstnameMatch ? firstnameMatch[1].trim() : '',
+    surnameQuotedMatch
       ? surnameQuotedMatch[1].trim()
       : surnameUnquotedMatch
         ? surnameUnquotedMatch[1].trim()
         : ''
-  }
+  )
 }
 
 const motherDetailsUnavailable = (data: AdoptionCsvRecord): boolean =>
@@ -93,7 +95,7 @@ const fatherDetailsUnavailable = (data: AdoptionCsvRecord): boolean =>
 
 export const adoptionResolver: AdoptionResolver = {
   'child.brnSearch': '',
-  'child.brn': (data: AdoptionCsvRecord) => data.BIRTH_REF, // Does this need to be convertedf to legaccy format
+  'child.brn': (data: AdoptionCsvRecord) => toLegacy(data.BIRTH_REF, 'birth'),
   'child.name': (data: AdoptionCsvRecord) => deriveName(data.CHILDS_NAME),
   'child.dob': (data: AdoptionCsvRecord) => toCrvsDate(data.CHILDS_DOB),
   'child.gender': (data: AdoptionCsvRecord) => toGender(data.CHILDS_GENDER),
@@ -105,7 +107,7 @@ export const adoptionResolver: AdoptionResolver = {
     resolveFacility(data.CHILDS_BIRTHPLACE, locationMap)
       ? 'HEALTH_FACILITY'
       : 'OTHER',
-  'consent.notProvidedOrWaived': '',
+  'consent.notProvidedOrWaived': (_: AdoptionCsvRecord) => true,
   'consent.numberOfParties': '',
   'consenter.cp1.name': '',
   'consenter.cp1.relationship': '',
@@ -137,9 +139,9 @@ export const adoptionResolver: AdoptionResolver = {
     toAgeObject(data.MOTHERS_AGE, 'eventDetails.date'),
   'adoptiveMother.maritalStatus': '',
   'adoptiveMother.maidenName': (data: AdoptionCsvRecord) =>
-    data.MOTHERS_MAIDEN_NAME,
+    toTitleCase(data.MOTHERS_MAIDEN_NAME),
   'adoptiveMother.placeOfBirth': (data: AdoptionCsvRecord) =>
-    data.MOTHERS_BIRTHPLACE,
+    toTitleCase(data.MOTHERS_BIRTHPLACE),
   'adoptiveMother.nationality': (data: AdoptionCsvRecord) =>
     toNationality(data.MOTHERS_NATIONALITY, data.MOTHERS_RACE),
   'adoptiveMother.idType': (_: AdoptionCsvRecord) => 'NONE' as IdType,
@@ -164,7 +166,7 @@ export const adoptionResolver: AdoptionResolver = {
   'adoptiveFather.age': (data: AdoptionCsvRecord) =>
     toAgeObject(data.FATHERS_AGE, 'eventDetails.date'),
   'adoptiveFather.placeOfBirth': (data: AdoptionCsvRecord) =>
-    data.FATHERS_BIRTHPLACE,
+    toTitleCase(data.FATHERS_BIRTHPLACE),
   'adoptiveFather.nationality': (data: AdoptionCsvRecord) =>
     toNationality(data.FATHERS_NATIONALITY, data.FATHERS_RACE),
   'adoptiveFather.idType': (_: AdoptionCsvRecord) => 'NONE' as IdType,
@@ -182,7 +184,7 @@ export const adoptionResolver: AdoptionResolver = {
   'adoptionOrder.date': (data: AdoptionCsvRecord) =>
     toCrvsDate(data.DATE_REGISTERED),
   'adoptionOrder.changesChildLegalName': (data: AdoptionCsvRecord) =>
-    !!data.CHILDS_NEW_NAME,
+    data.CHILDS_NEW_NAME ? 'yes' : 'no',
   'adoptionOrder.childNewName': (data: AdoptionCsvRecord) =>
     data.CHILDS_NEW_NAME
       ? { ...deriveName(data.CHILDS_NAME), ...getNewName(data.CHILDS_NEW_NAME) }

@@ -7,6 +7,8 @@ export type ResolverFunction<T> =
   | ((data: AdoptionCsvRecord, all: CsvFields) => T)
   | ((data: AdoptionCsvRecord, all: CsvFields, locationMap: LocationMap[]) => T)
 
+type YesNo = 'yes' | 'no'
+
 export type AdoptionResolver = {
   'child.brnSearch': string
   'child.brn': ResolverFunction<string>
@@ -14,7 +16,7 @@ export type AdoptionResolver = {
   'child.dob': ResolverFunction<CrvsDate>
   'child.gender': ResolverFunction<Gender>
   'child.birthLocation': ResolverFunction<string>
-  'consent.notProvidedOrWaived': string
+  'consent.notProvidedOrWaived': ResolverFunction<boolean>
   'consent.numberOfParties': string
   'consenter.cp1.name': string
   'consenter.cp1.relationship': string
@@ -63,7 +65,7 @@ export type AdoptionResolver = {
   'adoptionOrder.number': ResolverFunction<string>
   'adoptionOrder.issuingAuthority': ResolverFunction<string>
   'adoptionOrder.date': ResolverFunction<CrvsDate>
-  'adoptionOrder.changesChildLegalName': ResolverFunction<boolean>
+  'adoptionOrder.changesChildLegalName': ResolverFunction<YesNo>
   'adoptionOrder.childNewName': ResolverFunction<Name | undefined>
 }
 

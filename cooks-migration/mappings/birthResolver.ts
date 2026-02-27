@@ -22,7 +22,8 @@ import {
   toGender,
   toISODate,
   toLegacy,
-  toName
+  toName,
+  toTitleCase
 } from '../helpers/resolverHelpers.ts'
 
 const lookUpNameChange = (CsvFields: CsvFields, birthRef: string) => {
@@ -155,8 +156,10 @@ export const birthResolver: BirthResolver = {
     Boolean(!data.MOTHERS_DOB && data.MOTHERS_AGE),
   'mother.age': (data: BirthCsvRecord) => toAge(data.MOTHERS_AGE),
   'mother.maritalStatus': '',
-  'mother.maidenName': (data: BirthCsvRecord) => data.MOTHERS_MAIDEN_NAME,
-  'mother.placeOfBirth': (data: BirthCsvRecord) => data.MOTHERS_BIRTHPLACE,
+  'mother.maidenName': (data: BirthCsvRecord) =>
+    toTitleCase(data.MOTHERS_MAIDEN_NAME),
+  'mother.placeOfBirth': (data: BirthCsvRecord) =>
+    toTitleCase(data.MOTHERS_BIRTHPLACE),
   'mother.nationality': (data: BirthCsvRecord) =>
     toNationality(data.MOTHERS_NATIONALITY, data.MOTHERS_RACE),
   'mother.idType': (_: BirthCsvRecord) => 'NONE' as IdType,
@@ -179,7 +182,8 @@ export const birthResolver: BirthResolver = {
   'father.dobUnknown': (data: BirthCsvRecord) =>
     Boolean(!data.FATHERS_DOB && data.FATHERS_AGE),
   'father.age': (data: BirthCsvRecord) => toAge(data.FATHERS_AGE),
-  'father.placeOfBirth': (data: BirthCsvRecord) => data.FATHERS_BIRTHPLACE,
+  'father.placeOfBirth': (data: BirthCsvRecord) =>
+    toTitleCase(data.FATHERS_BIRTHPLACE),
   'father.nationality': (data: BirthCsvRecord) =>
     toNationality(data.FATHERS_NATIONALITY, data.FATHERS_RACE),
   'father.idType': (_: BirthCsvRecord) => 'NONE' as IdType,

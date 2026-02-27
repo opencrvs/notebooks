@@ -33,7 +33,7 @@ export type Action = {
   createdAtLocation: string
   updatedAtLocation: string
   status: 'Accepted' | 'Rejected' | 'Pending'
-  declaration: Record<string, unknown>
+  declaration?: Record<string, unknown>
   registrationNumber?: string
 }
 

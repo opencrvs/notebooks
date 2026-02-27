@@ -11,40 +11,58 @@ export const transform = (
   location: string,
   trackingId: string,
   registrationNumber: string
-): CrvsEvent => ({
-  id: uuidv5(registrationNumber, UUID_NAMESPACE),
-  type: eventType,
-  createdAt: date,
-  updatedAt: date,
-  updatedAtLocation: location, // Need location Id
-  trackingId: deterministicHash(trackingId, 6),
-  actions: [
-    {
-      type: 'CREATE' as ActionType,
-      createdAt: date,
-      createdBy: user,
-      createdByUserType: 'user' as const,
-      createdByRole: role, // Do I use a static role?
-      createdAtLocation: location,
-      updatedAtLocation: location,
-      status: 'Accepted',
-      declaration: {},
-      id: uuidv5(registrationNumber + 'CREATE', UUID_NAMESPACE),
-      transactionId: uuidv4()
-    },
-    {
-      id: uuidv5(registrationNumber + 'REGISTER', UUID_NAMESPACE),
-      type: 'REGISTER' as ActionType,
-      transactionId: uuidv4(),
-      createdAt: date,
-      createdBy: user,
-      createdByUserType: 'user' as const,
-      createdByRole: role,
-      createdAtLocation: location,
-      updatedAtLocation: location,
-      status: 'Accepted',
-      declaration,
-      registrationNumber
-    }
-  ]
-})
+): CrvsEvent => {
+  const printDate = new Date(date)
+  printDate.setHours(23)
+
+  return {
+    id: uuidv5(registrationNumber, UUID_NAMESPACE),
+    type: eventType,
+    createdAt: date,
+    updatedAt: date,
+    updatedAtLocation: location, // Need location Id
+    trackingId: deterministicHash(trackingId, 6),
+    actions: [
+      {
+        type: 'CREATE' as ActionType,
+        createdAt: date,
+        createdBy: user,
+        createdByUserType: 'user' as const,
+        createdByRole: role, // Do I use a static role?
+        createdAtLocation: location,
+        updatedAtLocation: location,
+        status: 'Accepted',
+        declaration: {},
+        id: uuidv5(registrationNumber + 'CREATE', UUID_NAMESPACE),
+        transactionId: uuidv4()
+      },
+      {
+        id: uuidv5(registrationNumber + 'REGISTER', UUID_NAMESPACE),
+        type: 'REGISTER' as ActionType,
+        transactionId: uuidv4(),
+        createdAt: date,
+        createdBy: user,
+        createdByUserType: 'user' as const,
+        createdByRole: role,
+        createdAtLocation: location,
+        updatedAtLocation: location,
+        status: 'Accepted',
+        declaration,
+        registrationNumber
+      },
+      {
+        id: uuidv5(registrationNumber + 'PRINT_CERTIFICATE', UUID_NAMESPACE),
+        type: 'PRINT_CERTIFICATE' as ActionType,
+        transactionId: uuidv4(),
+        createdAt: printDate.toISOString(), // Set the time to 11:00 PM to ensure that the certificate is printed on the same day as registration
+        createdBy: user,
+        createdByUserType: 'user' as const,
+        createdByRole: role,
+        createdAtLocation: location,
+        updatedAtLocation: location,
+        status: 'Accepted',
+        declaration: {}
+      }
+    ]
+  }
+}

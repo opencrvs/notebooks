@@ -38,9 +38,17 @@ export const toCrvsDate = (
   return format(parsedDate, 'yyyy-MM-dd') as CrvsDate
 }
 
+export const toTitleCase = (str: string): string =>
+  str
+    ?.toLowerCase()
+    .split(' ')
+    .filter(Boolean)
+    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+    .join(' ')
+
 export const toName = (firstname: string, surname: string): Name => ({
-  firstname,
-  surname
+  firstname: toTitleCase(firstname),
+  surname: toTitleCase(surname)
 })
 
 export const deriveName = (name: string): Name => {
@@ -100,7 +108,7 @@ export const resolveAddress = (
       addressType: 'INTERNATIONAL',
       country: location.country,
       streetLevelDetails: {
-        town: location.intlTown
+        town: toTitleCase(location.intlTown)
       }
     }
   }

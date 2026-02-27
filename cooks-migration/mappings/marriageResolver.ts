@@ -12,7 +12,8 @@ import {
   resolveAddress,
   toCrvsDate,
   toISODate,
-  toName
+  toName,
+  toTitleCase
 } from '../helpers/resolverHelpers.ts'
 import { decreeMap } from '../lookupMappings/marriage/decree.ts'
 import { denominationMap } from '../lookupMappings/marriage/denominations.ts'
@@ -57,11 +58,12 @@ export const marriageResolver: MarriageResolver = {
     _: CsvFields,
     locationMap: LocationMap[]
   ) => resolveAddress(data.MARRIAGE_PLACE, locationMap),
-  'marriageDetails.venueName': (data: MarriageCsvRecord) => data.CHURCH_NAME,
+  'marriageDetails.venueName': (data: MarriageCsvRecord) =>
+    toTitleCase(data.CHURCH_NAME),
   'marriageDetails.officiantType': (data: MarriageCsvRecord) =>
     denominationMap[data.DENOMINATION] || 'MARRIAGE_CELEBRANT',
   'marriageDetails.officiantFullName': (data: MarriageCsvRecord) =>
-    data.PASTOR_NAME || 'Legacy record',
+    toTitleCase(data.PASTOR_NAME) || 'Legacy record',
   'marriageDetails.officiantAffiliation': (data: MarriageCsvRecord) =>
     data.DENOMINATION,
   'marriageDetails.bridegroomName': (data: MarriageCsvRecord) =>
@@ -69,7 +71,7 @@ export const marriageResolver: MarriageResolver = {
   'marriageDetails.bridegroomDob': (data: MarriageCsvRecord) =>
     toCrvsDate(data.GROOM_DOB),
   'marriageDetails.bridegroomPlaceOfBirth': (data: MarriageCsvRecord) =>
-    data.GROOM_BIRTHPLACE,
+    toTitleCase(data.GROOM_BIRTHPLACE),
   'marriageDetails.bridegroomOccupation': (data: MarriageCsvRecord) =>
     data.GROOM_OCCUPATION,
   'marriageDetails.bridegroomConjugalStatus': (data: MarriageCsvRecord) =>
@@ -89,7 +91,7 @@ export const marriageResolver: MarriageResolver = {
   'marriageDetails.brideDob': (data: MarriageCsvRecord) =>
     toCrvsDate(data.BRIDE_DOB),
   'marriageDetails.bridePlaceOfBirth': (data: MarriageCsvRecord) =>
-    data.BRIDE_BIRTHPLACE,
+    toTitleCase(data.BRIDE_BIRTHPLACE),
   'marriageDetails.brideOccupation': (data: MarriageCsvRecord) =>
     data.BRIDE_OCCUPATION,
   'marriageDetails.brideConjugalStatus': (data: MarriageCsvRecord) =>

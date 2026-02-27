@@ -12,7 +12,8 @@ import {
   toCrvsDate,
   toISODate,
   toLegacy,
-  toName
+  toName,
+  toTitleCase
 } from '../helpers/resolverHelpers.ts'
 import {
   getBrideStatus,
@@ -29,15 +30,15 @@ export const divorceResolver: DivorceResolver = {
   'marriageDetails.dateOfMarriage': (data: MarriageCsvRecord) =>
     toCrvsDate(data.MARRIAGE_DATE),
   'marriageDetails.placeOfMarriage': (data: MarriageCsvRecord) =>
-    data.MARRIAGE_PLACE,
+    toTitleCase(data.MARRIAGE_PLACE),
   'marriageDetails.bridegroomGivenNames': (data: MarriageCsvRecord) =>
     toName(data.GROOM_FIRSTNAME, data.GROOM_LASTNAME),
   'marriageDetails.bridegroomDob': (data: MarriageCsvRecord) =>
     toCrvsDate(data.GROOM_DOB),
   'marriageDetails.bridegroompob': (data: MarriageCsvRecord) =>
-    data.GROOM_BIRTHPLACE,
+    toTitleCase(data.GROOM_BIRTHPLACE),
   'marriageDetails.bridegroomOccupation': (data: MarriageCsvRecord) =>
-    data.GROOM_OCCUPATION,
+    toTitleCase(data.GROOM_OCCUPATION),
   'marriageDetails.bridegroomConjugalStatus': (data: MarriageCsvRecord) =>
     getGroomStatus(data.GROOM_STATUS),
   'marriageDetails.bridegroomDecreeAbsoluteDate': (data: MarriageCsvRecord) =>
@@ -54,7 +55,7 @@ export const divorceResolver: DivorceResolver = {
   'marriageDetails.brideDob': (data: MarriageCsvRecord) =>
     toCrvsDate(data.BRIDE_DOB),
   'marriageDetails.bridePlaceOfBirth': (data: MarriageCsvRecord) =>
-    data.BRIDE_BIRTHPLACE,
+    toTitleCase(data.BRIDE_BIRTHPLACE),
   'marriageDetails.brideOccupation': (data: MarriageCsvRecord) =>
     data.BRIDE_OCCUPATION,
   'marriageDetails.brideConjugalStatus': (data: MarriageCsvRecord) =>

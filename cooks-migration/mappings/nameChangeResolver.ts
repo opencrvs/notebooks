@@ -8,7 +8,8 @@ import {
   getLocationCode,
   resolveAddress,
   toCrvsDate,
-  toISODate
+  toISODate,
+  toTitleCase
 } from '../helpers/resolverHelpers.ts'
 import { IdType, LocationMap } from '../helpers/types.ts'
 
@@ -29,7 +30,7 @@ const getPreviousChanges = (
 
 const sanitiseName = (str: string): string => {
   const match = str.match(/"([^"]*)"/)
-  return match ? match[1] : str
+  return toTitleCase(match ? match[1] : str)
 }
 
 export const nameChangeResolver: NameChangeResolver = {
