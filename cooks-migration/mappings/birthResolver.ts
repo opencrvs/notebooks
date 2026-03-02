@@ -294,8 +294,10 @@ export const birthResolver: BirthResolver = {
   'child.attendantAtBirth.other': (_: BirthCsvRecord) => 'Legacy record',
   'child.attendantAtBirth.givenNames': (_: BirthCsvRecord) => '-',
   'child.attendantAtBirth.surname': (_: BirthCsvRecord) => '-',
-  'child.isRenamed': (data: BirthCsvRecord, all: CsvFields) =>
-    !!latestNameChange(data, all),
+  'child.isRenamed': (data: BirthCsvRecord, all: CsvFields) => {
+    const latest = latestNameChange(data, all)
+    return latest?.firstname || latest?.surname ? true : false
+  },
   'child.isAdoptionOrder': (data: BirthCsvRecord) => !!data.ADOP_REC_REF,
   'nameChange.deedPollNumber1': (data: BirthCsvRecord, all: CsvFields) =>
     latestNameChange(data, all)?.DP_REF,

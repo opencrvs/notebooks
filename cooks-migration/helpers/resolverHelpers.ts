@@ -55,7 +55,7 @@ export const toName = (firstname: string, surname: string): Name => ({
   surname: toTitleCase(surname)
 })
 
-export const deriveName = (name: string): Name => {
+export const deriveName = (name: string = ''): Name => {
   const names = name.split(' ').filter(Boolean)
   const surname = names.length > 1 ? names.pop() || '' : ''
   const firstname = names.join(' ')
