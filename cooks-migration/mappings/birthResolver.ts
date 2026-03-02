@@ -44,6 +44,11 @@ const toNationality = (
   nationality: string,
   race: string
 ): Country | undefined => {
+  if (
+    nationality.toLowerCase().includes('brit') &&
+    race.toLowerCase().includes('cook')
+  )
+    return 'COK'
   return nationalityMap[nationality] || raceMap[race] || undefined
 }
 
