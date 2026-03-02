@@ -316,7 +316,7 @@ export const informantTypeMapping: Record<string, DeathInformant> = {
   'DAUGHTER/WIFE': 'OTHER',
   'FATHER/MONTHER': 'OTHER',
   'FATHER/MOTHER': 'OTHER',
-  'MOTHER[SON': 'OTHER',
+  'MOTHER[SON': 'OTHER'
 }
 
 export function parseInformantDescription(description: string): {
@@ -335,12 +335,12 @@ export function parseInformantDescription(description: string): {
     return {
       name,
       relationType,
-      otherRelation: relationType === 'OTHER' ? rawRelation : undefined,
+      otherRelation: relationType === 'OTHER' ? rawRelation : undefined
     }
   }
 
   return {
     name: description.trim(),
-    relationType: 'OTHER',
+    relationType: 'OTHER'
   }
 }

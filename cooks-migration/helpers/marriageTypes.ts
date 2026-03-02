@@ -17,7 +17,7 @@ export type MarriageResolver = {
   'marriageDetails.expiryDate': MarriageResolverFunction<CrvsDate>
   'marriageDetails.dateOfMarriage': MarriageResolverFunction<CrvsDate>
   'marriageDetails.address': MarriageResolverFunction<Address | undefined>
-  'marriageDetails.venueName': MarriageResolverFunction<string>
+  'marriageDetails.venueName': MarriageResolverFunction<string | undefined>
   'marriageDetails.officiantType': MarriageResolverFunction<OfficiantType>
   'marriageDetails.officiantFullName': MarriageResolverFunction<string>
   'marriageDetails.officiantAffiliation': MarriageResolverFunction<string>
