@@ -70,11 +70,11 @@ export function generateRegistrationNumber(
 
 const trackingIdPath = 'trackingIds.json'
 
-export const writeTrackingIdsToFile = async () => {
+export const writeTrackingIdsToFile = async (customIds?: string[]) => {
   console.log(`Writing ${usedTrackingIds.size} used tracking IDs to file...`)
   await Deno.writeTextFile(
     trackingIdPath,
-    JSON.stringify(Array.from(usedTrackingIds), null, 2)
+    JSON.stringify(Array.from(customIds || usedTrackingIds), null, 2)
   )
 }
 

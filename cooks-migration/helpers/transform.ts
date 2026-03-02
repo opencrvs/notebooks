@@ -2,6 +2,8 @@ import { v4 as uuidv4, v5 as uuidv5 } from 'npm:uuid'
 import { ActionType, CrvsEvent, EventType } from './types.ts'
 import { deterministicHash, UUID_NAMESPACE } from './generators.ts'
 
+export const trackingIdMap: Record<string, string> = {}
+
 export const transform = (
   declaration: Record<string, unknown>,
   eventType: EventType,
@@ -15,13 +17,16 @@ export const transform = (
   const printDate = new Date(date)
   printDate.setHours(23)
 
+  const id = uuidv5(registrationNumber, UUID_NAMESPACE)
+  const tracking = trackingIdMap[id] || deterministicHash(trackingId, 6)
+
   return {
-    id: uuidv5(registrationNumber, UUID_NAMESPACE),
+    id: id,
     type: eventType,
     createdAt: date,
     updatedAt: date,
     updatedAtLocation: location, // Need location Id
-    trackingId: deterministicHash(trackingId, 6),
+    trackingId: tracking,
     actions: [
       {
         type: 'CREATE' as ActionType,
