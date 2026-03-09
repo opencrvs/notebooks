@@ -130,6 +130,7 @@ const GetRegistrationsList = async (
     }),
   })
   if (!response.ok) {
+    console.log('response :>> ', response);
     throw new Error(`GraphQL request failed: ${response.statusText}`)
   }
   return response.json()
