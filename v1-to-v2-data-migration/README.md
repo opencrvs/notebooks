@@ -12,6 +12,8 @@
   - Run `./migrate.ipynb`
 - If the migration is successful, it will print out a list of successful migrations
 
+**NOTE: to re-run a notebook after making changes, you need to Click Restart and Run All**
+
 
 ## How to set up migrations for countries
 
@@ -41,7 +43,7 @@ In the case where your production does not use a VPN, just ignore those steps
 - Approach:
 	- Configure 1.9 completely for the birth & death events you are trying to migrate
 	- Fork the OpenCRVS Notebook and install your Node runtime e.g. Deno to run these Jupyter notebooks in VSCode
-	- Update your address / name mappings and resolvers to those that suit your country here: https://github.com/opencrvs/notebooks/blob/main/v1-to-v2-data-migration/countryData/addressResolver.ts
+	- Update your address / name mappings and resolvers to those that suit your country here: https://github.com/opencrvs/notebooks/blob/main/v1-to-v2-data-migration/countryData/addressResolver.ts. The administrativeArea prop should be set to the field id for the leaf level select for admin levels that you have configured in your 1.9 `application-config.ts`
 	- Update your country mappings and resolvers that are appropriate to your form - usually for custom fields
 
 
