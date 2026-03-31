@@ -64,6 +64,7 @@ export interface AddressLine {
   state?: string
   country: string
   postalCode?: string
+  village?: string
 }
 
 // Name types

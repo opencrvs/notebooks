@@ -64,13 +64,7 @@ export function resolveAddress(
   return {
     addressType: 'DOMESTIC',
     country: address.country,
-    administrativeArea: address.district,
-    streetLevelDetails: {
-      town: address.city,
-      number: lines[0],
-      street: lines[1],
-      residentialArea: lines[2],
-      zipCode: address.postalCode,
-    },
+    administrativeArea: address.village,
+    streetLevelDetails: {},
   }
 }
