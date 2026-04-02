@@ -1,11 +1,13 @@
-import eventDescription from '../formData/eventDescription.json' with { type: 'json' }
-
 type FieldDescriptor = {
   id: string
   type: string
   options?: string[]
   nameFields?: string[]
-  streetAddressFields?: { id: string; type: string; addressType: 'DOMESTIC' | 'INTERNATIONAL' }[]
+  streetAddressFields?: {
+    id: string
+    type: string
+    addressType: 'DOMESTIC' | 'INTERNATIONAL'
+  }[]
   asOfDateRef?: string
 }
 
@@ -48,7 +50,9 @@ function capitalize(s: string): string {
   return s.charAt(0).toUpperCase() + s.slice(1)
 }
 
-function generateSharedTypes(description: Record<string, FieldDescriptor[]>): void {
+function generateSharedTypes(
+  description: Record<string, FieldDescriptor[]>
+): void {
   const allNameFields = new Set<string>()
   const domesticFields: { id: string }[] = []
   const internationalFields: { id: string }[] = []
@@ -65,7 +69,10 @@ function generateSharedTypes(description: Record<string, FieldDescriptor[]>): vo
           if (sf.addressType === 'DOMESTIC' && !seenDomesticIds.has(sf.id)) {
             seenDomesticIds.add(sf.id)
             domesticFields.push({ id: sf.id })
-          } else if (sf.addressType === 'INTERNATIONAL' && !seenInternationalIds.has(sf.id)) {
+          } else if (
+            sf.addressType === 'INTERNATIONAL' &&
+            !seenInternationalIds.has(sf.id)
+          ) {
             seenInternationalIds.add(sf.id)
             internationalFields.push({ id: sf.id })
           }
@@ -109,13 +116,19 @@ function generateSharedTypes(description: Record<string, FieldDescriptor[]>): vo
     ''
   ]
 
-  const outputPath = new URL('../types/sharedTypes_generated.ts', import.meta.url)
+  const outputPath = new URL(
+    '../types/sharedTypes_generated.ts',
+    import.meta.url
+  )
   Deno.writeTextFileSync(outputPath, lines.join('\n'))
   console.log(`Written: ${outputPath.pathname}`)
 }
 
 export function generateTypes(
-  description: Record<string, FieldDescriptor[]> = eventDescription as Record<string, FieldDescriptor[]>
+  description: Record<string, FieldDescriptor[]> = eventDescription as Record<
+    string,
+    FieldDescriptor[]
+  >
 ): void {
   generateSharedTypes(description)
 
