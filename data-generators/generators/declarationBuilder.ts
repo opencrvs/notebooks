@@ -9,6 +9,7 @@ export type EventField = {
   nameFields?: string[]
   streetAddressFields?: { id: string; type: string; addressType: 'DOMESTIC' | 'INTERNATIONAL' }[]
   defaultCountry?: string
+  asOfDateRef?: string
 }
 export type EventType = keyof typeof eventDescription
 
@@ -71,7 +72,7 @@ function generateValueForField(
       return faker.number.int({ min: 1, max: 10 })
 
     case 'AGE':
-      return faker.number.int({ min: 18, max: 80 })
+      return { age: faker.number.int({ min: 18, max: 80 }), asOfDateRef: field.asOfDateRef ?? '' }
 
     case 'ID':
       return faker.string.numeric(7)

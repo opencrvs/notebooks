@@ -6,6 +6,7 @@ type FieldDescriptor = {
   options?: string[]
   nameFields?: string[]
   streetAddressFields?: { id: string; type: string; addressType: 'DOMESTIC' | 'INTERNATIONAL' }[]
+  asOfDateRef?: string
 }
 
 const TYPE_MAP: Record<string, string> = {
@@ -18,7 +19,7 @@ const TYPE_MAP: Record<string, string> = {
   PHONE: 'string',
   ID: 'string',
   CHECKBOX: 'boolean',
-  AGE: 'number',
+  AGE: 'Age',
   COUNTRY: 'Country',
   FACILITY: 'Facility',
   ADDRESS: 'Address',
@@ -30,6 +31,7 @@ const IMPORTED_TYPES: Record<string, string> = {
   Country: './staticTypes.ts',
   Facility: './staticTypes.ts',
   Address: './sharedTypes_generated.ts',
+  Age: './sharedTypes_generated.ts',
   Name: './sharedTypes_generated.ts'
 }
 
@@ -99,6 +101,11 @@ function generateSharedTypes(description: Record<string, FieldDescriptor[]>): vo
     '}',
     '',
     'export type Address = DomesticAddress | InternationalAddress',
+    '',
+    'export type Age = {',
+    '  age: number',
+    '  asOfDateRef: string',
+    '}',
     ''
   ]
 

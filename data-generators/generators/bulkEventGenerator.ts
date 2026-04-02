@@ -12,16 +12,25 @@ function pick<T>(arr: T[]): T {
 
 function randomAlphaNumeric(length: number): string {
   const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'
-  return Array.from({ length }, () => chars[Math.floor(Math.random() * chars.length)]).join('')
+  return Array.from(
+    { length },
+    () => chars[Math.floor(Math.random() * chars.length)]
+  ).join('')
 }
 
-function buildTrackingId(eventType: EventType, sequentialNumber: number): string {
+function buildTrackingId(
+  eventType: EventType,
+  sequentialNumber: number
+): string {
   const prefix = eventType.slice(0, 2).toUpperCase()
   const hex = sequentialNumber.toString(16).toUpperCase().padStart(7, '0')
   return `${prefix}${hex}`
 }
 
-function buildRegistrationNumber(eventType: EventType, sequentialNumber: number): string {
+function buildRegistrationNumber(
+  eventType: EventType,
+  sequentialNumber: number
+): string {
   const prefix = eventType.slice(0, 2).toUpperCase()
   const random = randomAlphaNumeric(4)
   const seq = String(sequentialNumber).padStart(7, '0')
@@ -43,12 +52,24 @@ export const createBulkEvents = (
     const sequentialNumber = startFrom + i
     const eventType = pick(EVENT_TYPES)
     const trackingId = buildTrackingId(eventType, sequentialNumber)
-    const registrationNumber = buildRegistrationNumber(eventType, sequentialNumber)
+    const registrationNumber = buildRegistrationNumber(
+      eventType,
+      sequentialNumber
+    )
     const location = pick(crvsOffices)
-    const date = faker.date.past({ years: 5 }).toISOString().slice(0, 10)
+    const date = faker.date.past({ years: 5 }).toISOString()
 
     const declaration = createDeclaration(eventType, adminStructure, facilities)
-    const event = createEvent(declaration, eventType, date, user, role, location, trackingId, registrationNumber)
+    const event = createEvent(
+      declaration,
+      eventType,
+      date,
+      user,
+      role,
+      location,
+      trackingId,
+      registrationNumber
+    )
 
     events.push(event)
   }
