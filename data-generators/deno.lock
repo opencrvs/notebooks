@@ -1,0 +1,22 @@
+{
+  "version": "5",
+  "specifiers": {
+    "npm:@faker-js/faker@9": "9.9.0",
+    "npm:uuid@*": "11.1.0"
+  },
+  "npm": {
+    "@faker-js/faker@9.9.0": {
+      "integrity": "sha512-OEl393iCOoo/z8bMezRlJu+GlRGlsKbUAN7jKB6LhnKoqKve5DXRpalbItIIcwnCjs1k/FOPjFzcA6Qn+H+YbA=="
+    },
+    "uuid@11.1.0": {
+      "integrity": "sha512-0/A9rDy9P7cJ+8w1c9WD9V//9Wj15Ce2MPz8Ri6032usz+NfePxx5AcN3bN+r6ZL6jEo066/yNYB3tn4pQEx+A==",
+      "bin": true
+    }
+  },
+  "workspace": {
+    "dependencies": [
+      "jsr:@std/assert@1",
+      "npm:@faker-js/faker@9"
+    ]
+  }
+}
