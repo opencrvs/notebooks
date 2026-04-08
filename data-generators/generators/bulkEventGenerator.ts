@@ -2,7 +2,7 @@ import { AdminStructure, Facility } from '../types/staticTypes.ts'
 import { createDeclaration, EventType } from './declarationBuilder.ts'
 import { createEvent } from './eventBuilder.ts'
 import { faker } from '@faker-js/faker'
-import eventDescription from '../formData/eventDescription.json' with { type: 'json' }
+import eventDescription from '../types/eventDescription_generated.json' with { type: 'json' }
 
 const EVENT_TYPES = Object.keys(eventDescription) as EventType[]
 

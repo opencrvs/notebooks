@@ -1,13 +1,17 @@
 import { faker } from '@faker-js/faker'
 import { AdminStructure, COUNTRIES, Facility } from '../types/staticTypes.ts'
-import eventDescription from '../formData/eventDescription.json' with { type: 'json' }
+import eventDescription from '../types/eventDescription_generated.json' with { type: 'json' }
 
 export type EventField = {
   id: string
   type: string
   options?: string[]
   nameFields?: string[]
-  streetAddressFields?: { id: string; type: string; addressType: 'DOMESTIC' | 'INTERNATIONAL' }[]
+  streetAddressFields?: {
+    id: string
+    type: string
+    addressType: string
+  }[]
   defaultCountry?: string
   asOfDateRef?: string
 }
@@ -26,7 +30,9 @@ function generateValueForField(
 ): unknown {
   switch (field.type) {
     case 'NAME': {
-      return Object.fromEntries((field.nameFields ?? []).map((key) => [key, faker.person.firstName()]))
+      return Object.fromEntries(
+        (field.nameFields ?? []).map((key) => [key, faker.person.firstName()])
+      )
     }
 
     case 'DATE':
@@ -44,11 +50,14 @@ function generateValueForField(
 
     case 'ADDRESS': {
       const addressType = Math.random() < 0.5 ? 'DOMESTIC' : 'INTERNATIONAL'
-      const streetFields = (field.streetAddressFields ?? []).filter((sf) => sf.addressType === addressType)
+      const streetFields = (field.streetAddressFields ?? []).filter(
+        (sf) => sf.addressType === addressType
+      )
       const domesticCountry = field.defaultCountry ?? 'FAR'
-      const country = addressType === 'DOMESTIC'
-        ? domesticCountry
-        : pick(COUNTRIES.filter((c) => c !== domesticCountry))
+      const country =
+        addressType === 'DOMESTIC'
+          ? domesticCountry
+          : pick(COUNTRIES.filter((c) => c !== domesticCountry))
       return {
         addressType,
         country,
@@ -72,7 +81,10 @@ function generateValueForField(
       return faker.number.int({ min: 1, max: 10 })
 
     case 'AGE':
-      return { age: faker.number.int({ min: 18, max: 80 }), asOfDateRef: field.asOfDateRef ?? '' }
+      return {
+        age: faker.number.int({ min: 18, max: 80 }),
+        asOfDateRef: field.asOfDateRef ?? ''
+      }
 
     case 'ID':
       return faker.string.numeric(7)

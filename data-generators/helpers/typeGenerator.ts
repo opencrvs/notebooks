@@ -125,11 +125,12 @@ function generateSharedTypes(
 }
 
 export function generateTypes(
-  description: Record<string, FieldDescriptor[]> = eventDescription as Record<
-    string,
-    FieldDescriptor[]
-  >
+  description: Record<string, FieldDescriptor[]>
 ): void {
+  Deno.writeTextFile(
+    './types/eventDescription_generated.json',
+    JSON.stringify(description, null, 2)
+  )
   generateSharedTypes(description)
 
   for (const [eventName, fields] of Object.entries(description)) {
@@ -187,8 +188,4 @@ export function generateTypes(
     Deno.writeTextFileSync(outputPath, lines.join('\n'))
     console.log(`Written: ${outputPath.pathname}`)
   }
-}
-
-if (import.meta.main) {
-  generateTypes()
 }
