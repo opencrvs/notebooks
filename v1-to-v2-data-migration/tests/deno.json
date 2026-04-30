@@ -4,7 +4,7 @@
     "strict": true
   },
   "imports": {
-    "@faker-js/faker": "npm:@faker-js/faker@^8.3.1",
+    "@faker-js/faker": "npm:@faker-js/faker@^10.0.0",
     "@types/fhir": "npm:@types/fhir@^0.0.41",
     "date-fns": "npm:date-fns@^2.29.3",
     "date-fns/": "npm:/date-fns@^2.29.3/",

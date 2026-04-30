@@ -6,7 +6,7 @@
     "jsr:@std/expect@*": "1.0.16",
     "jsr:@std/internal@^1.0.6": "1.0.9",
     "jsr:@std/internal@^1.0.7": "1.0.9",
-    "npm:@faker-js/faker@^8.3.1": "8.4.1",
+    "npm:@faker-js/faker@10": "10.4.0",
     "npm:@types/fhir@*": "0.0.41",
     "npm:@types/fhir@^0.0.41": "0.0.41",
     "npm:@types/node@*": "22.10.5",
@@ -42,8 +42,8 @@
     "@babel/runtime@7.27.6": {
       "integrity": "sha512-vbavdySgbTTrmFE+EsiqUTzlOr5bzlnJtUv9PynGCAKvfQqjIXbvFdumPM/GxMDfyuGMJaJAU6TO4zc1Jf1i8Q=="
     },
-    "@faker-js/faker@8.4.1": {
-      "integrity": "sha512-XQ3cU+Q8Uqmrbf2e0cIC/QN43sTBSC8KF12u29Mb47tWrt2hAgBXSgpZMj4Ao8Uk0iJcU99QsOCaIL8934obCg=="
+    "@faker-js/faker@10.4.0": {
+      "integrity": "sha512-sDBWI3yLy8EcDzgobvJTWq1MJYzAkQdpjXuPukga9wXonhpMRvd1Izuo2Qgwey2OiEoRIBr35RMU9HJRoOHzpw=="
     },
     "@types/fhir@0.0.41": {
       "integrity": "sha512-MAQAFufNZBZ6V0F94Nhknmmh/E3iMXFK4n/L8RkSNjKtOJnvaAJERivNOj35VVx9VCQBJbE0BHSzikfBahoRhA=="
@@ -109,6 +109,7 @@
     },
     "uuid@9.0.1": {
       "integrity": "sha512-b+1eJOlsR9K8HJpow9Ok3fiWOWSIcIzXodvv0rQjVoOVNpWMpxf1wZNpt4y9h10odCNrqnYp1OBzRktckBe3sA==",
+      "deprecated": true,
       "bin": true
     },
     "web-streams-polyfill@3.3.3": {
@@ -152,7 +153,7 @@
   },
   "workspace": {
     "dependencies": [
-      "npm:@faker-js/faker@^8.3.1",
+      "npm:@faker-js/faker@10",
       "npm:@types/fhir@^0.0.41",
       "npm:date-fns@^2.29.3",
       "npm:graphql-tag@^2.12.0",
