@@ -5,7 +5,7 @@
   },
   "imports": {
     "@faker-js/faker": "npm:@faker-js/faker@^8.3.1",
-    "@types/fhir": "npm:@types/fhir@^0.0.41",
+    "@types/fhir": "npm:@types/fhir@^0.0.43",
     "date-fns": "npm:date-fns@^2.29.3",
     "date-fns/": "npm:/date-fns@^2.29.3/",
     "uuid": "npm:uuid@^9.0.1",
