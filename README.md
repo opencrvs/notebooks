@@ -9,7 +9,7 @@ This repository contains Jupyter notebooks & Github actions pipelines to be used
 
 ### To get started with local development
 
-1. Install Deno and Deno Jupyter kernel
+1. Install [Deno and Deno Jupyter kernel](https://docs.deno.com/runtime/getting_started/installation/)
 2. Install [Jupyter extension for VSCode](https://marketplace.visualstudio.com/items?itemName=ms-toolsai.jupyter)
 3. Open up a notebook, select Deno as kernel and run
 

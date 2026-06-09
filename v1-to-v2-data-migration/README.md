@@ -12,6 +12,8 @@
   - Run `./migrate.ipynb`
 - If the migration is successful, it will print out a list of successful migrations
 
+**NOTE: to re-run a notebook after making changes, you need to Click Restart and Run All**
+
 
 ## How to set up migrations for countries
 
@@ -36,3 +38,40 @@ In the case where your production does not use a VPN, just ignore those steps
 	- Go to `Configuration -> Integrations -> Create client`
 	- Create client with name 'Migrations' and type 'Import/Export'
 	- Copy the Client ID and Client secret and save them in the github secrets for each environment
+
+## Example process
+- Approach:
+	- Configure 1.9 completely for the birth & death events you are trying to migrate
+	- Fork the OpenCRVS Notebook and install your Node runtime e.g. Deno to run these Jupyter notebooks in VSCode
+	- Update your address / name mappings and resolvers to those that suit your country here: https://github.com/opencrvs/notebooks/blob/main/v1-to-v2-data-migration/countryData/addressResolver.ts. The administrativeArea prop should be set to the field id for the leaf level select for admin levels that you have configured in your 1.9 `application-config.ts`
+	- Update your country mappings and resolvers that are appropriate to your form - usually for custom fields
+
+
+	- Madagascar example:
+		https://github.com/opencrvs/notebooks/blob/mdg-migrations/v1-to-v2-data-migration/countryData/addressMappings.ts
+		https://github.com/opencrvs/notebooks/blob/mdg-migrations/v1-to-v2-data-migration/countryData/addressResolver.ts
+		https://github.com/opencrvs/notebooks/blob/mdg-migrations/v1-to-v2-data-migration/countryData/countryMappings.ts
+		https://github.com/opencrvs/notebooks/blob/mdg-migrations/v1-to-v2-data-migration/countryData/countryResolvers.ts
+		https://github.com/opencrvs/notebooks/blob/mdg-migrations/v1-to-v2-data-migration/countryData/nameMappings.ts
+		https://github.com/opencrvs/notebooks/blob/mdg-migrations/v1-to-v2-data-migration/countryData/nameResolver.ts
+
+
+	- Locally run the tasks in the https://github.com/opencrvs/notebooks/blob/main/v1-to-v2-data-migration/get-field-diff.ipynb notebook to make sure that your 1.9 forms have been configured so that every field in 1.8 has a new field in 1.9 to migrate data too.  This will obviously fail first time as you need to make your country specific mappers and resolvers
+
+
+	Once that script passes, ...
+
+
+	In an incognito window, load the 1.8 version of your app and create some test records to migrate:
+
+
+	http://localhost:3000/?V2_EVENTS=false
+
+
+	- Run the migrate notebook with test system client API details and a test Registrar locally to see if the records migrated OK:  https://github.com/opencrvs/notebooks/blob/mdg-migrations/v1-to-v2-data-migration/migrate.ipynb
+	- Deploy 1.9 to the target (QA) environment
+	- Obtain QA server env var/secrets for the notebook and set them in Github Secrets
+	- Create test records to migrate on your QA environment (There probably already are a lot of records there)
+	- Run the https://github.com/opencrvs/notebooks/blob/mdg-migrations/.github/workflows/migrate.yml Github Action to migrate the environment.  This action will need edited with VPN access commands as you have already for other actions in your forked countryconfig repo
+	- Quality assure your 1.9 config thoroughly
+	- Repeat in staging and production
