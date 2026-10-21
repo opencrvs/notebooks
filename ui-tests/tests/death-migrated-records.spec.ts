@@ -62,7 +62,7 @@ test.describe.serial("1. Verify migrated death record", () => {
 
       for (const id of ids) {
         // Escape special characters in id (like ".")
-        const safeId = id.replace(/\./g, "\\.");
+        const safeId = await page.evaluate((id) => CSS.escape(id), id);
         const value = await page
           .locator(`#deceased-content #${safeId}`)
           .locator("td:nth-child(2)")
@@ -119,7 +119,7 @@ test.describe.serial("1. Verify migrated death record", () => {
 
       for (const id of ids) {
         // Escape special characters in id (like ".")
-        const safeId = id.replace(/\./g, "\\.");
+        const safeId = await page.evaluate((id) => CSS.escape(id), id);
         const value = await page
           .locator(`#deathEvent-content #${safeId}`)
           .locator("td:nth-child(2)")
@@ -181,7 +181,7 @@ test.describe.serial("1. Verify migrated death record", () => {
 
       for (const id of ids) {
         // Escape special characters in id (like ".")
-        const safeId = id.replace(/\./g, "\\.");
+        const safeId = await page.evaluate((id) => CSS.escape(id), id);
         const value = await page
           .locator(`#informant-content #${safeId}`)
           .locator("td:nth-child(2)")
@@ -240,7 +240,7 @@ test.describe.serial("1. Verify migrated death record", () => {
 
       for (const id of ids) {
         // Escape special characters in id (like ".")
-        const safeId = id.replace(/\./g, "\\.");
+        const safeId = await page.evaluate((id) => CSS.escape(id), id);
         const value = await page
           .locator(`#spouse-content #${safeId}`)
           .locator("td:nth-child(2)")

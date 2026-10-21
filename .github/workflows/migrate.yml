@@ -21,6 +21,9 @@ on:
         required: false
         type: string
 
+permissions:
+  contents: read
+
 jobs:
   fetch-and-transform:
     name: Migrate ${{ github.event.inputs.event }} in ${{ github.event.inputs.domain }}
