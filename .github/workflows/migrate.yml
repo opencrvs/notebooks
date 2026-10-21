@@ -1,13 +1,10 @@
-name: Migrate one record from v1 to v2
-description: |
-  This workflow fetches a record from the v1 API, transforms it, and imports the result to v2.
-  It is designed for test & development purposes.
+name: Migrate all records of an event from v1 to v2
 
 on:
   workflow_dispatch:
     inputs:
-      record_id:
-        description: 'The record ID to process'
+      event:
+        description: 'The event to process (birth or death)'
         required: true
         type: string
       domain:
@@ -15,16 +12,26 @@ on:
         required: true
         type: string
         default: 'farajaland-qa.opencrvs.org'
+      client_id:
+        description: 'System Client ID'
+        required: false
+        type: string
+      client_secret:
+        description: 'System Client Secret'
+        required: false
+        type: string
 
 jobs:
   fetch-and-transform:
-    name: Migrate ${{ github.event.inputs.record_id }} in ${{ github.event.inputs.domain }}
+    name: Migrate ${{ github.event.inputs.event }} in ${{ github.event.inputs.domain }}
     runs-on: ubuntu-latest
     outputs:
       script_output: ${{ steps.deno-script.outputs.script_output }}
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
+        with:
+          ref: ${{ github.ref }}
 
       - name: Install dependencies
         run: |
@@ -36,13 +43,19 @@ jobs:
       - name: Convert notebook to TypeScript
         run: |
           mkdir -p tmp
-          bash ./scripts/deno-notebook-to-deno.sh ./v1-to-v2-data-migration/fetch-and-transform.ipynb ./tmp/fetch-and-transform.ts
+          bash ./scripts/deno-notebook-to-deno.sh ./v1-to-v2-data-migration/migrate.ipynb ./tmp/migrate.ts
 
       - name: Run the script with Deno
         id: deno-script
+        env:
+          OPENCRVS_EVENT: ${{ github.event.inputs.event }}
+          OPENCRVS_DOMAIN: ${{ github.event.inputs.domain }}
+          OPENCRVS_CLIENT_ID: ${{ github.event.inputs.client_id }}
+          OPENCRVS_CLIENT_SECRET: ${{ github.event.inputs.client_secret }}
         run: |
+          set -o pipefail
           echo "script_output<<EOF" >> $GITHUB_OUTPUT
-          deno run --allow-net ./tmp/fetch-and-transform.ts ${{ github.event.inputs.record_id }} ${{ github.event.inputs.domain }} | tee /dev/stderr >> $GITHUB_OUTPUT
+          deno run --allow-net --allow-env ./tmp/migrate.ts | tee /dev/stderr >> $GITHUB_OUTPUT
           echo "EOF" >> $GITHUB_OUTPUT
 
       - name: Generate summary
@@ -51,5 +64,3 @@ jobs:
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "${{ steps.deno-script.outputs.script_output }}" >> $GITHUB_STEP_SUMMARY
-
-

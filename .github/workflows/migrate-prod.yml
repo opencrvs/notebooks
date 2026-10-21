@@ -1,0 +1,75 @@
+name: Migrate all records of an event from v1 to v2 (Production)
+
+on:
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Environment to run migration in'
+        required: true
+        type: choice
+        default: 'staging'
+        options:
+          - staging
+          - production
+      event:
+        description: 'The event to process (birth or death)'
+        required: true
+        type: string
+      domain:
+        description: 'The environment domain (without protocol or subdomains)'
+        required: true
+        type: string
+        default: 'farajaland.opencrvs.org'
+      skip:
+        description: 'Number of records to skip'
+        required: false
+        type: number
+        default: 0
+
+jobs:
+  migrate:
+    name: Migrate ${{ github.event.inputs.event }} in ${{ github.event.inputs.environment }} (${{ github.event.inputs.domain }})
+    runs-on: ubuntu-latest
+    environment: ${{ github.event.inputs.environment }}
+    outputs:
+      script_output: ${{ steps.deno-script.outputs.script_output }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+        with:
+          ref: ${{ github.ref }}
+
+      # ADD VPN SETUP STEPS HERE
+
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y jq
+          curl -fsSL https://deno.land/install.sh | sh
+          echo "$HOME/.deno/bin" >> $GITHUB_PATH
+
+      - name: Convert notebook to TypeScript
+        run: |
+          mkdir -p tmp
+          bash ./scripts/deno-notebook-to-deno.sh ./v1-to-v2-data-migration/migrate.ipynb ./tmp/migrate.ts
+
+      - name: Run the script with Deno
+        id: deno-script
+        env:
+          OPENCRVS_EVENT: ${{ github.event.inputs.event }}
+          OPENCRVS_DOMAIN: ${{ github.event.inputs.domain }}
+          RECORD_SKIP: ${{ github.event.inputs.skip }}
+          OPENCRVS_CLIENT_ID: ${{ secrets.OPENCRVS_CLIENT_ID }}
+          OPENCRVS_CLIENT_SECRET: ${{ secrets.OPENCRVS_CLIENT_SECRET }}
+        run: |
+          set -o pipefail
+          echo "script_output<<EOF" >> $GITHUB_OUTPUT
+          deno run --allow-net --allow-env ./tmp/migrate.ts | tee /dev/stderr >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
+
+      - name: Generate summary
+        run: |
+          echo "## Notebook result" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "${{ steps.deno-script.outputs.script_output }}" >> $GITHUB_STEP_SUMMARY
