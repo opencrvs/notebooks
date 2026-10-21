@@ -6,6 +6,9 @@ on:
       - 'v1-to-v2-data-migration/**'
       - '.github/workflows/test-migration.yml'
 
+permissions:
+  contents: read
+
 jobs:
   test:
     name: Run Migration Tests

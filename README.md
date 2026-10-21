@@ -9,7 +9,14 @@ This repository contains Jupyter notebooks & Github actions pipelines to be used
 
 ### To get started with local development
 
-1. Install Deno and Deno Jupyter kernel
-2. Install [Jupyter extension for VSCode](https://marketplace.visualstudio.com/items?itemName=ms-toolsai.jupyter)
-3. Open up a notebook, select Deno as kernel and run
+1. Install Poetry and add to your PATH
+
+```
+curl -sSL https://install.python-poetry.org | python3 -
+```
+2. Run `poetry install`
+3. Run `poetry run nbstripout --install` to ensure Jupyter output is never committed to git
+4. Install Deno and Deno Jupyter kernel
+5. Install [Jupyter extension for VSCode](https://marketplace.visualstudio.com/items?itemName=ms-toolsai.jupyter)
+6. Open up a notebook, select Deno as kernel and run
 

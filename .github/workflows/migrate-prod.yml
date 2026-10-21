@@ -26,6 +26,9 @@ on:
         type: number
         default: 0
 
+permissions:
+  contents: read
+
 jobs:
   migrate:
     name: Migrate ${{ github.event.inputs.event }} in ${{ github.event.inputs.environment }} (${{ github.event.inputs.domain }})
